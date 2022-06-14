@@ -14,9 +14,12 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoIsolationSymptomAdvice.NoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
+import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
+import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalHelper
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
@@ -34,6 +37,7 @@ class QuestionnaireIsolationHandlerTest {
     private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
     private val riskCalculator = mockk<RiskCalculator>()
     private val fixedClock = Clock.fixed(Instant.parse("2020-01-01T10:00:00Z"), ZoneOffset.UTC)
+    private val getLatestConfiguration = mockk<GetLatestConfiguration>()
 
     private val isolationHelper = IsolationLogicalHelper(fixedClock)
 
@@ -41,7 +45,8 @@ class QuestionnaireIsolationHandlerTest {
         isolationStateMachine,
         analyticsEventProcessor,
         riskCalculator,
-        fixedClock
+        fixedClock,
+        getLatestConfiguration
     )
 
     private val riskThreshold = 1.0f
@@ -63,7 +68,7 @@ class QuestionnaireIsolationHandlerTest {
     )
 
     @Test
-    fun `compute advice given user is not isolating due to positive test and has symptoms then isolates due to self assessment`() {
+    fun `when isSymptomaticSelfIsolationEnabled is true compute advice given user is not isolating due to positive test and has symptoms then isolates due to self assessment`() {
         val selfAssessmentIndexCase = isolationHelper.selfAssessment(LocalDate.now(fixedClock)).asIsolation()
         val expectedRemainingDaysInIsolation = 7
 
@@ -73,7 +78,7 @@ class QuestionnaireIsolationHandlerTest {
         every { isolationStateMachine.remainingDaysInIsolation(selfAssessmentIndexCase) } returns
                 expectedRemainingDaysInIsolation.toLong()
 
-        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate)
+        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = true)
 
         assertEquals(NoIndexCaseThenIsolationDueToSelfAssessment(expectedRemainingDaysInIsolation), symptomAdvice)
 
@@ -84,7 +89,7 @@ class QuestionnaireIsolationHandlerTest {
     }
 
     @Test
-    fun `compute advice given user is not isolating due to positive test and has symptoms then isolates without self assessment`() {
+    fun `when isSymptomaticSelfIsolationEnabled is true compute advice given user is not isolating due to positive test and has symptoms then isolates without self assessment`() {
         val contactCaseIsolation = isolationHelper.contactCase().asIsolation()
         val expectedRemainingDaysInIsolation = 7
 
@@ -93,7 +98,7 @@ class QuestionnaireIsolationHandlerTest {
         every { isolationStateMachine.remainingDaysInIsolation(contactCaseIsolation) } returns
                 expectedRemainingDaysInIsolation.toLong()
 
-        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate)
+        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = true)
 
         assertEquals(NoIndexCaseThenSelfAssessmentNoImpactOnIsolation(expectedRemainingDaysInIsolation), symptomAdvice)
 
@@ -104,21 +109,72 @@ class QuestionnaireIsolationHandlerTest {
     }
 
     @Test
-    fun `compute advice given user is not isolating due to positive test and has selected non-cardinal symptoms`() {
+    fun `when isSymptomaticSelfIsolationEnabled is true compute advice given user is not isolating due to positive test and has selected non-cardinal symptoms`() {
         every { riskCalculator.isRiskAboveThreshold(selectedSymptoms, riskThreshold) } returns false
         every { isolationStateMachine.readLogicalState() } returns isolationHelper.neverInIsolation()
 
-        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate)
+        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = true)
 
         verify { analyticsEventProcessor.track(CompletedQuestionnaireButDidNotStartIsolation) }
         assertEquals(NoSymptoms, symptomAdvice)
     }
 
     @Test
-    fun `compute advice given user is not isolating due to positive test and has not selected any symptoms`() {
+    fun `when isSymptomaticSelfIsolationEnabled is true compute advice given user is not isolating due to positive test and has not selected any symptoms`() {
         every { isolationStateMachine.readLogicalState() } returns isolationHelper.neverInIsolation()
 
-        val symptomAdvice = testSubject.computeAdvice(riskThreshold, noSymptoms, onsetDate)
+        val symptomAdvice = testSubject.computeAdvice(riskThreshold, noSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = true)
+
+        verify { analyticsEventProcessor wasNot Called }
+        assertEquals(NoSymptoms, symptomAdvice)
+    }
+
+    @Test
+    fun `when isSymptomaticSelfIsolationEnabled is false compute advice given user is not isolating due to positive test and has symptoms then isolates due to self assessment but no countdown timer`() {
+        val expectedRemainingDaysInIsolation = 6
+
+        every { riskCalculator.isRiskAboveThreshold(selectedSymptoms, riskThreshold) } returns true
+        every { isolationStateMachine.readLogicalState() } returns isolationHelper.neverInIsolation()
+        every { getLatestConfiguration().indexCaseSinceSelfDiagnosisOnset } returns DurationDays().wales.indexCaseSinceSelfDiagnosisOnset
+
+        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = false)
+
+        verify { analyticsEventProcessor wasNot Called }
+        assertEquals(NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales(expectedRemainingDaysInIsolation), symptomAdvice)
+    }
+
+    @Test
+    fun `when isSymptomaticSelfIsolationEnabled is false compute advice given user is not isolating due to positive test and has symptoms then isolates without self assessment`() {
+        val contactCaseIsolation = isolationHelper.contactCase().asIsolation()
+        val expectedRemainingDaysInIsolation = 7
+
+        every { riskCalculator.isRiskAboveThreshold(selectedSymptoms, riskThreshold) } returns true
+        every { isolationStateMachine.readLogicalState() } returns contactCaseIsolation
+        every { isolationStateMachine.remainingDaysInIsolation(contactCaseIsolation) } returns
+                expectedRemainingDaysInIsolation.toLong()
+
+        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = false)
+
+        verify { analyticsEventProcessor wasNot Called }
+        assertEquals(NoIndexCaseThenSelfAssessmentNoImpactOnIsolation(expectedRemainingDaysInIsolation), symptomAdvice)
+    }
+
+    @Test
+    fun `when isSymptomaticSelfIsolationEnabled is false compute advice given user is not isolating due to positive test and has selected non-cardinal symptoms`() {
+        every { riskCalculator.isRiskAboveThreshold(selectedSymptoms, riskThreshold) } returns false
+        every { isolationStateMachine.readLogicalState() } returns isolationHelper.neverInIsolation()
+
+        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = false)
+
+        verify { analyticsEventProcessor.track(CompletedQuestionnaireButDidNotStartIsolation) }
+        assertEquals(NoSymptoms, symptomAdvice)
+    }
+
+    @Test
+    fun `when isSymptomaticSelfIsolationEnabled is false compute advice given user is not isolating due to positive test and has not selected any symptoms`() {
+        every { isolationStateMachine.readLogicalState() } returns isolationHelper.neverInIsolation()
+
+        val symptomAdvice = testSubject.computeAdvice(riskThreshold, noSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = false)
 
         verify { analyticsEventProcessor wasNot Called }
         assertEquals(NoSymptoms, symptomAdvice)
@@ -139,7 +195,7 @@ class QuestionnaireIsolationHandlerTest {
         every { isolationStateMachine.remainingDaysInIsolation(selfAssessmentIndexCase) } returns
                 expectedRemainingDaysInIsolation.toLong()
 
-        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate)
+        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = true)
 
         assertEquals(IndexCaseThenHasSymptomsDidUpdateIsolation(expectedRemainingDaysInIsolation), symptomAdvice)
     }
@@ -152,7 +208,7 @@ class QuestionnaireIsolationHandlerTest {
         every { isolationStateMachine.readLogicalState() } returns
                 isolationHelper.positiveTest(acknowledgedTestResult).asIsolation()
 
-        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate)
+        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = true)
 
         assertEquals(IndexCaseThenHasSymptomsNoEffectOnIsolation, symptomAdvice)
     }
@@ -163,7 +219,7 @@ class QuestionnaireIsolationHandlerTest {
         every { isolationStateMachine.readLogicalState() } returns
                 isolationHelper.positiveTest(acknowledgedTestResult).asIsolation()
 
-        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate)
+        val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = true)
 
         assertEquals(IndexCaseThenNoSymptoms, symptomAdvice)
 
@@ -175,7 +231,7 @@ class QuestionnaireIsolationHandlerTest {
         every { isolationStateMachine.readLogicalState() } returns
                 isolationHelper.positiveTest(acknowledgedTestResult).asIsolation()
 
-        val symptomAdvice = testSubject.computeAdvice(riskThreshold, noSymptoms, onsetDate)
+        val symptomAdvice = testSubject.computeAdvice(riskThreshold, noSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = true)
 
         assertEquals(IndexCaseThenNoSymptoms, symptomAdvice)
 

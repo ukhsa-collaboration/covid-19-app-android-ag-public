@@ -5,10 +5,6 @@ import android.app.Instrumentation
 import android.content.Intent
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_NO_SYMPTOMS_SCREEN
-import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -20,11 +16,13 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
+import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
@@ -40,13 +38,11 @@ import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.NewNoSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.NoSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SymptomsAdviceIsolateRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithIntents
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.IsolationSetupHelper
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
@@ -63,28 +59,18 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
     private val noSymptomsRobot = NoSymptomsRobot()
     private val reviewSymptomsRobot = ReviewSymptomsRobot()
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
-    private val newNoSymptomsRobot = NewNoSymptomsRobot()
 
     override val isolationHelper = IsolationHelper(testAppContext.clock)
 
-    @Before
-    fun setUp() {
-        FeatureFlagTestHelper.disableFeatureFlag(NEW_NO_SYMPTOMS_SCREEN)
-    }
-
-    @After
-    fun tearDown() {
-        FeatureFlagTestHelper.clearFeatureFlags()
-    }
-
     @Test
     @Reported
-    fun whenNotIsolating_userSelectsPositiveSymptoms_transitionsIntoIsolation_forWales() = reporter(
+    fun whenSymptomaticSelfIsolationIsEnabledAndNotIsolating_userSelectsPositiveSymptoms_transitionsIntoIsolation_forWales() = reporter(
         scenario = "Self Diagnosis Wales",
-        title = "Currently not in isolation - Positive symptoms",
+        title = "Currently not in isolation - Positive symptoms - Symptomatic self isolation enabled",
         description = "User is currently not in isolation, selects symptoms and is notified of coronavirus symptoms",
         kind = FLOW
     ) {
+        testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = true
         givenLocalAuthorityIsInWales()
         startTestActivity<StatusActivity>()
 
@@ -148,6 +134,82 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
         )
 
         statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkIsolationViewIsDisplayed()
+    }
+
+    @Test
+    @Reported
+    fun whenSymptomaticSelfIsolationIsDisabledAndNotIsolating_userSelectsPositiveSymptoms_doNotTransitionsIntoIsolation_forWales() = reporter(
+        scenario = "Self Diagnosis Wales",
+        title = "Currently not in isolation - Positive symptoms - Symptomatic self isolation disabled",
+        description = "User is currently not in isolation, selects symptoms and is notified of coronavirus symptoms",
+        kind = FLOW
+    ) {
+        testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = false
+        givenLocalAuthorityIsInWales()
+        startTestActivity<StatusActivity>()
+
+        statusRobot.checkActivityIsDisplayed()
+
+        step(
+            stepName = "Home screen - Default state",
+            stepDescription = "When the user is on the Home screen they can tap 'Report symptoms'"
+        )
+
+        statusRobot.clickReportSymptoms()
+
+        questionnaireRobot.checkActivityIsDisplayed()
+
+        step(
+            stepName = "Symptom list",
+            stepDescription = "The user is presented a list of symptoms"
+        )
+
+        questionnaireRobot.selectSymptomsAtPositions(0, 1, 2)
+
+        step(
+            stepName = "Symptom selected",
+            stepDescription = "The user selects a symptom and confirms the screen"
+        )
+
+        questionnaireRobot.reviewSymptoms()
+
+        reviewSymptomsRobot.checkActivityIsDisplayed()
+
+        step(
+            stepName = "Review symptoms",
+            stepDescription = "The user is presented a list of the selected symptoms for review"
+        )
+
+        reviewSymptomsRobot.selectCannotRememberDate()
+
+        step(
+            stepName = "No Date",
+            stepDescription = "The user can specify an onset date or tick that they don't remember the onset date, before confirming"
+        )
+
+        reviewSymptomsRobot.confirmSelection()
+
+        symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
+
+        symptomsAdviceIsolateRobot.checkViewState(
+            NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales(DurationDays().wales.indexCaseSinceSelfDiagnosisOnset)
+        )
+
+        step(
+            stepName = "Positive Symptoms screen",
+            stepDescription = "The user is asked to isolate, and given the option to book a test. They choose to close the screen."
+        )
+
+        testAppContext.device.pressBack()
+
+        step(
+            stepName = "Home screen - Default state",
+            stepDescription = "The user is presented with the home screen in default state"
+        )
+
+        statusRobot.checkActivityIsDisplayed()
+        statusRobot.checkIsolationViewIsNotDisplayed()
     }
 
     @Test
@@ -196,7 +258,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
         description = "User is in contact case isolation, selects symptoms that do not result in isolation due to self-assessment and is asked to continue isolating",
         kind = FLOW
     ) {
-        givenLocalAuthorityIsInEngland()
+        givenLocalAuthorityIsInWales()
         testAppContext.setState(isolationHelper.contact().asIsolation())
 
         completeQuestionnaire(selectMainSymptom = false)
@@ -222,7 +284,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
                     "This extends the current isolation and shows the appropriate screen.",
             kind = FLOW
         ) {
-            givenLocalAuthorityIsInEngland()
+            givenLocalAuthorityIsInWales()
             isolatingDueToPositiveTestResult(testEndDate = LocalDate.now(testAppContext.clock).minusDays(3))
 
             completeQuestionnaire(selectMainSymptom = true)
@@ -272,7 +334,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
                     "This has no effect on the current isolation and asks the user to keep isolating.",
             kind = FLOW
         ) {
-            givenLocalAuthorityIsInEngland()
+            givenLocalAuthorityIsInWales()
             isolatingDueToPositiveTestResult()
 
             completeQuestionnaire(selectMainSymptom = false)
@@ -293,7 +355,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
         description = "User is in index case isolation due to a positive test result, has no symptoms selected and taps 'I don't have any of these symptoms'",
         kind = FLOW
     ) {
-        givenLocalAuthorityIsInEngland()
+        givenLocalAuthorityIsInWales()
         isolatingDueToPositiveTestResult()
 
         startTestActivity<QuestionnaireActivity>()
@@ -454,7 +516,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
 
     @Test
     fun contactCase_SelectNotCoronavirusSymptoms_StaysInIsolation() {
-        givenLocalAuthorityIsInEngland()
+        givenLocalAuthorityIsInWales()
         testAppContext.setState(
             IsolationState(
                 isolationConfiguration = IsolationConfiguration(),
@@ -486,7 +548,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
 
     @Test
     fun contactCase_selectNoCoronavirusSymptoms_staysInIsolation() {
-        givenLocalAuthorityIsInEngland()
+        givenLocalAuthorityIsInWales()
         testAppContext.setState(
             IsolationState(
                 isolationConfiguration = IsolationConfiguration(),
@@ -666,61 +728,6 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
     @Test
     fun startReviewSymptomsActivityWithoutQuestions_NothingHappens() {
         startTestActivity<ReviewSymptomsActivity>()
-    }
-
-    @Test
-    fun startWithNewNoSymptomFeatureEnabled_inActiveIsolation_clickNoSymptoms_showDialogAndConfirm_noSymptomsScreenIsDisplayed() {
-        runWithFeatureEnabled(NEW_NO_SYMPTOMS_SCREEN, clearFeatureFlags = true) {
-            givenLocalAuthorityIsInEngland()
-            givenContactIsolation()
-
-            startTestActivity<QuestionnaireActivity>()
-
-            questionnaireRobot.clickNoSymptoms()
-            waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
-            waitFor { questionnaireRobot.continueOnDiscardSymptomsDialog() }
-
-            waitFor { symptomsAdviceIsolateRobot.checkViewState(NoIndexCaseThenSelfAssessmentNoImpactOnIsolation(remainingDaysInIsolation = 9)) }
-        }
-    }
-
-    @Test
-    fun startWithNewNoSymptomFeatureEnabled_notInActiveIsolation_clickNoSymptoms_showNewNoSymptomsScreen_tapBackToHome_showStatusScreen() {
-        runWithFeatureEnabled(NEW_NO_SYMPTOMS_SCREEN, clearFeatureFlags = true) {
-            givenNeverInIsolation()
-
-            startTestActivity<QuestionnaireActivity>()
-
-            questionnaireRobot.clickNoSymptoms()
-
-            waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
-            waitFor { questionnaireRobot.continueOnDiscardSymptomsDialog() }
-
-            waitFor { newNoSymptomsRobot.checkActivityIsDisplayed() }
-            newNoSymptomsRobot.clickBackToHomeButton()
-
-            waitFor { statusRobot.checkActivityIsDisplayed() }
-        }
-    }
-
-    @Test
-    fun startWithNewNoSymptomFeatureEnabled_notInActiveIsolation_clickNoSymptoms_showNewNoSymptomsScreen_tapBack_showStatusScreen() {
-        runWithFeatureEnabled(NEW_NO_SYMPTOMS_SCREEN, clearFeatureFlags = true) {
-            givenNeverInIsolation()
-
-            startTestActivity<QuestionnaireActivity>()
-
-            questionnaireRobot.clickNoSymptoms()
-
-            waitFor { questionnaireRobot.discardSymptomsDialogIsDisplayed() }
-            waitFor { questionnaireRobot.continueOnDiscardSymptomsDialog() }
-
-            waitFor { newNoSymptomsRobot.checkActivityIsDisplayed() }
-
-            testAppContext.device.pressBack()
-
-            waitFor { statusRobot.checkActivityIsDisplayed() }
-        }
     }
 
     private fun isolatingDueToPositiveTestResult(testEndDate: LocalDate = LocalDate.now(testAppContext.clock)) {

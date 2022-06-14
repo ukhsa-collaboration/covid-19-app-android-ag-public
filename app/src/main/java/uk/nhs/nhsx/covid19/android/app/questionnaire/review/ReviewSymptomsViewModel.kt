@@ -4,9 +4,14 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.launch
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
@@ -17,6 +22,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSympto
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.util.SingleLiveEvent
 import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
+import java.lang.IllegalStateException
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -28,7 +34,9 @@ class ReviewSymptomsViewModel @AssistedInject constructor(
     private val clock: Clock,
     @Assisted private val questions: List<Question>,
     @Assisted private val riskThreshold: Float,
-    @Assisted private val symptomsOnsetWindowDays: Int
+    @Assisted private val symptomsOnsetWindowDays: Int,
+    @Assisted private val isSymptomaticSelfIsolationForWalesEnabled: Boolean,
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider
 ) : ViewModel() {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -46,7 +54,8 @@ class ReviewSymptomsViewModel @AssistedInject constructor(
                 showOnsetDateError = false,
                 symptomsOnsetWindowDays = symptomsOnsetWindowDays,
                 showOnsetDatePicker = false,
-                datePickerSelection = clock.millis()
+                datePickerSelection = clock.millis(),
+                isSymptomaticSelfIsolationForWalesEnabled = isSymptomaticSelfIsolationForWalesEnabled
             )
         )
     }
@@ -100,12 +109,22 @@ class ReviewSymptomsViewModel @AssistedInject constructor(
             val newState = currentState.copy(showOnsetDateError = true)
             viewState.postValue(newState)
         } else {
-            val symptomAdvice = questionnaireIsolationHandler.computeAdvice(
-                riskThreshold = riskThreshold,
-                selectedSymptoms = getSelectedSymptoms(),
-                onsetDate = currentState.onsetDate
-            )
-            navigateToSymptomAdviceScreen.postValue(symptomAdvice)
+            viewModelScope.launch {
+                val isSymptomaticSelfIsolationEnabled =
+                    when (localAuthorityPostCodeProvider.requirePostCodeDistrict()) {
+                        ENGLAND -> true
+                        WALES -> isSymptomaticSelfIsolationForWalesEnabled
+                        else -> throw IllegalStateException("Current local authority is not present")
+                    }
+
+                val symptomAdvice = questionnaireIsolationHandler.computeAdvice(
+                    riskThreshold = riskThreshold,
+                    selectedSymptoms = getSelectedSymptoms(),
+                    onsetDate = currentState.onsetDate,
+                    isSymptomaticSelfIsolationEnabled = isSymptomaticSelfIsolationEnabled
+                )
+                navigateToSymptomAdviceScreen.postValue(symptomAdvice)
+            }
         }
     }
 
@@ -134,7 +153,8 @@ class ReviewSymptomsViewModel @AssistedInject constructor(
         val showOnsetDateError: Boolean,
         val symptomsOnsetWindowDays: Int,
         val showOnsetDatePicker: Boolean,
-        val datePickerSelection: Long
+        val datePickerSelection: Long,
+        val isSymptomaticSelfIsolationForWalesEnabled: Boolean
     )
 
     @AssistedFactory
@@ -142,7 +162,8 @@ class ReviewSymptomsViewModel @AssistedInject constructor(
         fun create(
             questions: List<Question>,
             riskThreshold: Float,
-            symptomsOnsetWindowDays: Int
+            symptomsOnsetWindowDays: Int,
+            isSymptomaticSelfIsolationForWalesEnabled: Boolean
         ): ReviewSymptomsViewModel
     }
 }

@@ -60,7 +60,7 @@
     <string name="test_result_positive_no_self_isolation_subtitle">Deși ați fost testat/ ă pozitiv, perioada dvs. de auto-izolare s-a încheiat</string>
     <string name="state_test_positive_info">Rezultatul testului dvs. de coronavirus este pozitiv</string>
     <string name="state_test_void_info">Nu am putut stabili dacă aveați coronavirus la momentul testării</string>
-    <string name="test_result_void_continue_self_isolate_explanation">Pentru a înțelege modul în care aplicația calculează zilele de autoizolare, accesați întrebările frecvente.\n\nNu am putut determina dacă ați avut coronavirus când s-a făcut testul și ar trebui să vă testați din nou. Vi s-au trimis mai multe informații prin e-mail, text sau telefon. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.</string>
+    <string name="test_result_void_continue_self_isolate_explanation">Pentru a înțelege modul în care aplicația calculează zilele de autoizolare, accesați întrebările frecvente.\n\n\nNu am putut determina dacă ați avut coronavirus când s-a făcut testul și ar trebui să vă testați din nou. Vi s-au trimis mai multe informații prin e-mail, text sau telefon. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere.</string>
     <string name="questionnaire_review_symptoms">Revizuire simptome</string>
     <string name="questionnaire_review_symptoms_title">Revizuiți răspunsurile</string>
     <string name="questionnaire_positive_symptoms_review_message">Ați spus „da” acestor simptome:</string>
@@ -81,7 +81,7 @@
     <string name="about_this_app_title">Despre această aplicație</string>
     <string name="title_how_app_works">Cum funcționează această aplicație</string>
     <string name="about_how_this_app_works_link">Cum funcționează aplicația</string>
-    <string name="about_common_questions_text">Vizitați pagina noastră cu întrebări frecvente pentru a afla mai multe despre aplicația NHS COVID-19 și despre programul extins.</string>
+    <string name="about_common_questions_text">Accesați website-ul nostru pentru a afla mai multe despre aplicația NHS COVID-19.</string>
     <string name="about_our_policies_title">Politicile noastre</string>
     <string name="about_our_policies_text">Politicile noastre vă oferă informații importante despre utilizarea aplicației, despre modul în care folosim datele dvs. și despre modul în care aplicația este proiectată pentru a fi utilizată de toată lumea.</string>
     <string name="about_description">Vă mulțumim că vă protejați pe dvs. și pe alte persoane prin utilizarea aplicației</string>
@@ -111,10 +111,10 @@
     <string name="onboarding_age_confirmation_negative">Am vârsta mai mică de 16 ani</string>
     <string name="onboarding_age_restriction_title">Această aplicație se adresează numai persoanelor cu vârsta de peste 16 ani.</string>
     <string name="onboarding_age_restriction_text">Vă mulțumim pentru interesul dvs. Din păcate, nu puteți folosi această aplicație. Această aplicație este destinată numai persoanelor cu vârsta de peste 16 ani.</string>
-    <string name="url_terms_of_use">https://covid19.nhs.uk/terms-of-use-romanian.html</string>
+    <string name="url_terms_of_use">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information/nhs-covid-19-app-terms-of-use</string>
     <string name="url_nhs_111_online">https://111.nhs.uk/</string>
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
-    <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01230/en-us</string>
+    <string name="url_postal_code_risk_more_info">https://www.gov.uk/government/publications/covid-19-response-living-with-covid-19</string>
     <string name="url_common_questions">https://covid19.nhs.uk/common-questions-romanian.html</string>
     <string name="url_order_test_privacy">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information</string>
     <string name="url_order_test_for_someone_else">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
@@ -207,13 +207,13 @@
     <string name="expiration_notification_title">Vești bune!</string>
     <string name="expiration_notification_description_passed">Ați fost eliberat/ ă din izolare din %s la 23:59</string>
     <string name="expiration_notification_recommendation">Pentru sfaturi suplimentare, vă rugăm să contactați:</string>
-    <string name="expiration_temperature_hint">Dacă nu vă simțiți bine, rămâneți acasă până vă reveniți</string>
+    <string name="expiration_temperature_hint">Puteți continua activitățile normale dacă nu aveți temperatură mare și dacă vă simțiți suficient de bine</string>
     <string name="button_agree">Sunt de acord</string>
     <string name="terms_of_use_onboarding">Termeni de utilizare</string>
-    <string name="about_common_questions_title">Întrebări frecvente</string>
-    <string name="about_common_questions_link">Întrebări frecvente</string>
+    <string name="about_common_questions_title">Aflați mai multe despre aplicație</string>
+    <string name="about_common_questions_link">Aflați mai multe despre aplicație</string>
     <string name="about_accessibility_statement">Declarație de accesibilitate</string>
-    <string name="test_result_no_self_isolation_description">Dacă nu vă simțiți bine, rămâneți acasă până vă reveniți</string>
+    <string name="test_result_no_self_isolation_description">Puteți continua activitățile normale dacă nu aveți temperatură mare și dacă vă simțiți suficient de bine</string>
     <string name="for_further_advice_visit">Pentru sfaturi suplimentare, vă rugăm să contactați:</string>
     <string name="test_result_positive_continue_self_isolation_title_1">Continuați să vă autoizolați pentru</string>
     <string name="test_result_positive_continue_self_isolate_explanation">Pentru a înțelege modul în care aplicația calculează zilele de autoizolare, accesați linkul de mai jos la întrebările frecvente.\n\nRezultatul testului dvs. arată că ați avut virusul în momentul testului. Vi s-au trimis mai multe informații prin e-mail, text sau telefon. Dacă aveți vârsta sub 18 ani, vi se recomandă să arătați acest mesaj unui adult de încredere. Pentru sfaturi suplimentare, vă rugăm să vizitați nhs.uk.</string>
@@ -258,10 +258,10 @@
     <string name="okay">OK</string>
     <string name="template_hours">%d ore</string>
     <string name="url_how_app_works">https://covid19.nhs.uk/introducing-the-app-romanian.html</string>
-    <string name="url_latest_advice_in_isolation">https://faq.covid19.nhs.uk/article/KA-01231/en-us</string>
+    <string name="url_latest_advice_in_isolation">https://www.gov.uk/government/publications/covid-19-response-living-with-covid-19</string>
     <string name="submit_keys_information_description_text">Partajați acest rezultat mai jos.\n\nCând vi se solicită, selectați „Partajare” sau „Partajare ID aleatoriu de dispozitiv”.</string>
     <string name="about_feedback_information_title">Informații despre opinii</string>
-    <string name="about_feedback_information_text">Dacă aveți feedback privind aplicația, o întrebare care nu are răspuns în întrebările frecvente sau dacă întâmpinați o problemă tehnică, contactați-ne. Ne puteți contacta folosind formularul online sau prin telefon la 119.</string>
+    <string name="about_feedback_information_text">Dacă vreți să ne comunicați părerile dvs. despre aplicație, dacă aveți o întrebare al cărei răspuns nu se găsește pe website-ul nostru sau dacă aveți o problemă tehnică, vă rugăm să ne contactați. Ne puteți contacta cu ajutorul formularului nostru online sau dacă sunați la 119.</string>
     <string name="submit_keys_information_text">Informați-i anonim pe ceilalți că s-au aflat lângă o persoană care a testat pozitiv pentru coronavirus.</string>
     <string name="submit_keys_information_description_title">Cum să partajați acest rezultat</string>
     <string name="link_test_result_title">Introduceți rezultatul testului folosind codul trimis prin e-mail sau SMS</string>
@@ -275,14 +275,14 @@
     <string name="about_software_information_text_app_manufacturer">Producătorul și întreținătorul</string>
     <string name="submit_keys_information_title">Ajutați la informarea celorlalți</string>
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
-    <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-romanian.html</string>
+    <string name="url_terms_of_use_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information/nhs-covid-19-app-terms-of-use</string>
     <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/encyclopaedia/c/article/coronavirus(covid19)/</string>
     <string name="url_accessibility_statement_wls">https://covid19.nhs.uk/accessibility.html</string>
-    <string name="url_postal_code_risk_more_info_wls">https://faq.covid19.nhs.uk/article/KA-01230/en-us</string>
+    <string name="url_postal_code_risk_more_info_wls">https://www.gov.uk/government/publications/covid-19-response-living-with-covid-19</string>
     <string name="url_how_app_works_wls">https://covid19.nhs.uk/introducing-the-app-romanian.html</string>
     <string name="url_common_questions_wls">https://covid19.nhs.uk/common-questions-romanian.html</string>
     <string name="url_latest_advice_wls">https://gov.wales/coronavirus</string>
-    <string name="url_latest_advice_in_isolation_wls">https://faq.covid19.nhs.uk/article/KA-01231/en-us</string>
+    <string name="url_latest_advice_in_isolation_wls">https://www.gov.uk/government/publications/covid-19-response-living-with-covid-19</string>
     <string name="url_order_test_privacy_wls">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information</string>
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
     <string name="status_option_link_test_result">Introduceți codul testului dvs</string>
@@ -341,7 +341,7 @@
     <string name="updated_privacy_title">Schimbări în politicile noastre</string>
     <string name="checkin_information_title_new">Mai multe informații</string>
     <string name="confirm_and_start">Confirmare</string>
-    <string name="exposure_faqs">Întrebări frecvente</string>
+    <string name="exposure_faqs">Accesați website-ul aplicației</string>
     <string name="exposure_faqs_title">Dacă vă aflați în afara Angliei și Țării Galilor, este nevoie să urmați instrucțiunile în vigoare din țara în care vă aflați.</string>
     <string name="local_authority_error_authority_not_supported_description">Din păcate, această aplicație nu este acceptată în regiunea dvs. Vă rugăm să descărcați aplicația pentru regiunea sau țara dvs.</string>
     <string name="local_authority_error_no_authority_selected_description">Trebuie să selectați o autoritate locală pentru a continua</string>
@@ -416,7 +416,7 @@
     <string name="about_test_follow_up_state_pending">În așteptare</string>
     <string name="book_follow_up_test">Rezervați un test de control</string>
     <string name="device_not_supported_next_steps_link_text">Citiți secțiunea „Întrebări frecvente“</string>
-    <string name="device_not_supported_next_steps_link_url">https://faq.covid19.nhs.uk/article/KA-01386</string>
+    <string name="device_not_supported_next_steps_link_url">https://www.gov.uk/government/publications/nhs-covid-19-app-user-guide/nhs-covid-19-app-troubleshooting-and-technical-information#getting-an-error-message</string>
     <string name="device_not_supported_next_steps_text">Aflați ce puteți face pentru a continua să utilizați aplicația.</string>
     <string name="device_not_supported_next_steps_title">Pașii următori</string>
     <string name="device_not_supported_reasons">setări restricționate pe telefonul dvs. (de exemplu, dacă este telefon de serviciu)\n\nhardware neacceptat (de exemplu, dacă telefonul nu acceptă Android 6.0 sau orice versiune mai recentă)</string>
@@ -525,7 +525,7 @@
     <string name="user_data_acknowledged_date">Confirmat la data de</string>
     <string name="user_data_test_end">Terminare test</string>
     <string name="about_download_the_nhs_app">Descărcați aplicația NHS</string>
-    <string name="about_no_vaccination_status_text">Această aplicație vă protejează confidențialitatea și identitatea. Nu știe cine sunteți și nu este asociată fișelor dvs. medicale.\n\nDacă locuiți în Anglia, utilizați aplicația NHS separată pentru a vizualiza statusul dvs. COVID-19 și alte informații despre starea de sănătate.</string>
+    <string name="about_no_vaccination_status_text">Această aplicație vă protejează confidențialitatea și identitatea. Nu știe cine sunteți și nu este asociată fișelor dvs. medicale.\n\nDacă locuiți în Anglia, utilizați aplicația NHS separat pentru a vizualiza statusul dvs. COVID-19 și alte informații despre starea de sănătate.</string>
     <string name="about_no_vaccination_status_title">Aplicația nu include statutul vaccinării împotriva COVID-19</string>
     <string name="animations">Animații</string>
     <string name="animations_description">Acest lucru nu va modifica modul în care funcționează aplicația. Se va modifica doar mișcarea.</string>
@@ -545,7 +545,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">Țineți evidența perioadei de autoizolare cu ajutorul cronometrului de numărătoare inversă de pe ecranul de pornire al aplicației.</string>
     <string name="test_result_plod_title">Rezultatul testului dvs. este slab pozitiv</string>
     <string name="url_download_the_nhs_app">https://www.nhs.uk/nhs-app/</string>
-    <string name="local_message_banner_read_more">Aflați mai multe</string>
+    <string name="local_message_banner_read_more">Verificați care sunt cele mai recente actualizări</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">Este important să continuați să vă autoizolați, deoarece ați testat pozitiv.\n\nVă rugăm să stați acasă, pentru a vă menține pe dvs. și pe ceilalți în siguranță. Țineți evidența perioadei de autoizolare cu ajutorul cronometrului de numărătoare inversă de pe ecranul de pornire al aplicației.</string>
@@ -691,7 +691,7 @@
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">Programați-vă la un test PCR gratuit dacă aveți simptome.</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">Rezervați un test PCR gratuit</string>
     <string name="risky_contact_isolation_advice_continue_isolataion_for">Continuați să vă autoizolați pentru</string>
-    <string name="risky_contact_isolation_advice_faq_button_title">Întrebări frecvente</string>
+    <string name="risky_contact_isolation_advice_faq_button_title">Accesați website-ul aplicației</string>
     <string name="risky_contact_isolation_advice_further_nhs_guidance">Pentru îndrumări suplimentare, vă rugăm să vizitați:</string>
     <string name="risky_contact_isolation_advice_go_back_to_home">Înapoi la ecranul de pornire</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">În continuare, este importantă respectarea directivelor naționale, inclusiv reducerea contactului cu alte persoane, mai ales cu cele în vârstă și vulnerabile.</string>
@@ -841,7 +841,7 @@
     <string name="contact_case_exposure_info_screen_title_england">Aplicația a detectat că v-ați aflat în apropierea unei persoane care a fost testată pozitiv pentru coronavirus (COVID-19)</string>
     <string name="contact_case_exposure_info_screen_title_wales">Aplicația a detectat că v-ați aflat în apropierea unei persoane care a fost testată pozitiv pentru coronavirus (COVID-19)</string>
     <string name="index_case_isolation_advice_body_england">Rezultatul testului dvs. arată că aveați COVID-19 în momentul efectuării testului. V-au fost trimise mai multe informații prin e-mail, SMS sau telefon.\n\nÎnștiințați în mod anonim pe oricine a avut contact apropiat cu dvs. pentru a le spune că este posibil să fie expuși riscurilor. Confidențialitatea dvs. este protejată iar informațiile dvs. cu caracter personal nu vor fi comunicate.\n\nDacă aveți sub 18 ani, vă recomandăm să arătați acest mesaj unui adult de încredere.</string>
-    <string name="index_case_isolation_advice_common_question_link_button_england">Întrebări frecvente</string>
+    <string name="index_case_isolation_advice_common_question_link_button_england">Accesați website-ul aplicației</string>
     <string name="index_case_isolation_advice_further_advice_england">Pentru îndrumări suplimentare, vă rugăm să vizitați:</string>
     <string name="index_case_isolation_advice_heading_title_england">Testul dvs. COVID-19 are un rezultat pozitiv</string>
     <string name="index_case_isolation_advice_information_box_description_england">Înștiințați alte persoane în mod anonim prin intermediul aplicației</string>
@@ -870,7 +870,7 @@
     <string name="risky_contact_opt_out_primary_button_url_wales">https://gov.wales/self-isolation</string>
     <string name="risky_contact_opt_out_secondary_button_title">Înapoi la ecranul de pornire</string>
     <string name="risky_contact_opt_out_secondary_button_title_wales">Înapoi la ecranul de pornire</string>
-    <string name="symptomatic_contact_guidance_common_questions_link_england">Întrebări frecvente</string>
+    <string name="symptomatic_contact_guidance_common_questions_link_england">Accesați website-ul aplicației</string>
     <string name="symptomatic_contact_guidance_further_advice_england">Pentru îndrumări suplimentare, vă rugăm să vizitați:</string>
     <string name="symptomatic_contact_guidance_mask_england">Pentru a reduce riscurile pentru alte persoane, acoperiți-vă fața dacă trebuie să plecați de acasă</string>
     <string name="symptomatic_contact_guidance_meeting_indoors_england">Evitați locurile aglomerate și spațiile închise și, dacă este necesar, întâlniți-vă cu alte persoane în spații exterioare</string>
@@ -885,7 +885,7 @@
         <item quantity="other">Aveți mare grijă și protejați-i pe ceilalți până când  %1$s, la ora 23:59. Mai sunt %2$s zile până atunci.</item>
     </plurals>
     <string name="be_careful_until_date_title">Luați măsuri de protecție suplimentare și protejați-i pe ceilalți</string>
-    <string name="about_this_app_software_information_date_of_release_description">05/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">06/2022</string>
     <string name="back_to_home_screen">Înapoi la ecranul de pornire</string>
     <string name="covid_guidance_hub_check_ssp_description">Aflați despre testarea pentru COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">Cele mai recente recomandări privind testarea COVID-19</string>

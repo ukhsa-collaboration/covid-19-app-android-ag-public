@@ -81,7 +81,7 @@
     <string name="about_this_app_title">Ynglŷn â\'r ap hwn</string>
     <string name="title_how_app_works">Sut mae’r ap hwn yn gweithio</string>
     <string name="about_how_this_app_works_link">Sut mae\'r ap yn gweithio</string>
-    <string name="about_common_questions_text">Ewch i’n tudalen cwestiynau cyffredin i gael rhagor o wybodaeth am ap COVID-19 y GIG a’r rhaglen ehangach.</string>
+    <string name="about_common_questions_text">Ewch i\'n gwefan i ddysgu mwy am ap COVID-19 y GIG.</string>
     <string name="about_our_policies_title">Ein polisïau</string>
     <string name="about_our_policies_text">Mae ein dogfennaeth bolisi yn rhoi gwybodaeth bwysig i chi am ddefnyddio\'r ap, sut rydym yn defnyddio\'ch data, a sut mae\'r ap wedi\'i lunio i bawb allu ei ddefnyddio.</string>
     <string name="about_description">Diolch ichi am amddiffyn eich hunan ac eraill trwy ddefnyddio\'r ap</string>
@@ -111,10 +111,10 @@
     <string name="onboarding_age_confirmation_negative">Rydw i dan 16 oed</string>
     <string name="onboarding_age_restriction_title">Yn anffodus, i bobl 16 oed a hŷn yn unig y mae’r ap hwn.</string>
     <string name="onboarding_age_restriction_text">Diolch am eich diddordeb. Ar gyfer pobl 16 oed a hŷn yn unig y mae\'r ap hwn.</string>
-    <string name="url_terms_of_use">https://covid19.nhs.uk/terms-of-use-welsh.html</string>
+    <string name="url_terms_of_use">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information/nhs-covid-19-app-terms-of-use</string>
     <string name="url_nhs_111_online">https://111.wales.nhs.uk/</string>
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
-    <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01192/en-us</string>
+    <string name="url_postal_code_risk_more_info">https://www.gov.uk/government/publications/covid-19-response-living-with-covid-19</string>
     <string name="url_common_questions">https://covid19.nhs.uk/common-questions-welsh.html</string>
     <string name="url_order_test_privacy">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information</string>
     <string name="url_order_test_for_someone_else">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
@@ -222,8 +222,8 @@
     <string name="expiration_temperature_hint">Os ydych chi\'n dal i deimlo\'n sâl, arhoswch adref nes eich bod yn teimlo’n well</string>
     <string name="button_agree">Rwy’n cytuno</string>
     <string name="terms_of_use_onboarding">Telerau defnyddio</string>
-    <string name="about_common_questions_title">Cwestiynau cyffredin</string>
-    <string name="about_common_questions_link">Cwestiynau cyffredin</string>
+    <string name="about_common_questions_title">Dysgu mwy am yr ap</string>
+    <string name="about_common_questions_link">Dysgu mwy am yr ap</string>
     <string name="about_accessibility_statement">Datganiad hygyrchedd</string>
     <string name="test_result_no_self_isolation_description">Os ydych chi\'n dal i deimlo\'n sâl, arhoswch adref nes eich bod yn teimlo’n well</string>
     <string name="for_further_advice_visit">I gael rhagor o gyngor, cysylltwch â:</string>
@@ -270,10 +270,10 @@
     <string name="okay">iawn</string>
     <string name="template_hours">%d awr</string>
     <string name="url_how_app_works">https://covid19.nhs.uk/introducing-the-app-welsh.html</string>
-    <string name="url_latest_advice_in_isolation">https://faq.covid19.nhs.uk/article/KA-01193/en-us</string>
+    <string name="url_latest_advice_in_isolation">https://www.gov.uk/government/publications/covid-19-response-living-with-covid-19</string>
     <string name="submit_keys_information_description_text">Ewch ymlaen i rannu\'r canlyniad yma isod.\n\nPan ofynnir i chi wneud hynny, dewiswch \'Rhannu\' neu \'Rhannu\'r hap-IDs sydd ar eich dyfais’.</string>
     <string name="about_feedback_information_title">Gwybodaeth adborth</string>
-    <string name="about_feedback_information_text">Os oes gennych adborth am yr ap, cwestiwn nad yw wedi\'i ateb yn ein cwestiynau cyffredin, neu os oes gennych broblem dechnegol, cysylltwch â ni. Gallwch gysylltu â ni trwy ddefnyddio ein ffurflen ar-lein neu ffonio 119.</string>
+    <string name="about_feedback_information_text">Os oes gennych adborth am yr ap, cwestiwn nad yw wedi\'i ateb ar ein gwefan, neu os oes gennych broblem dechnegol, cysylltwch â ni. Gallwch gysylltu â ni trwy ddefnyddio ein ffurflen ar-lein neu ffonio 119.</string>
     <string name="submit_keys_information_text">Hysbysu eraill yn ddienw iddynt fod yn ymyl rhywun a gafodd ganlyniad prawf positif am y coronafeirws.</string>
     <string name="submit_keys_information_description_title">Sut i rannu\'r canlyniad yma</string>
     <string name="link_test_result_title">Mewngofnodwch ganlyniad eich prawf gan ddefnyddio\'r cod a anfonwyd mewn e-bost neu neges destun</string>
@@ -287,14 +287,14 @@
     <string name="about_software_information_text_app_manufacturer">Gwneuthurwr a chynhaliwr</string>
     <string name="submit_keys_information_title">Helpu i hysbysu eraill</string>
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information/ap-covid-19-y-gig</string>
-    <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-welsh.html</string>
+    <string name="url_terms_of_use_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information/nhs-covid-19-app-terms-of-use</string>
     <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/encyclopaedia/c/article/coronavirus(covid19)/</string>
     <string name="url_accessibility_statement_wls">https://covid19.nhs.uk/accessibility.html</string>
-    <string name="url_postal_code_risk_more_info_wls">https://faq.covid19.nhs.uk/article/KA-01192/en-us</string>
+    <string name="url_postal_code_risk_more_info_wls">https://www.gov.uk/government/publications/covid-19-response-living-with-covid-19</string>
     <string name="url_how_app_works_wls">https://covid19.nhs.uk/introducing-the-app-welsh.html</string>
     <string name="url_common_questions_wls">https://covid19.nhs.uk/common-questions-welsh.html</string>
     <string name="url_latest_advice_wls">https://llyw.cymru/coronafeirws</string>
-    <string name="url_latest_advice_in_isolation_wls">https://faq.covid19.nhs.uk/article/KA-01193/en-us</string>
+    <string name="url_latest_advice_in_isolation_wls">https://www.gov.uk/government/publications/covid-19-response-living-with-covid-19</string>
     <string name="url_order_test_privacy_wls">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information</string>
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
     <string name="status_option_link_test_result">Nodwch ganlyniad y prawf</string>
@@ -335,7 +335,7 @@
     <string name="test_result_negative_then_positive_continue_explanation">Er mwyn deall sut mae\'r ap yn cyfrifo diwrnodau hunan-ynysu, defnyddiwch y ddolen i\'r cwestiynau isod.\n\nMae canlyniad eich prawf yn dangos bod y feirws arnoch ar adeg y prawf. Anfonwyd rhagor o wybodaeth atoch trwy e-bost, neges destun neu ffôn. Os ydych chi o dan 18 oed, fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy.</string>
     <string name="test_result_positive_then_negative_explanation">Er mwyn deall sut mae\'r ap yn cyfrifo diwrnodau hunan-ynysu, ewch i\'r rhestr o gwestiynau a ofynnir yn aml.\n\nMae canlyniad y prawf yn dangos nad oedd y feirws arnoch ar adeg y prawf. Os ydych wedi rhoi gwybod yn ddiweddar am symptomau, gwnewch yn siŵr eich bod wedi archebu prawf. Os ydych yn datblygu symptomau, rhowch wybod amdanynt ar yr ap yma. Os ydych chi o dan 18 oed, fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy.</string>
     <string name="test_result_void_already_not_in_isolation_subtitle">Er mwyn deall sut mae\'r ap yn cyfrifo diwrnodau hunan-ynysu, ewch i\'r rhestr o gwestiynau a ofynnir yn aml.\n\nNi allem ddweud a oedd y coronafeirws arnoch pan wnaed y prawf a dylech gymryd y prawf eto. Os ydych chi o dan 18 oed, fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy.</string>
-    <string name="test_result_void_no_self_isolation_subtitle">Ni allem ddweud a oedd y coronafeirws arnoch</string>
+    <string name="test_result_void_no_self_isolation_subtitle">Ni allem ddweud a oedd y coronafeirws arnoch.</string>
     <string name="test_result_your_test_result">Canlyniad eich prawf</string>
     <string name="test_result_negative_no_self_isolation_explanation">Mae canlyniad eich prawf yn dangos nad oedd y feirws arnoch ar adeg y prawf. Os byddwch yn datblygu symptomau, rhowch wybod amdanynt ar yr ap hwn. Os ydych chi o dan 18 oed, fe\'ch cynghorir i ddangos y neges hon i oedolyn dibynadwy.</string>
     <string name="test_result_negative_no_self_isolation_subtitle">Mae’ch hunanynysu wedi dod i ben</string>
@@ -355,7 +355,7 @@
     <string name="updated_privacy_title">Newidiadau i\'r ap</string>
     <string name="checkin_information_title_new">Mwy o wybodaeth</string>
     <string name="confirm_and_start">Cadarnhau</string>
-    <string name="exposure_faqs">Cwestiynau cyffredin</string>
+    <string name="exposure_faqs">Ewch i wefan yr ap</string>
     <string name="exposure_faqs_title">Os ydych chi yn rhywle heblaw Cymru a Lloegr, mae angen i chi ddilyn canllawiau\'r wlad rydych chi ynddi.</string>
     <string name="local_authority_error_authority_not_supported_description">Yn anffodus, nid yw\'r ap hwn yn cael ei gefnogi yn eich rhanbarth. Lawrlwythwch yr ap ar gyfer eich rhanbarth neu\'ch gwlad.</string>
     <string name="local_authority_error_no_authority_selected_description">Mae angen i chi ddewis awdurdod lleol i allu parhau</string>
@@ -428,7 +428,7 @@
     <string name="about_test_follow_up_state_pending">I ddod</string>
     <string name="book_follow_up_test">Archebwch brawf dilynol</string>
     <string name="device_not_supported_next_steps_link_text">Darllenwch y ddolen cwestiynau a ofynnir yn aml (FAQs)</string>
-    <string name="device_not_supported_next_steps_link_url">https://faq.covid19.nhs.uk/article/KA-01386</string>
+    <string name="device_not_supported_next_steps_link_url">https://www.gov.uk/government/publications/nhs-covid-19-app-user-guide/nhs-covid-19-app-troubleshooting-and-technical-information#getting-an-error-message</string>
     <string name="device_not_supported_next_steps_text">Darganfod beth i\'w wneud er mwyn parhau i ddefnyddio\'r ap.</string>
     <string name="device_not_supported_next_steps_title">Camau nesaf</string>
     <string name="device_not_supported_reasons">gosodiadau cyfyngedig ar eich ffôn (er enghraifft, os mai ffôn cwmni ydyw)\n\ncaledwedd nad yw\'n cael ei chefnogi (er enghraifft, os nad yw eich ffôn yn addas ar gyfer Android 6.0 neu uwch)</string>
@@ -557,7 +557,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">Gallwch olrhain eich cyfnod hunanynysu gyda’r amserydd cyfrif-i-lawr ar sgrin gartref yr ap.</string>
     <string name="test_result_plod_title">Mae canlyniad eich prawf yn un positif gwan</string>
     <string name="url_download_the_nhs_app">https://www.nhs.uk/nhs-app/</string>
-    <string name="local_message_banner_read_more">Darllen mwy</string>
+    <string name="local_message_banner_read_more">Gwiriwch y diweddariad diwethaf</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">Mae’n bwysig parhau i hunanynysu gan eich bod wedi derbyn canlyniad positif i brawf.\n\nArhoswch gartref i’ch cadw eich hun ac eraill yn ddiogel. Gallwch olrhain eich cyfnod hunanynysu gyda’r amserydd cyfrif-i-lawr ar sgrin gartref yr ap.</string>
@@ -636,7 +636,7 @@
     <string name="contact_case_exposure_info_screen_how_close_contacts_are_calculated_heading">Sut mae cysylltiad agos yn cael ei gyfrifo</string>
     <string name="contact_case_start_isolation_how_we_calculate_isolation_days_title">Sut mae dyddiau hunanynysu yn cael eu cyfrifo</string>
     <string name="continue_to_self_isolate_for">Parhewch i hunanynysu am</string>
-    <string name="exposure_notification_advised_to_self_isolate_for">Cynghorwn chi i hunanynysu am</string>
+    <string name="exposure_notification_advised_to_self_isolate_for">Hunanynyswch am</string>
     <string name="exposure_notification_age_continue_button">Parhau</string>
     <string name="exposure_notification_age_description">Dim ond i roi\'r cyngor cywir i chi fyddwn ni\'n defnyddio’ch atebion.</string>
     <string name="exposure_notification_age_error_description">I barhau, mae angen i chi ddewis ateb</string>
@@ -712,7 +712,7 @@
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">Archebwch brawf PCR am ddim os oes gennych chi symptomau.</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">Archebu prawf PCR am ddim</string>
     <string name="risky_contact_isolation_advice_continue_isolataion_for">Parhewch i hunanynysu am</string>
-    <string name="risky_contact_isolation_advice_faq_button_title">Cwestiynau cyffredin</string>
+    <string name="risky_contact_isolation_advice_faq_button_title">Ewch i wefan yr ap</string>
     <string name="risky_contact_isolation_advice_further_nhs_guidance">I gael rhagor o gyngor ewch i:</string>
     <string name="risky_contact_isolation_advice_go_back_to_home">Yn ôl i’r sgrîn gartref</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">Mae’n dal i fod yn bwysig dilyn canllawiau cenedlaethol, gan gynnwys lleihau eich cyswllt ag eraill, yn arbennig yr henoed a phobl fregus.</string>
@@ -868,7 +868,7 @@
     <string name="contact_case_exposure_info_screen_title_england">Mae\'r ap wedi darganfod y buoch yn ymyl rhywun a gafodd ganlyniad positif i brawf coronafeirws (COVID-19)</string>
     <string name="contact_case_exposure_info_screen_title_wales">Mae\'r ap wedi darganfod y buoch yn ymyl rhywun a gafodd ganlyniad positif i brawf coronafeirws (COVID-19)</string>
     <string name="index_case_isolation_advice_body_england">Mae canlyniad eich prawf yn dangos bod gennych COVID-19 ar adeg y prawf. Anfonwyd rhagor o wybodaeth atoch trwy e-bost, neges destun neu ffôn.\n\nHysbyswch unrhyw un sydd wedi bod mewn cyswllt agos â chi\'n ddienw i roi gwybod iddynt y gallent fod dan risg. Mae\'ch preifatrwydd wedi ei ddiogelu ac ni fydd eich gwybodaeth bersonol yn cael ei rhannu.\n\nOs ydych dan 18 oed, rydym yn eich cynghori i ddangos y neges yma i oedolyn rydych yn ymddiried ynddo.</string>
-    <string name="index_case_isolation_advice_common_question_link_button_england">Cwestiynau cyffredin</string>
+    <string name="index_case_isolation_advice_common_question_link_button_england">Ewch i wefan yr ap</string>
     <string name="index_case_isolation_advice_further_advice_england">I gael rhagor o gyngor ewch i:</string>
     <string name="index_case_isolation_advice_heading_title_england">Mae canlyniad eich prawf COVID-19 yn bositif</string>
     <string name="index_case_isolation_advice_information_box_description_england">Hysbyswch eraill yn ddienw trwy\'r ap</string>
@@ -897,7 +897,7 @@
     <string name="risky_contact_opt_out_primary_button_url_wales">https://llyw.cymru/canllawiau-hunanynysu?_ga=2.39196963.1478961316.1625138741-2142473961.1612823651</string>
     <string name="risky_contact_opt_out_secondary_button_title">Yn ôl i’r sgrîn gartref</string>
     <string name="risky_contact_opt_out_secondary_button_title_wales">Yn ôl i’r sgrîn gartref</string>
-    <string name="symptomatic_contact_guidance_common_questions_link_england">Cwestiynau cyffredin</string>
+    <string name="symptomatic_contact_guidance_common_questions_link_england">Ewch i wefan yr ap</string>
     <string name="symptomatic_contact_guidance_further_advice_england">I gael rhagor o gyngor ewch i:</string>
     <string name="symptomatic_contact_guidance_mask_england">I leihau’r risg i eraill, gwisgwch orchudd wyneb os oes angen i chi adael eich cartref</string>
     <string name="symptomatic_contact_guidance_meeting_indoors_england">Osgowch lefydd prysur ac amgaeedig a chwrdd tu allan os oes angen</string>
@@ -915,7 +915,7 @@
         <item quantity="other">Byddwch yn ofalus iawn a diogelu eraill tan  %1$s am 23:59. Mae yna %2$s dd/diwrnod tan hynny.</item>
     </plurals>
     <string name="be_careful_until_date_title">Byddwch yn ofalus iawn a diogelu eraill</string>
-    <string name="about_this_app_software_information_date_of_release_description">05/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">06/2022</string>
     <string name="back_to_home_screen">Yn ôl i’r sgrîn gartref</string>
     <string name="covid_guidance_hub_check_ssp_description">Dysgu am brofion ar gyfer COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">Canllawiau diweddaraf profion COVID-19</string>

@@ -20,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoIndexCaseThenIsolationDueToSelfAssessmentAdvice.AdviceForEngland
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoIndexCaseThenIsolationDueToSelfAssessmentAdvice.AdviceForWales
@@ -30,6 +31,7 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.openInExternalBrowserForRe
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
+import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpLinkTypeWithBrowserWarning
 import uk.nhs.nhsx.covid19.android.app.widgets.StateInfoParams
 import javax.inject.Inject
 
@@ -83,6 +85,8 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
             }
             is NoIndexCaseThenSelfAssessmentNoImpactOnIsolation ->
                 handleNoIndexCaseThenSelfAssessmentNoImpactOnIsolation(isolationSymptomAdvice.remainingDaysInIsolation)
+            is NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales ->
+                handleNoIndexCaseThenIsolationDueToSelfAssessmentForWales(isolationSymptomAdvice.remainingDaysInIsolation)
         }
     }
 
@@ -181,7 +185,8 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
             explanationParagraphs = intArrayOf(
                 R.string.isolate_after_corona_virus_symptoms
             ),
-            showIcon = true
+            showIcon = true,
+            isLinkTypeButton = true
         )
 
     private fun handleNoIndexCaseThenIsolationDueToSelfAssessmentForEngland() {
@@ -239,7 +244,8 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
         @StringRes buttonText: Int,
         showCloseButtonInToolbar: Boolean = false,
         buttonAction: () -> Unit,
-        showIcon: Boolean
+        showIcon: Boolean,
+        isLinkTypeButton: Boolean = false
     ) = with(binding) {
         if (showCloseButtonInToolbar) {
             setCloseToolbar(primaryToolbar.toolbar, R.string.empty, R.drawable.ic_close_primary)
@@ -260,6 +266,9 @@ class SymptomsAdviceIsolateActivity : BaseActivity() {
 
         stateActionButton.text = getString(buttonText)
         stateActionButton.setOnSingleClickListener(buttonAction)
+        if (isLinkTypeButton) {
+            stateActionButton.setUpLinkTypeWithBrowserWarning(binding.stateActionButton.text)
+        }
         stateActionButtonIcon(showIcon)
     }
 

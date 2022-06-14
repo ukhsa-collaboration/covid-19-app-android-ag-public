@@ -42,7 +42,8 @@ class YourSymptomsViewModelTest {
         Cardinal(title = TranslatableString(mapOf())),
         NonCardinal(title = TranslatableString(mapOf()), description = TranslatableString(mapOf())),
         riskThreshold = 100.0f,
-        symptomsOnsetWindowDays = 14
+        symptomsOnsetWindowDays = 14,
+        isSymptomaticSelfIsolationForWalesEnabled = false
     )
 
     @Before

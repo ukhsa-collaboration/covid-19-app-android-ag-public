@@ -61,7 +61,7 @@
     <string name="test_result_positive_no_self_isolation_subtitle">যদিও পরীক্ষাতে আপনার ফলাফল পজিটিভ এসেছে, তাও আপনার স্ব-বিচ্ছিন্ন থাকার সময় শেষ হয়ে গেছে।</string>
     <string name="state_test_positive_info">আপনার করোনাভাইরাস পরীক্ষার ফলাফল পজিটিভ</string>
     <string name="state_test_void_info">আপনার করোনাভাইরাস হয়েছে কিনা আমরা আপনাকে বলতে পারি নি</string>
-    <string name="test_result_void_continue_self_isolate_explanation">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী দেখুন।\n\nপরীক্ষাটি করার সময় আপনার করোনভাইরাস ছিল কিনা তা আমরা জানাতে পারিনি এবং আপনার আবার পরীক্ষা করানো উচিত। যদি আপনার বয়স 18 বছরের কম হয় তাহলে আপনাকে এই বার্তাটি কোন বিশ্বস্ত প্রাপ্ত বয়স্ককে দেখানোর পরামর্শ প্রদান করা হয়।</string>
+    <string name="test_result_void_continue_self_isolate_explanation">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী দেখুন।\n\n\nপরীক্ষাটি করার সময় আপনার করোনভাইরাস ছিল কিনা তা আমরা জানাতে পারিনি এবং আপনার আবার পরীক্ষা করানো উচিত। যদি আপনার বয়স 18 বছরের কম হয় তাহলে আপনাকে এই বার্তাটি কোন বিশ্বস্ত প্রাপ্ত বয়স্ককে দেখানোর পরামর্শ প্রদান করা হয়।</string>
     <string name="questionnaire_review_symptoms">উপসর্গ পর্যালোচনা করুন</string>
     <string name="questionnaire_review_symptoms_title">আপনার উত্তর পর্যালোচনা করুন</string>
     <string name="questionnaire_positive_symptoms_review_message">আপনি এই উপসর্গের উত্তরে ‘হ্যাঁ’ বলেছেন:</string>
@@ -82,7 +82,7 @@
     <string name="about_this_app_title">অ্যাপ সম্পর্কিত তথ্য</string>
     <string name="title_how_app_works">এই অ্যাপটি কিভাবে কাজ করে</string>
     <string name="about_how_this_app_works_link">এই অ্যাপটি কিভাবে কাজ করে</string>
-    <string name="about_common_questions_text">এনএইচএস কোভিড-১৯ অ্যাপ ও ব্যাপকতর কর্মসূচী সম্পর্কে আরো জানতে আমাদের সাধারণ প্রশ্নাবলী পেইজে যান।</string>
+    <string name="about_common_questions_text">NHS COVID-19 অ্যাপের বিষয়ে আরও জানার জন্য আমাদের ওয়েবসাইট দেখুন।</string>
     <string name="about_our_policies_title">আমাদের নীতিমালা</string>
     <string name="about_our_policies_text">আমাদের নীতিমালা আপনাকে অ্যাপটি ব্যবহার করা সম্পর্কে, আমরা কিভাবে আপনার ডেটা ব্যবহার করি এবং অ্যাপটি কিভাব সকলের দ্বারা ব্যবহারযোগ্য করে তোলার জন্য ডিজাইন করা হয়েছে সে সম্পর্কে গুরুত্বপূর্ণ তথ্য প্রদান করে।</string>
     <string name="about_description">অ্যাপটি ব্যবহার করে নিজেকে এবং অন্যকে সুরক্ষিত করার জন্য আপনাকে ধন্যবাদ</string>
@@ -112,10 +112,10 @@
     <string name="onboarding_age_confirmation_negative">আমার বয়স 16 বছরের কম</string>
     <string name="onboarding_age_restriction_title">দুর্ভাগ্যবশত, এই অ্যাপটি শুধুমাত্র 16 বা তার বেশি বয়সী মানুষদের জন্য।</string>
     <string name="onboarding_age_restriction_text">আপনার আগ্রহের জন্য ধন্যবাদ। এই অ্যাপটি শুধুমাত্র 16 বছর বা তার চেয়ে বেশি বয়স ব্যক্তিদের জন্য।</string>
-    <string name="url_terms_of_use">https://covid19.nhs.uk/terms-of-use-bengali.html</string>
+    <string name="url_terms_of_use">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information/nhs-covid-19-app-terms-of-use</string>
     <string name="url_nhs_111_online">https://111.nhs.uk/</string>
     <string name="url_accessibility_statement">https://covid19.nhs.uk/accessibility.html</string>
-    <string name="url_postal_code_risk_more_info">https://faq.covid19.nhs.uk/article/KA-01202/en-us</string>
+    <string name="url_postal_code_risk_more_info">https://www.gov.uk/government/publications/covid-19-response-living-with-covid-19</string>
     <string name="url_common_questions">https://covid19.nhs.uk/common-questions-bengali.html</string>
     <string name="url_order_test_privacy">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information</string>
     <string name="url_order_test_for_someone_else">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
@@ -204,15 +204,15 @@
     <string name="expiration_notification_title">সুখবর!</string>
     <string name="expiration_notification_description_passed">23:59 %s মিনিটে আপনি বিচ্ছিন্ন থাকা থেকে অব্যাহতি পেয়েছেন</string>
     <string name="expiration_notification_recommendation">আরো পরামর্শের জন্য, অনুগ্রহ করে যোগাযোগ করুন:</string>
-    <string name="expiration_temperature_hint">আপনি যদি এখনও অসুস্থ বোধ করেন, তাহলে ভাল বোধ না করা পর্যন্ত বাসায় থাকুন</string>
+    <string name="expiration_temperature_hint">যদি আপনার উচ্চ তাপমাত্রা না থাকে এবং আপনি যথেষ্ট সুস্থ বোধ করেন, তাহলে আপনি স্বাভাবিক কার্যকলাপ চালিয়ে যেতে পারেন</string>
     <string name="button_agree">আমি সম্মত আছি</string>
     <string name="terms_of_use_onboarding">ব্যবহারের শর্তাবলী</string>
-    <string name="about_common_questions_title">সাধারণ প্রশ্নাবলি</string>
-    <string name="about_common_questions_link">সাধারণ প্রশ্নাবলি</string>
+    <string name="about_common_questions_title">অ্যাপের বিষয়ে আরও জানুন</string>
+    <string name="about_common_questions_link">অ্যাপের বিষয়ে আরও জানুন</string>
     <string name="about_accessibility_statement">প্রবেশাধিকার সম্পর্কিত বিবৃতি</string>
     <string name="test_result_positive_no_self_isolation_description">আপনি যদি অসুস্থ বোধ করেন, তাহলে ভাল বোধ না করা পর্যন্ত বাসায় থাকুন</string>
     <string name="for_further_advice_visit">আরো পরামর্শের জন্য, অনুগ্রহ করে যোগাযোগ করুন:</string>
-    <string name="test_result_positive_continue_self_isolation_title_1">স্ব-বিচ্ছিন্ন থাকা বহাল রাখুন</string>
+    <string name="test_result_positive_continue_self_isolation_title_1">নিজেকে আলাদা রাখা অব্যাহত রাখুন</string>
     <string name="test_result_positive_continue_self_isolate_explanation">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলীর লিংক দেখুন।\n\nপরীক্ষার ফলাফল দেখায় যে পরীক্ষা করানোর সময় আপনার ভাইরাসটি ছিল। আপনাকে আরো তথ্য পাঠানো হয়েছে ইমেল, টেক্সত, বা ফোনের মাধ্যমে। যদি আপনার বয়স 18 বছরের কম হয় তাহলে আপনাকে এই বার্তাটি কোন বিশ্বস্ত প্রাপ্ত বয়স্ককে দেখানোর পরামর্শ প্রদান করা হয়।</string>
     <string name="test_result_negative_no_self_isolation_explanation">আপনার পরীক্ষার ফলাফল দেখায় যে পরীক্ষা করার সময় আপনার ভাইরাস ছিল না। আপনার উপসর্গ দেখা দিলে, এই অ্যাপে সেইগুলি জানান। যদি আপনার বয়স 18 বছরের কম হয় তাহলে আপনাকে এই বার্তাটি কোন বিশ্বস্ত প্রাপ্ত বয়স্ককে দেখানোর পরামর্শ প্রদান করা হয়।</string>
     <string name="back_to_home">হোমে ফিরে যান</string>
@@ -256,10 +256,10 @@
     <string name="okay">ঠিক আছে</string>
     <string name="template_hours">%d ঘন্টা</string>
     <string name="url_how_app_works">https://covid19.nhs.uk/introducing-the-app-bengali.html</string>
-    <string name="url_latest_advice_in_isolation">https://faq.covid19.nhs.uk/article/KA-01203/en-us</string>
+    <string name="url_latest_advice_in_isolation">https://www.gov.uk/government/publications/covid-19-response-living-with-covid-19</string>
     <string name="submit_keys_information_description_text">এই ফলাফল শেয়ার করার জন্য নিচে যান।\n\nযখন বেছে নেওয়ার জন্য বলা হবে, তখন ‘শেয়ার করুন’ বা ‘আপনার ডিভাইসের র্যান্ডম আইডি শেয়ার করুন’ বেছে নিন।</string>
     <string name="about_feedback_information_title">প্রতিক্রিয়ার তথ্য</string>
-    <string name="about_feedback_information_text">অ্যাপটি সম্পর্কে আপনার মতামত থাকলে, আমাদের সাধারণ প্রশ্নে উত্তর দেওয়া হয়নি এমন কোনো প্রশ্ন থাকলে, বা আপনার কোনো প্রযুক্তিগত সমস্যা থাকলে, অনুগ্রহ করে যোগাযোগ করুন। আপনি আমাদের অনলাইন ফর্ম ব্যবহার করে আমাদের সাথে যোগাযোগ করতে পারেন বা 119 নম্বরে কল করতে পারেন।</string>
+    <string name="about_feedback_information_text">অ্যাপের বিষয়ে আপনার ফিডব্যাক থাকলে, একটি প্রশ্ন থাকলে যার উত্তর আমাদের ওয়েবসাইটে নেই, অথবা আপনার একটি টেকনিকাল সমস্যা থাকলে, অনুগ্রহ করে যোগাযোগ করুন। আপনি আমাদের সাথে যোগাযোগ করতে পারেন আমাদের অনলাইন ফর্মের মাধ্যমে বা 119 নম্বরে ফোন করে।</string>
     <string name="submit_keys_information_text">অজ্ঞাতভাবে অন্যদের জানিয়ে দিন, তাহারা অন্য কাহারো নিকটে ছিলেন যাহার করোনাভাইরাস পরীক্ষার ফল পজিটিভ ছিল।</string>
     <string name="submit_keys_information_description_title">এই ফলাফল যেভাবে শেয়ার করবেন</string>
     <string name="link_test_result_title">ইমেইল বা টেক্সট মেসেজের মাধ্যমে প্রেরিত কোড ব্যবহার করে আপনার পরীক্ষার ফলাফল প্রবেশ করান</string>
@@ -273,14 +273,14 @@
     <string name="about_software_information_text_app_manufacturer">নির্মাতা এবং রক্ষনাবেক্ষণকারী</string>
     <string name="submit_keys_information_title">অন্যদের জানাতে সাহায্য করুন</string>
     <string name="url_privacy_notice_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
-    <string name="url_terms_of_use_wls">https://covid19.nhs.uk/terms-of-use-bengali.html</string>
+    <string name="url_terms_of_use_wls">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information/nhs-covid-19-app-terms-of-use</string>
     <string name="url_nhs_111_online_wls">https://111.wales.nhs.uk/encyclopaedia/c/article/coronavirus(covid19)/</string>
     <string name="url_accessibility_statement_wls">https://covid19.nhs.uk/accessibility.html</string>
-    <string name="url_postal_code_risk_more_info_wls">https://faq.covid19.nhs.uk/article/KA-01202/en-us</string>
+    <string name="url_postal_code_risk_more_info_wls">https://www.gov.uk/government/publications/covid-19-response-living-with-covid-19</string>
     <string name="url_how_app_works_wls">https://covid19.nhs.uk/introducing-the-app-bengali.html</string>
     <string name="url_common_questions_wls">https://covid19.nhs.uk/common-questions-bengali.html</string>
     <string name="url_latest_advice_wls">https://gov.wales/coronavirus</string>
-    <string name="url_latest_advice_in_isolation_wls">https://faq.covid19.nhs.uk/article/KA-01203/en-us</string>
+    <string name="url_latest_advice_in_isolation_wls">https://www.gov.uk/government/publications/covid-19-response-living-with-covid-19</string>
     <string name="url_order_test_privacy_wls">https://www.gov.uk/government/publications/coronavirus-covid-19-testing-privacy-information</string>
     <string name="url_order_test_for_someone_else_wls">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/</string>
     <string name="status_option_link_test_result">পরীক্ষার ফলাফল প্রবেশ করান</string>
@@ -321,9 +321,9 @@
     <string name="test_result_negative_then_positive_continue_explanation">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলীর লিংক দেখুন।\n\nপরীক্ষার ফলাফল দেখায় যে পরীক্ষা করানোর সময় আপনার ভাইরাসটি ছিল। আপনাকে আরো তথ্য পাঠানো হয়েছে ইমেল, টেক্সত, বা ফোনের মাধ্যমে। যদি আপনার বয়স 18 বছরের কম হয় তাহলে আপনাকে এই বার্তাটি কোন বিশ্বস্ত প্রাপ্ত বয়স্ককে দেখানোর পরামর্শ প্রদান করা হয়।</string>
     <string name="test_result_positive_then_negative_explanation">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী দেখুন।\n\nআপনার বর্তমান পরীক্ষার ফলাফল দেখায় টেস্ট করার সময় আপনার ভাইরাস ছিল না। আপনি সম্প্রতি উপসর্গ থাকার বিষয়টি রিপোর্ট করে থাকলে একটি পরীক্ষা বুক করা নিশ্চিত করুন। আপনার উপসর্গ দেখা দিলে এই অ্যাপে তা রিপোর্ট করুন। যদি আপনার বয়স 18 বছরের কম হয় তাহলে আপনাকে এই বার্তাটি কোন বিশ্বস্ত প্রাপ্ত বয়স্ককে দেখানোর পরামর্শ প্রদান করা হয়।</string>
     <string name="test_result_void_already_not_in_isolation_subtitle">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী দেখুন।\n\nপরীক্ষাটি করার সময় আপনার করোনভাইরাস ছিল কিনা তা আমরা জানাতে পারিনি এবং আপনাকে আবার পরীক্ষা করানো উচিত। আপনাকে ইমেল, পাঠ্য বা ফোনের মাধ্যমে আরো তথ্য প্রেরণ করা হয়েছে। যদি আপনার বয়স 18 বছরের কম হয় তাহলে আপনাকে এই বার্তাটি কোন বিশ্বস্ত প্রাপ্ত বয়স্ককে দেখানোর পরামর্শ প্রদান করা হয়।</string>
-    <string name="test_result_void_no_self_isolation_subtitle">পরীক্ষা করার সময় আমরা নির্ণয় করতে পারিনি যে আপনার করোনাভাইরাস হয়েছে কিনা</string>
+    <string name="test_result_void_no_self_isolation_subtitle">আপনার করোনাভাইরাস হয়েছে কিনা আমরা আপনাকে বলতে পারি নি</string>
     <string name="test_result_your_test_result">আপনার পরীক্ষার ফলাফল</string>
-    <string name="test_result_no_self_isolation_description">আপনি যদি এখনও অসুস্থ বোধ করেন, তাহলে ভাল বোধ না করা পর্যন্ত বাসায় থাকুন</string>
+    <string name="test_result_no_self_isolation_description">যদি আপনার উচ্চ তাপমাত্রা না থাকে এবং আপনি যথেষ্ট সুস্থ বোধ করেন, তাহলে আপনি স্বাভাবিক কার্যকলাপ চালিয়ে যেতে পারেন</string>
     <string name="test_result_negative_no_self_isolation_subtitle_text">আপনার করোনাভাইরাস পরীক্ষার ফলাফল নেগেটিভ</string>
     <string name="notification_text_potential_exposure_explanation">চিন্তা করবেন না, আমরা আপনার ঝুঁকি নিরূপণ করেছি। এখন কোন ব্যবস্থা নেওয়ার দরকার নেই। দয়া করে সতর্ক থাকবেন এবং সামাজিক দূরত্ব বজায় রাখার ব্যাপারে সর্বশেষ পরামর্শ মেনে চলবেন।</string>
     <string name="notification_title_potential_exposure_explanation">কোভিড -১৯-এর সংস্পর্শে আসা সংক্রান্ত যাচাই সম্পন্ন হয়েছে</string>
@@ -337,7 +337,7 @@
     <string name="updated_privacy_title">আমাদের নীতিমালায় পরিবর্তনসমূহ</string>
     <string name="checkin_information_title_new">আরো তথ্যাদি</string>
     <string name="confirm_and_start">সুনিশ্চিত করুন</string>
-    <string name="exposure_faqs">সাধারণ প্রশ্নাবলি</string>
+    <string name="exposure_faqs">অ্যাপের ওয়েবসাইট দেখুন</string>
     <string name="exposure_faqs_title">আপনি যদি ইংল্যান্ড ও ওয়েলসের বাইরে থাকেন, তাহলে যে দেশে আছেন সে দেশের নির্দেশনা অনুসরণ করা দরকার।</string>
     <string name="local_authority_error_authority_not_supported_description">দুর্ভাগ্যজনকভাবে, এই অ্যাপটি আপনার অঞ্চলে সমর্থিত নয়।আপনার অঞ্চল অথবা দেশের জন্যে অনুগ্রহ করে এই অ্যাপটি ডাউনলোড করুন।</string>
     <string name="local_authority_error_no_authority_selected_description">বহাল থাকার জন্য আপনাকে একটি স্থানীয় কর্তৃপক্ষ বেছে নিতে হবে</string>
@@ -412,7 +412,7 @@
     <string name="about_test_follow_up_state_pending">অনিষ্পন্ন</string>
     <string name="book_follow_up_test">একটি ফলো-আপ পরীক্ষা বুক করুন</string>
     <string name="device_not_supported_next_steps_link_text">সচরাচর জিজ্ঞাসিত প্রশ্নাবলী পড়ুন</string>
-    <string name="device_not_supported_next_steps_link_url">https://faq.covid19.nhs.uk/article/KA-01386</string>
+    <string name="device_not_supported_next_steps_link_url">https://www.gov.uk/government/publications/nhs-covid-19-app-user-guide/nhs-covid-19-app-troubleshooting-and-technical-information#getting-an-error-message</string>
     <string name="device_not_supported_next_steps_text">অ্যাপটি ব্যবহার অব্যাহত রাখার জন্য আপনি কী করতে পারেন জেনে নিন।</string>
     <string name="device_not_supported_next_steps_title">পরবর্তী ধাপসমূহ</string>
     <string name="device_not_supported_reasons">আপনার ফোনের সীমাবদ্ধ সেটিংস থাকা (যেমন, এটি কোম্পানি ফোন হলে)\n\nহার্ডওয়্যার সাপোর্ট করে না (উদাহরণস্বরূপ, আপনার ফোন যদি অ্যান্ড্রয়েড ৬.০ বা উচ্চতর সংস্করণ সাপোর্ট না করে)</string>
@@ -541,7 +541,7 @@
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_change">অ্যাপের হোম স্ক্রিনে কাউন্টডাউন টাইমারের সাহায্যে আপনার স্ব-বিচ্ছিন্নতা পর্ব অনুসরণ করুন।</string>
     <string name="test_result_plod_title">আপনার পরীক্ষার ফলাফল কমজোর পজিটিভ</string>
     <string name="url_download_the_nhs_app">https://www.nhs.uk/nhs-app/</string>
-    <string name="local_message_banner_read_more">আরো পড়ুন</string>
+    <string name="local_message_banner_read_more">সর্বশেষ হালনাগাদ যাচাই করুন</string>
     <string name="notification_channel_local_message_description">These notifications provide you with information relevant to your local area</string>
     <string name="notification_channel_local_message_name">Local information</string>
     <string name="symptoms_advice_isolate_paragraphs_continue_isolation_no_symptoms">যেহেতু আপনার সংক্রমণ ধরা পড়েছে, তাই স্ব-বিচ্ছিন্ন থাকা অব্যাহত রাখা জরুরি।\n\nদয়া করে বাসায় থাকুন, আর নিজেকে ও অন্যদের নিরাপদ রাখুন। অ্যাপের হোম স্ক্রিনে কাউন্টডাউন টাইমারের সাহায্যে আপনার স্ব-বিচ্ছিন্নতা পর্ব অনুসরণ করুন।</string>
@@ -684,7 +684,7 @@
     <string name="risky_contact_isolation_advice_already_vaccinated_vaccine_research">আপনার উপসর্গ থাকলে বিনামূল্যে একটি PCR পরীক্ষা বুক করুন।</string>
     <string name="risky_contact_isolation_advice_book_pcr_test">বিনামূল্যে একটি পিসিআর পরীক্ষা বুক করুন</string>
     <string name="risky_contact_isolation_advice_continue_isolataion_for">নিজেকে আলাদা রাখা অব্যাহত রাখুন</string>
-    <string name="risky_contact_isolation_advice_faq_button_title">সাধারণ প্রশ্নাবলি</string>
+    <string name="risky_contact_isolation_advice_faq_button_title">অ্যাপের ওয়েবসাইট দেখুন</string>
     <string name="risky_contact_isolation_advice_further_nhs_guidance">আরও পরামর্শের জন্য, অনুগ্রহ করে ভিজিট করুন:</string>
     <string name="risky_contact_isolation_advice_go_back_to_home">হোম স্ক্রিনে ফিরে যান</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">অন্যদের সঙ্গে, বিশেষ করে বয়স্ক ও ঝুঁকিগ্রস্ত মানুষদের সঙ্গে যোগাযোগ হ্রাস করা সহ, জাতীয় নির্দেশনা অনুসরণ করা এখনও গুরুত্বপূর্ণ।</string>
@@ -832,7 +832,7 @@
     <string name="contact_case_exposure_info_screen_title_england">অ্যাপটি সনাক্ত করেছে যে  করোনাভাইরাসে (কোভিড-১৯) আক্রান্ত হিসাবে সনাক্ত হওয়া কারো সংস্পর্শে আপনি গিয়েছিলেন</string>
     <string name="contact_case_exposure_info_screen_title_wales">অ্যাপটি সনাক্ত করেছে যে  করোনাভাইরাসে (কোভিড-১৯) আক্রান্ত হিসাবে সনাক্ত হওয়া কারো সংস্পর্শে আপনি গিয়েছিলেন</string>
     <string name="index_case_isolation_advice_body_england">আপনার পরীক্ষার ফলাফলে দেখা যায় যে পরীক্ষার সময় আপনার COVID-19 ছিল। আপনাকে ইমেল, টেক্সট বা ফোনের মাধ্যমে আরও তথ্য পাঠানো হয়েছে।\n\nআপনার সাথে ঘনিষ্ঠ সংস্পর্শে ছিলেন এমন যে কাউকে পরিচয় গোপন রেখে অবহিত করুন যাতে তারা জানেন যে তাদের ঝুঁকি থাকতে পারে। আপনার গোপনীয়তা সুরক্ষিত আছে এবং আপনার ব্যক্তিগত তথ্য আদানপ্রদান করা হবে না।\n\nআপনার বয়স ১৮ বছরের কম হলে, নির্ভরযোগ্য কোনো প্রাপ্তবয়ষ্ক ব্যক্তিকে এই বার্তা দেখানোর জন্য পরামর্শ দেওয়া হচ্ছে।</string>
-    <string name="index_case_isolation_advice_common_question_link_button_england">সাধারণ প্রশ্নাবলি</string>
+    <string name="index_case_isolation_advice_common_question_link_button_england">অ্যাপের ওয়েবসাইট দেখুন</string>
     <string name="index_case_isolation_advice_further_advice_england">আরও পরামর্শের জন্য, অনুগ্রহ করে ভিজিট করুন:</string>
     <string name="index_case_isolation_advice_heading_title_england">আপনার COVID-19 পরীক্ষার ফলাফল পজিটিভ এসেছে</string>
     <string name="index_case_isolation_advice_information_box_description_england">পরিচয় গোপন রেখে অ্যাপের মাধ্যমে অন্যদের অবহিত করুন</string>
@@ -861,7 +861,7 @@
     <string name="risky_contact_opt_out_primary_button_url_wales">https://gov.wales/self-isolation</string>
     <string name="risky_contact_opt_out_secondary_button_title">হোম স্ক্রিনে ফিরে যান</string>
     <string name="risky_contact_opt_out_secondary_button_title_wales">হোম স্ক্রিনে ফিরে যান</string>
-    <string name="symptomatic_contact_guidance_common_questions_link_england">সাধারণ প্রশ্নাবলি</string>
+    <string name="symptomatic_contact_guidance_common_questions_link_england">অ্যাপের ওয়েবসাইট দেখুন</string>
     <string name="symptomatic_contact_guidance_further_advice_england">আরও পরামর্শের জন্য, অনুগ্রহ করে ভিজিট করুন:</string>
     <string name="symptomatic_contact_guidance_mask_england">আপনার যদি বাড়ি ছেড়ে বেরনোর প্রয়োজন হয়, তাহলে অন্যদের ঝুঁকি কমাতে মুখ ঢেকে রাখুন</string>
     <string name="symptomatic_contact_guidance_meeting_indoors_england">ভিড় ও চারদিক ঘেরা জায়গাগুলি এড়িয়ে চলুন এবং প্রয়োজনে বাইরে দেখা করুন</string>
@@ -875,7 +875,7 @@
         <item quantity="other">পর্যন্ত অতিরিক্ত যত্ন নিন এবং অন্যদের সুরক্ষিত রাখুন %1$s এ 23:59 । তখন পর্যন্ত %2$s দিন বাকি আছে।</item>
     </plurals>
     <string name="be_careful_until_date_title">অতিরিক্ত যত্ন নিন এবং অন্যদের রক্ষা করুন</string>
-    <string name="about_this_app_software_information_date_of_release_description">05/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">06/2022</string>
     <string name="back_to_home_screen">হোম স্ক্রিনে ফিরে যান</string>
     <string name="covid_guidance_hub_check_ssp_description">COVID-19 এর পরীক্ষা সম্পর্কে জানুন</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 পরীক্ষার সর্বশেষ নির্দেশনা</string>

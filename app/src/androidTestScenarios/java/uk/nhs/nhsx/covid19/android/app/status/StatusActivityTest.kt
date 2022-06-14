@@ -19,11 +19,8 @@ import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.Contac
 import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider.ContactTracingHubAction.ONLY_NAVIGATE
 import uk.nhs.nhsx.covid19.android.app.remote.MockLocalMessagesApi
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
-import uk.nhs.nhsx.covid19.android.app.report.Reported
-import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.FLOW
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
-import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
 import uk.nhs.nhsx.covid19.android.app.state.asIsolation
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.NavigateToContactTracingHub
@@ -31,12 +28,9 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityActio
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ContactTracingHubRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.GuidanceHubRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.GuidanceHubWalesRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalMessageRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MoreAboutAppRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ProgressRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QrScannerRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SettingsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -61,69 +55,6 @@ class StatusActivityTest(override val configuration: TestConfiguration) : Espres
     private val testingHubRobot = TestingHubRobot()
     private val localMessageRobot = LocalMessageRobot()
     private val isolationHelper = IsolationHelper(testAppContext.clock)
-    private val progressRobot = ProgressRobot()
-    private val guidanceHubRobot = GuidanceHubRobot()
-    private val guidanceHubWalesRobot = GuidanceHubWalesRobot()
-
-    @Reported
-    @Test
-    fun whenCovidGuidanceHubFeatureFlagIsEnabledForEngland_clickGuidanceHub() = reporter(
-        scenario = "Covid Guidance hub",
-        title = "Display guidance hub screen",
-        description = "User clicks on guidance hub from status page",
-        kind = FLOW
-    ) {
-        runWithFeatureEnabled(COVID19_GUIDANCE_HOME_SCREEN_BUTTON_ENGLAND) {
-            givenLocalAuthorityIsInEngland()
-            startTestActivity<StatusActivity>()
-
-            statusRobot.checkActivityIsDisplayed()
-            statusRobot.checkCovidGuidanceHubIsDisplayed()
-
-            step(
-                stepName = "Status page – covid guidance hub feature is enabled",
-                stepDescription = "Guidance hub button is displayed on status page"
-            )
-
-            statusRobot.clickCovidGuidanceHub()
-            guidanceHubRobot.checkActivityIsDisplayed()
-
-            step(
-                stepName = "Show covid guidance hub screen",
-                stepDescription = "User clicks on guidance hub button from status page – is navigated to guidance hub page"
-            )
-        }
-    }
-
-    @Reported
-    @Test
-    fun whenCovidGuidanceHubFeatureFlagIsEnabledForWales_clickGuidanceHubForWales() = reporter(
-        scenario = "Covid Guidance hub",
-        title = "Display guidance hub screen for Wales",
-        description = "User clicks on guidance hub from status page",
-        kind = FLOW
-    ) {
-        runWithFeatureEnabled(COVID19_GUIDANCE_HOME_SCREEN_BUTTON_WALES) {
-            givenLocalAuthorityIsInWales()
-            startTestActivity<StatusActivity>()
-
-            statusRobot.checkActivityIsDisplayed()
-            statusRobot.checkCovidGuidanceHubIsDisplayed()
-
-            step(
-                stepName = "Status page – covid guidance hub feature is enabled",
-                stepDescription = "Guidance hub button is displayed on status page"
-            )
-
-            statusRobot.clickCovidGuidanceHub()
-            guidanceHubWalesRobot.checkActivityIsDisplayed()
-
-            step(
-                stepName = "Show covid guidance hub for wales screen",
-                stepDescription = "User clicks on guidance hub button from status page – is navigated to guidance hub for Wales page"
-            )
-        }
-    }
 
     @Test
     fun clickMoreAboutApp() {
@@ -834,23 +765,9 @@ class StatusActivityTest(override val configuration: TestConfiguration) : Espres
         }
 
     @Test
-    fun whenUserHasNotSeenNewReportSymptomsLabelForEngland_shouldBeDisplayed() {
+    fun newLabelOnReportSymptomsButtonForEngland_shouldBeDisabled() {
         givenLocalAuthorityIsInEngland()
         startTestActivity<StatusActivity>()
-
-        waitFor { statusRobot.checkNewLabelIsDisplayed(true) }
-    }
-
-    @Test
-    fun whenUserHasSeenNewReportSymptomsLabelForEngland_shouldBeHidden() {
-        givenLocalAuthorityIsInEngland()
-        startTestActivity<StatusActivity>()
-
-        waitFor { statusRobot.checkNewLabelIsDisplayed(true) }
-
-        statusRobot.clickReportSymptoms()
-
-        testAppContext.device.pressBack()
 
         waitFor { statusRobot.checkNewLabelIsDisplayed(false) }
     }

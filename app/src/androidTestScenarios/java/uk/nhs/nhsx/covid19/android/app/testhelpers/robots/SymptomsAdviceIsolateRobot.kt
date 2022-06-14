@@ -21,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.containsStringResourceAt
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.withStateColor
@@ -51,6 +52,9 @@ class SymptomsAdviceIsolateRobot : HasActivity {
                 }
             is NoIndexCaseThenSelfAssessmentNoImpactOnIsolation ->
                 checkNoIndexCaseThenSelfAssessmentNoImpactOnIsolationIsDisplayed(isolationSymptomAdvice.remainingDaysInIsolation)
+            is NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales -> {
+                checkNoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales(isolationSymptomAdvice.remainingDaysInIsolation)
+            }
         }
     }
 
@@ -105,6 +109,23 @@ class SymptomsAdviceIsolateRobot : HasActivity {
     }
 
     private fun checkNoIndexCaseThenIsolationDueToSelfAssessmentIsDisplayedWales(remainingDaysInIsolation: Int) {
+        checkCloseIconInToolbarIsDisplayed()
+        checkPreDaysTextViewIsDisplayed(R.string.self_isolate_for)
+        checkDaysUntilExpirationTextViewIsDisplayed(
+            context.resources.getQuantityString(
+                R.plurals.state_isolation_days,
+                remainingDaysInIsolation,
+                remainingDaysInIsolation
+            )
+        )
+        checkPostDaysTextViewIsDisplayed(R.string.state_and_book_a_test)
+        checkExposureLinkIsDisplayed()
+        checkStateInfo(R.string.state_index_info, R.color.amber)
+        checkExplanationText(R.string.isolate_after_corona_virus_symptoms)
+        checkBottomActionButtonIsDisplayedWithText(R.string.book_free_test)
+    }
+
+    private fun checkNoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales(remainingDaysInIsolation: Int) {
         checkCloseIconInToolbarIsDisplayed()
         checkPreDaysTextViewIsDisplayed(R.string.self_isolate_for)
         checkDaysUntilExpirationTextViewIsDisplayed(

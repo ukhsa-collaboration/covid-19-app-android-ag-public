@@ -2,7 +2,6 @@ package uk.nhs.nhsx.covid19.android.app.questionnaire
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.jeroenmols.featureflag.framework.FeatureFlag.NEW_NO_SYMPTOMS_SCREEN
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.called
 import io.mockk.coEvery
@@ -28,19 +27,12 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Cardinal
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.LoadQuestionnaire
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.AdviceScreen
-import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.NewNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.ReviewSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NonCardinal
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireState
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireViewModel
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
 import uk.nhs.nhsx.covid19.android.app.remote.data.QuestionnaireResponse
-import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
-import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
-import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneOffset
 
 class QuestionnaireViewModelTest {
 
@@ -50,16 +42,13 @@ class QuestionnaireViewModelTest {
     private val loadQuestionnaire = mockk<LoadQuestionnaire>()
     private val questionnaireIsolationHandler = mockk<QuestionnaireIsolationHandler>()
     private val loadQuestionnaireResultObserver = mockk<Observer<Lce<QuestionnaireState>>>(relaxUnitFun = true)
-    private val isolationStateMachine = mockk<IsolationStateMachine>()
-    private val fixedClock = Clock.fixed(Instant.parse("2020-01-01T10:00:00Z"), ZoneOffset.UTC)
     private val navigationTargetObserver = mockk<Observer<NavigationTarget>>(relaxUnitFun = true)
 
     private val testSubject =
-        QuestionnaireViewModel(loadQuestionnaire, questionnaireIsolationHandler, isolationStateMachine, fixedClock)
+        QuestionnaireViewModel(loadQuestionnaire, questionnaireIsolationHandler)
 
     @Before
     fun setUp() {
-        FeatureFlagTestHelper.disableFeatureFlag(NEW_NO_SYMPTOMS_SCREEN)
         testSubject.navigationTarget().observeForever(navigationTargetObserver)
         testSubject.viewState().observeForever(loadQuestionnaireResultObserver)
     }
@@ -77,7 +66,8 @@ class QuestionnaireViewModelTest {
                 Cardinal(title = TranslatableString(mapOf())),
                 NonCardinal(title = TranslatableString(mapOf()), description = TranslatableString(mapOf())),
                 riskThreshold = 100.0f,
-                symptomsOnsetWindowDays = 14
+                symptomsOnsetWindowDays = 14,
+                isSymptomaticSelfIsolationForWalesEnabled = false
             )
         )
 
@@ -93,6 +83,7 @@ class QuestionnaireViewModelTest {
                         symptomsOnsetWindowDays = 14,
                         showError = false,
                         showDialog = false,
+                        isSymptomaticSelfIsolationForWalesEnabled = false
                     )
                 )
             )
@@ -107,7 +98,8 @@ class QuestionnaireViewModelTest {
                 Cardinal(title = TranslatableString(mapOf())),
                 NonCardinal(title = TranslatableString(mapOf()), description = TranslatableString(mapOf())),
                 riskThreshold = 100.0f,
-                symptomsOnsetWindowDays = 14
+                symptomsOnsetWindowDays = 14,
+                isSymptomaticSelfIsolationForWalesEnabled = false
             )
         )
 
@@ -125,6 +117,7 @@ class QuestionnaireViewModelTest {
                         symptomsOnsetWindowDays = 14,
                         showError = false,
                         showDialog = false,
+                        isSymptomaticSelfIsolationForWalesEnabled = false
                     )
                 )
             )
@@ -160,6 +153,7 @@ class QuestionnaireViewModelTest {
                     14,
                     showError = true,
                     showDialog = false,
+                    isSymptomaticSelfIsolationForWalesEnabled = false
                 )
             )
         )
@@ -179,6 +173,7 @@ class QuestionnaireViewModelTest {
                         14,
                         showError = false,
                         showDialog = false,
+                        isSymptomaticSelfIsolationForWalesEnabled = false
                     )
                 )
             )
@@ -199,6 +194,7 @@ class QuestionnaireViewModelTest {
                     14,
                     showError = false,
                     showDialog = false,
+                    isSymptomaticSelfIsolationForWalesEnabled = false
                 )
             )
         )
@@ -214,6 +210,7 @@ class QuestionnaireViewModelTest {
                         14,
                         showError = true,
                         showDialog = false,
+                        isSymptomaticSelfIsolationForWalesEnabled = false
                     )
                 )
             )
@@ -234,6 +231,7 @@ class QuestionnaireViewModelTest {
             14,
             showError = false,
             showDialog = false,
+            isSymptomaticSelfIsolationForWalesEnabled = false
         )
         val response = Lce.Success(viewState)
 
@@ -244,7 +242,7 @@ class QuestionnaireViewModelTest {
         verify {
             with(viewState) {
                 navigationTargetObserver.onChanged(
-                    ReviewSymptoms(questions, riskThreshold, symptomsOnsetWindowDays)
+                    ReviewSymptoms(questions, riskThreshold, symptomsOnsetWindowDays, isSymptomaticSelfIsolationForWalesEnabled)
                 )
             }
         }
@@ -258,6 +256,7 @@ class QuestionnaireViewModelTest {
             14,
             showError = false,
             showDialog = true,
+            isSymptomaticSelfIsolationForWalesEnabled = false
         )
         val response = Lce.Success(viewState)
         testSubject.viewState.postValue(response)
@@ -270,13 +269,14 @@ class QuestionnaireViewModelTest {
     }
 
     @Test
-    fun `when no symptoms confirmed, feature flag disabled navigate to advice screen`() {
+    fun `when no symptoms confirmed, navigate to advice screen`() {
         val viewState = QuestionnaireState(
             questions = emptyList(),
             1.0f,
             14,
             showError = false,
             showDialog = true,
+            isSymptomaticSelfIsolationForWalesEnabled = false
         )
         val response = Lce.Success(viewState)
         testSubject.viewState.postValue(response)
@@ -285,48 +285,25 @@ class QuestionnaireViewModelTest {
             questionnaireIsolationHandler.computeAdvice(
                 riskThreshold = Float.MAX_VALUE,
                 selectedSymptoms = emptyList(),
-                onsetDate = SelectedDate.NotStated
+                onsetDate = SelectedDate.NotStated,
+                isSymptomaticSelfIsolationEnabled = true
             )
         } returns NoSymptoms
-
-        runWithFeature(NEW_NO_SYMPTOMS_SCREEN, enabled = false) {
-            testSubject.onNoSymptomsConfirmed()
-        }
-
-        verify { navigationTargetObserver.onChanged(AdviceScreen(NoSymptoms)) }
-    }
-
-    @Test
-    fun `when no symptoms confirmed, feature flag enabled and user is in isolation navigate to advice screen`() {
-        every { isolationStateMachine.readLogicalState().isActiveIsolation(fixedClock) } returns true
-        val viewState = QuestionnaireState(
-            questions = emptyList(),
-            1.0f,
-            14,
-            showError = false,
-            showDialog = true,
-        )
-        val response = Lce.Success(viewState)
-        testSubject.viewState.postValue(response)
-
-        every {
-            questionnaireIsolationHandler.computeAdvice(
-                riskThreshold = Float.MAX_VALUE,
-                selectedSymptoms = emptyList(),
-                onsetDate = SelectedDate.NotStated
-            )
-        } returns NoSymptoms
-
-        runWithFeatureEnabled(NEW_NO_SYMPTOMS_SCREEN) {
-            testSubject.onNoSymptomsConfirmed()
-        }
+        testSubject.onNoSymptomsConfirmed()
 
         verify { navigationTargetObserver.onChanged(AdviceScreen(NoSymptoms)) }
     }
 
     @Test
     fun `when no symptoms clicked then show confirmation dialog`() {
-        val viewState = QuestionnaireState(questions = emptyList(), 1.0f, 14, showError = false, showDialog = false)
+        val viewState = QuestionnaireState(
+            questions = emptyList(),
+            1.0f,
+            14,
+            showError = false,
+            showDialog = false,
+            isSymptomaticSelfIsolationForWalesEnabled = false
+        )
         val response = Lce.Success(viewState)
         testSubject.viewState.postValue(response)
 
@@ -335,18 +312,6 @@ class QuestionnaireViewModelTest {
         val updatedViewState = viewState.copy(showDialog = true)
         verify { loadQuestionnaireResultObserver.onChanged(Lce.Success(updatedViewState)) }
         verify(exactly = 0) { navigationTargetObserver.onChanged(any()) }
-    }
-
-    @Test
-    fun `when no symptoms confirmed, feature flag enabled and user is not in active isolation then emit NewNoSymptoms as navigation target`() {
-        every { isolationStateMachine.readLogicalState().isActiveIsolation(fixedClock) } returns false
-
-        runWithFeatureEnabled(NEW_NO_SYMPTOMS_SCREEN, clearFeatureFlags = true) {
-            testSubject.onNoSymptomsConfirmed()
-        }
-
-        verify { navigationTargetObserver.onChanged(NewNoSymptoms) }
-        verify(exactly = 0) { loadQuestionnaireResultObserver.onChanged(any()) }
     }
 
     private fun question(name: String, checked: Boolean): Question {

@@ -99,11 +99,11 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.SymptomsAfterRiskyVenueActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertBookTestActivity
 import uk.nhs.nhsx.covid19.android.app.qrcode.riskyvenues.VenueAlertInformActivity
-import uk.nhs.nhsx.covid19.android.app.questionnaire.NewNoSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
@@ -552,6 +552,10 @@ class DebugActivity : AppCompatActivity() {
             SymptomsAdviceIsolateActivity.start(this, NoIndexCaseThenIsolationDueToSelfAssessment(7))
         }
 
+        addScreenButton("Questionnaire Isolation Advice - NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales") {
+            SymptomsAdviceIsolateActivity.start(this, NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales(7))
+        }
+
         addScreenButton("Questionnaire Isolation Advice - NoIndexCaseThenSelfAssessmentNoImpactOnIsolation") {
             SymptomsAdviceIsolateActivity.start(this, NoIndexCaseThenSelfAssessmentNoImpactOnIsolation(7))
         }
@@ -873,10 +877,6 @@ class DebugActivity : AppCompatActivity() {
                 processEvent(OnExposedNotification(Instant.now()))
             }
             RiskyContactIsolationAdviceActivity.start(this)
-        }
-
-        addScreenButton("New no symptoms") {
-            startActivity<NewNoSymptomsActivity>()
         }
 
         addScreenButton("Risky contact review") {

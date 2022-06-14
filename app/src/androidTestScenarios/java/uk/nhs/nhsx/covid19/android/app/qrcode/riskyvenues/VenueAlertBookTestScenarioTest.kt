@@ -9,6 +9,7 @@ import uk.nhs.nhsx.covid19.android.app.qrcode.Venue
 import uk.nhs.nhsx.covid19.android.app.qrcode.VenueVisit
 import uk.nhs.nhsx.covid19.android.app.questionnaire.NewGuidanceForSymptomaticCasesEnglandRobot
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.state.IsolationHelper
@@ -128,8 +129,9 @@ class VenueAlertBookTestScenarioTest : EspressoTest(), LocalAuthoritySetupHelper
     }
 
     @Test
-    fun notActiveIndexCaseIsolation_navigateToSymptomsAfterRiskyVenue_hasSymptoms_completeQuestionnaire_shouldShowNewAdviceActivity_forWales() {
+    fun symptomaticSelfIsolationEnabled_notActiveIndexCaseIsolation_navigateToSymptomsAfterRiskyVenue_hasSymptoms_shouldShowNewAdviceActivity_forWales() {
         givenLocalAuthorityIsInWales()
+        testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = true
         testAppContext.setState(isolationHelper.contact().asIsolation())
 
         startVenueAlertBookTestActivity()
@@ -151,6 +153,35 @@ class VenueAlertBookTestScenarioTest : EspressoTest(), LocalAuthoritySetupHelper
         waitFor { symptomsAdviceIsolateRobot.checkActivityIsDisplayed() }
         waitFor { symptomsAdviceIsolateRobot.checkViewState(
             NoIndexCaseThenIsolationDueToSelfAssessment(testAppContext.getRemainingDaysInIsolation())
+        ) }
+        symptomsAdviceIsolateRobot.clickBottomActionButton()
+    }
+
+    @Test
+    fun symptomaticSelfIsolationDisabled_notActiveIndexCaseIsolation_navigateToSymptomsAfterRiskyVenue_hasSymptoms_shouldShowContinueWithIsolation_forWales() {
+        givenLocalAuthorityIsInWales()
+        testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = false
+        testAppContext.setState(isolationHelper.contact().asIsolation())
+
+        startVenueAlertBookTestActivity()
+
+        waitFor { venueAlertBookTestRobot.checkActivityIsDisplayed() }
+        venueAlertBookTestRobot.clickBookTestButton()
+
+        waitFor { symptomsAfterRiskyVenueVisitRobot.checkActivityIsDisplayed() }
+        symptomsAfterRiskyVenueVisitRobot.clickHasSymptomsButton()
+
+        waitFor { questionnaireRobot.checkActivityIsDisplayed() }
+        questionnaireRobot.selectSymptomsAtPositions(2)
+        questionnaireRobot.reviewSymptoms()
+
+        waitFor { reviewSymptomsRobot.checkActivityIsDisplayed() }
+        reviewSymptomsRobot.selectCannotRememberDate()
+        reviewSymptomsRobot.confirmSelection()
+
+        waitFor { symptomsAdviceIsolateRobot.checkActivityIsDisplayed() }
+        waitFor { symptomsAdviceIsolateRobot.checkViewState(
+            NoIndexCaseThenSelfAssessmentNoImpactOnIsolation(testAppContext.getRemainingDaysInIsolation())
         ) }
         symptomsAdviceIsolateRobot.clickBottomActionButton()
     }

@@ -37,7 +37,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     fun receivePositiveAssistedLFDTestResultAfterSelfDiagnosis() {
         receivePositiveTestResultAfterSelfDiagnosis(
             RAPID_RESULT,
-            Metrics::receivedPositiveLFDTestResultViaPolling,
+            receivedPositiveTestResultViaPollingMetric = null,
             Metrics::isIsolatingForTestedLFDPositiveBackgroundTick,
             Metrics::hasTestedLFDPositiveBackgroundTick
         )
@@ -193,7 +193,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     fun receiveNegativeAssistedLFDTestResultAfterSelfDiagnosisAndEndIsolation() {
         receiveNegativeTestResultAfterSelfDiagnosisAndEndIsolation(
             RAPID_RESULT,
-            Metrics::receivedNegativeLFDTestResultViaPolling
+            receivedNegativeTestResultViaPollingMetric = null
         )
     }
 
@@ -272,7 +272,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
     fun receiveVoidAssistedLFDTestResultAfterSelfDiagnosis() {
         receiveVoidTestResultAfterSelfDiagnosis(
             RAPID_RESULT,
-            Metrics::receivedVoidLFDTestResultViaPolling
+            receivedVoidTestResultViaPollingMetric = null
         )
     }
 

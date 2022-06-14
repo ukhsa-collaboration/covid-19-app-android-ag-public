@@ -11,5 +11,6 @@ data class QuestionnaireResponse(
     val cardinal: Cardinal,
     val noncardinal: NonCardinal,
     val riskThreshold: Float,
-    val symptomsOnsetWindowDays: Int
+    val symptomsOnsetWindowDays: Int,
+    val isSymptomaticSelfIsolationForWalesEnabled: Boolean
 )

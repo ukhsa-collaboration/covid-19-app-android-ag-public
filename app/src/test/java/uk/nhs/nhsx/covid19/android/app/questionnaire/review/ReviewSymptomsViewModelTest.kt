@@ -2,11 +2,15 @@ package uk.nhs.nhsx.covid19.android.app.questionnaire.review
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
@@ -36,13 +40,16 @@ class ReviewSymptomsViewModelTest {
     private val navigateToSymptomsAdviceScreenObserver = mockk<Observer<SymptomAdvice>>(relaxed = true)
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-22T20:00:00Z"), ZoneOffset.UTC)
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider>()
 
     private fun createTestSubject() = ReviewSymptomsViewModel(
         symptomsAdviceIsolationHandler,
         fixedClock,
         questions,
         riskThreshold,
-        symptomsOnsetWindowDays
+        symptomsOnsetWindowDays,
+        isSymptomaticSelfIsolationForWalesEnabled,
+        localAuthorityPostCodeProvider
     )
 
     private val defaultViewState = ViewState(
@@ -51,7 +58,8 @@ class ReviewSymptomsViewModelTest {
         showOnsetDateError = false,
         symptomsOnsetWindowDays = symptomsOnsetWindowDays,
         showOnsetDatePicker = false,
-        datePickerSelection = fixedClock.millis()
+        datePickerSelection = fixedClock.millis(),
+        isSymptomaticSelfIsolationForWalesEnabled = false
     )
 
     @Test
@@ -143,7 +151,8 @@ class ReviewSymptomsViewModelTest {
     }
 
     @Test
-    fun `onButtonConfirmedClicked and onset date is selected does not update view state and emits correct navigation event`() {
+    fun `onButtonConfirmedClicked and onset date is selected does not update view state and emits correct navigation event England`() {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
         val testSubject = createTestSubject()
 
         testSubject.navigateToSymptomAdviceScreen().observeForever(navigateToSymptomsAdviceScreenObserver)
@@ -156,7 +165,32 @@ class ReviewSymptomsViewModelTest {
 
         every {
             symptomsAdviceIsolationHandler.computeAdvice(
-                riskThreshold, properReviewSymptomItems.toSelectedSymptoms(), onsetDate
+                riskThreshold, properReviewSymptomItems.toSelectedSymptoms(), onsetDate, true
+            )
+        } returns expectedIsolationSymptomsAdvice
+
+        testSubject.onButtonConfirmedClicked()
+
+        verify { navigateToSymptomsAdviceScreenObserver.onChanged(expectedIsolationSymptomsAdvice) }
+        verify(exactly = 0) { viewStateObserver.onChanged(any()) }
+    }
+
+    @Test
+    fun `onButtonConfirmedClicked and onset date is selected does not update view state and emits correct navigation event Wales`() {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+        val testSubject = createTestSubject()
+
+        testSubject.navigateToSymptomAdviceScreen().observeForever(navigateToSymptomsAdviceScreenObserver)
+
+        val onsetDate = ExplicitDate(LocalDate.parse("2020-05-21"))
+        testSubject.viewState.value =
+            testSubject.viewState.value?.copy(onsetDate = onsetDate, showOnsetDateError = true)
+
+        val expectedIsolationSymptomsAdvice = mockk<IsolationSymptomAdvice>()
+
+        every {
+            symptomsAdviceIsolationHandler.computeAdvice(
+                riskThreshold, properReviewSymptomItems.toSelectedSymptoms(), onsetDate, false
             )
         } returns expectedIsolationSymptomsAdvice
 
@@ -253,5 +287,6 @@ class ReviewSymptomsViewModelTest {
             question2,
             question4
         )
+        const val isSymptomaticSelfIsolationForWalesEnabled = false
     }
 }

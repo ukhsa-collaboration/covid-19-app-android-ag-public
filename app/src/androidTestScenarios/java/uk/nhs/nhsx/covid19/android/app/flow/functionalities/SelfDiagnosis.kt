@@ -63,8 +63,53 @@ class SelfDiagnosis(
         symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
     }
 
+    private fun selfDiagnosePositiveIsolationDisabled(selectedDate: SelectedDate) {
+        statusRobot.checkActivityIsDisplayed()
+
+        val isContactCase = (espressoTest.testAppContext.getCurrentLogicalState() as? PossiblyIsolating)
+            ?.isActiveContactCase(espressoTest.testAppContext.clock)
+            ?: false
+
+        statusRobot.clickReportSymptoms()
+
+        waitFor { questionnaireRobot.checkActivityIsDisplayed() }
+
+        questionnaireRobot.selectSymptomsAtPositions(0, 1, 2)
+
+        questionnaireRobot.reviewSymptoms()
+
+        reviewSymptomsRobot.checkActivityIsDisplayed()
+
+        when (selectedDate) {
+            CannotRememberDate -> reviewSymptomsRobot.selectCannotRememberDate()
+            is ExplicitDate -> {
+                reviewSymptomsRobot.clickSelectDate()
+                reviewSymptomsRobot.selectDayOfMonth(selectedDate.date.dayOfMonth)
+            }
+            NotStated -> throw Exception("Self diagnosis onset date not stated")
+        }
+
+        reviewSymptomsRobot.confirmSelection()
+
+        val newState = espressoTest.testAppContext.getCurrentLogicalState()
+        if (isContactCase) {
+            assertTrue(newState.isActiveContactCase(espressoTest.testAppContext.clock))
+        } else {
+            assertFalse(newState.remembersContactCase())
+        }
+
+        symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
+    }
+
     fun selfDiagnosePositiveAndPressBack(selectedDate: SelectedDate = CannotRememberDate) {
+        espressoTest.testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = true
         selfDiagnosePositive(selectedDate)
+        espressoTest.testAppContext.device.pressBack()
+    }
+
+    fun selfDiagnosePositiveAndPressBackIsolationDisabled(selectedDate: SelectedDate = CannotRememberDate) {
+        espressoTest.testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = false
+        selfDiagnosePositiveIsolationDisabled(selectedDate)
         espressoTest.testAppContext.device.pressBack()
     }
 

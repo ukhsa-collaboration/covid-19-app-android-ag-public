@@ -21,7 +21,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
     // >0 if the app is aware that the user has completed the questionnaire with symptoms
     // this currently happens during an isolation and for the 14 days after isolation.
     @Test
-    fun hasSelfDiagnosedBackgroundTickIsPresentWhenCompletedQuestionnaireAndFor14DaysAfterIsolation() {
+    fun hasSelfDiagnosedBackgroundTickIsPresentWhenCompletedQuestionnaireAndFor14DaysAfterIsolationWhenSelfIsolationForWalesIsEnabled() {
         startTestActivity<MainActivity>()
 
         // Current date: 1st Jan
@@ -69,6 +69,34 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
         assertAnalyticsPacketIsNormal()
 
         isolationChecker.assertNeverIsolating()
+    }
+
+    @Test
+    fun hasSelfDiagnosedBackgroundTickIsNotPresentWhenCompletedQuestionnaireWhenSelfIsolationForWalesIsDisabled() {
+        startTestActivity<MainActivity>()
+
+        // Current date: 1st Jan
+        // Starting state: App running normally, not in isolation
+        runBackgroundTasks()
+
+        // Current date: 2nd Jan -> Analytics packet for: 1st Jan
+        assertAnalyticsPacketIsNormal()
+
+        // Complete questionnaire with risky symptoms on 2nd Jan
+        // Symptom onset date: Don't remember
+        selfDiagnosis.selfDiagnosePositiveAndPressBackIsolationDisabled()
+
+        isolationChecker.assertNeverIsolating()
+
+        // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
+        assertOnFields {
+            // Not in isolation due to self-diagnosis
+            assertEquals(0, Metrics::completedQuestionnaireAndStartedIsolation)
+            assertEquals(0, Metrics::startedIsolation)
+            assertEquals(0, Metrics::isIsolatingBackgroundTick)
+            assertEquals(0, Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertEquals(0, Metrics::hasSelfDiagnosedBackgroundTick)
+        }
     }
 
     @Test

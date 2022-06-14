@@ -46,12 +46,6 @@ enum class FeatureFlag(
         "Store and send RemoteServiceException crash analytics data",
         defaultValue = false
     ),
-    NEW_NO_SYMPTOMS_SCREEN(
-        "feature.NewNoSymptomsScreen",
-        "New no symptoms screen",
-        "Show new no symptoms screen",
-        defaultValue = false
-    ),
     LOCAL_COVID_STATS(
         "feature.LocalCovidStats",
         "Local Covid Stats page",

@@ -1,20 +1,45 @@
 package uk.nhs.nhsx.covid19.android.app.status.guidancehub
 
+import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_EXTERNAL_BROWSER
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.report.Reported
+import uk.nhs.nhsx.covid19.android.app.report.Reporter.Kind.SCREEN
+import uk.nhs.nhsx.covid19.android.app.report.config.TestConfiguration
+import uk.nhs.nhsx.covid19.android.app.report.reporter
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.GuidanceHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
-import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_EXTERNAL_BROWSER
 
-class GuidanceHubActivityTest : EspressoTest(), HasActivity {
+@RunWith(Parameterized::class)
+class GuidanceHubActivityTest(override val configuration: TestConfiguration) : EspressoTest(), HasActivity {
     override val containerId: Int
         get() = R.id.guidanceHubContainer
 
     private val guidanceHubRobot = GuidanceHubRobot()
     private val browserRobot = BrowserRobot()
+
+    @Test
+    @Reported
+    fun showGuidanceHubForEngland() = reporter(
+        scenario = "Covid Guidance hub",
+        title = "Display guidance hub screen",
+        description = "Guidance Hub – England",
+        kind = SCREEN
+    ) {
+        startTestActivity<GuidanceHubActivity>()
+
+        guidanceHubRobot.checkActivityIsDisplayed()
+
+        step(
+            stepName = "Show covid guidance hub screen",
+            stepDescription = "User navigates to guidance hub page for England"
+        )
+    }
 
     @Test
     fun canActivityLaunchSuccessfully() {

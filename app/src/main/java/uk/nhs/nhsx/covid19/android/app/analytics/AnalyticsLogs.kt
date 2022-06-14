@@ -51,10 +51,7 @@ private fun Metrics.updateTestResults(
                 INSIDE_APP -> receivedVoidTestResultViaPolling++
                 OUTSIDE_APP -> receivedVoidTestResultEnteredManually++
             }
-            RAPID_RESULT -> when (testOrderType) {
-                INSIDE_APP -> receivedVoidLFDTestResultViaPolling++
-                OUTSIDE_APP -> receivedVoidLFDTestResultEnteredManually++
-            }
+            RAPID_RESULT -> {}
             RAPID_SELF_REPORTED -> {}
         }
         POSITIVE -> when (testKitType) {
@@ -63,7 +60,7 @@ private fun Metrics.updateTestResults(
                 OUTSIDE_APP -> receivedPositiveTestResultEnteredManually++
             }
             RAPID_RESULT -> when (testOrderType) {
-                INSIDE_APP -> receivedPositiveLFDTestResultViaPolling++
+                INSIDE_APP -> {}
                 OUTSIDE_APP -> receivedPositiveLFDTestResultEnteredManually++
             }
             RAPID_SELF_REPORTED -> when (testOrderType) {
@@ -76,10 +73,7 @@ private fun Metrics.updateTestResults(
                 INSIDE_APP -> receivedNegativeTestResultViaPolling++
                 OUTSIDE_APP -> receivedNegativeTestResultEnteredManually++
             }
-            RAPID_RESULT -> when (testOrderType) {
-                INSIDE_APP -> receivedNegativeLFDTestResultViaPolling++
-                OUTSIDE_APP -> receivedNegativeLFDTestResultEnteredManually++
-            }
+            RAPID_RESULT -> {}
             RAPID_SELF_REPORTED -> {}
         }
         PLOD -> {}

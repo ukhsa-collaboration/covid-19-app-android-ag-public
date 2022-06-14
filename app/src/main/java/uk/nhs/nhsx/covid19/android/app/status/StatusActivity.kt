@@ -1,6 +1,5 @@
 package uk.nhs.nhsx.covid19.android.app.status
 
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -176,8 +175,7 @@ class StatusActivity : StatusBaseActivity() {
             )
             handleRiskyPostCodeViewState(viewState.areaRiskState)
             handleReportSymptomsState(
-                viewState.showReportSymptomsButton,
-                viewState.showReportSymptomsNewLabel
+                viewState.showReportSymptomsButton
             )
             handleLocalMessageState(viewState.localMessage)
             handleCovidGuidanceHubState(viewState.showCovidGuidanceHubButton)
@@ -192,9 +190,8 @@ class StatusActivity : StatusBaseActivity() {
         localMessageBanner.isVisible = localMessage != null
     }
 
-    private fun handleReportSymptomsState(showReportSymptomsButton: Boolean, showReportSymptomsNewLabel: Boolean) {
+    private fun handleReportSymptomsState(showReportSymptomsButton: Boolean) {
         binding.optionReportSymptoms.isVisible = showReportSymptomsButton
-        binding.optionReportSymptoms.shouldDisplayNewFunctionalityLabel = showReportSymptomsNewLabel
     }
 
     private fun handleCovidGuidanceHubState(showCovidGuidanceHubButton: Boolean) {
@@ -207,10 +204,7 @@ class StatusActivity : StatusBaseActivity() {
             statusViewModel.viewState.value?.country?.let { country ->
                 when (country) {
                     WALES -> startActivity<QuestionnaireActivity>()
-                    ENGLAND -> {
-                        statusViewModel.reportSymptomsClicked()
-                        startActivity<YourSymptomsActivity>()
-                    }
+                    ENGLAND -> startActivity<YourSymptomsActivity>()
                     else -> throw IllegalStateException("The post code district is not England or Wales")
                 }
             }
@@ -275,7 +269,7 @@ class StatusActivity : StatusBaseActivity() {
             val bluetoothSettingsIntent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
             try {
                 startActivity(bluetoothSettingsIntent)
-            } catch (e: ActivityNotFoundException) {
+            } catch (e: Exception) {
                 Snackbar.make(binding.root, R.string.enable_bluetooth_error_hint, Snackbar.LENGTH_LONG).show()
             }
         }

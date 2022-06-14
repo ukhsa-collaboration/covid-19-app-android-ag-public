@@ -11,6 +11,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -40,6 +41,13 @@ class SymptomsAdviceIsolateActivityTest : EspressoTest(), LocalAuthoritySetupHel
         givenLocalAuthorityIsInWales()
 
         verifyViewState(NoIndexCaseThenIsolationDueToSelfAssessment(remainingDaysInIsolation), WALES)
+    }
+
+    @Test
+    fun whenNotIsolating_thenSelfAssessmentForWalesSymptomaticSelfIsolationDisabled() {
+        givenLocalAuthorityIsInWales()
+
+        verifyViewState(NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales(remainingDaysInIsolation), WALES)
     }
 
     @Test

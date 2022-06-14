@@ -43,7 +43,9 @@ class ReviewSymptomsActivity : BaseActivity() {
         factory.create(
             questions = intent.getParcelableArrayListExtra(EXTRA_QUESTIONS) ?: listOf(),
             riskThreshold = intent.getFloatExtra(EXTRA_RISK_THRESHOLD, 0.0f),
-            symptomsOnsetWindowDays = intent.getIntExtra(EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS, 0)
+            symptomsOnsetWindowDays = intent.getIntExtra(EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS, 0),
+            isSymptomaticSelfIsolationForWalesEnabled = intent.getBooleanExtra(
+                EXTRA_IS_SYMPTOMATIC_SELF_ISOLATION_FOR_WALES_ENABLED, false)
         )
     }
 
@@ -203,6 +205,7 @@ class ReviewSymptomsActivity : BaseActivity() {
         const val EXTRA_QUESTIONS = "EXTRA_QUESTIONS"
         const val EXTRA_RISK_THRESHOLD = "EXTRA_RISK_THRESHOLD"
         const val EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS = "EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS"
+        const val EXTRA_IS_SYMPTOMATIC_SELF_ISOLATION_FOR_WALES_ENABLED = "EXTRA_IS_SYMPTOMATIC_SELF_ISOLATION_FOR_WALES_ENABLED"
         const val SELECTED_DATE_FORMAT = "d MMM yyyy"
     }
 }

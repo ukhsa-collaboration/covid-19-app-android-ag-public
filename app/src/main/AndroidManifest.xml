@@ -234,9 +234,6 @@
             android:name=".exposure.questionnaire.ExposureNotificationVaccinationStatusActivity"
             android:label="@string/exposure_notification_vaccination_status_title" />
         <activity
-            android:name=".questionnaire.NewNoSymptomsActivity"
-            android:label="@string/new_no_symptoms_title" />
-        <activity
             android:name=".exposure.encounter.RiskyContactIsolationAdviceActivity"
             android:label="@string/empty_accessibility_announcement" />
         <activity

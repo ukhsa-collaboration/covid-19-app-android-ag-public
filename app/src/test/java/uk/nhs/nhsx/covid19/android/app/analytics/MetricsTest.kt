@@ -166,42 +166,6 @@ class MetricsTest {
         }
 
     @Test
-    fun `add receivedVoidLFDTestResultViaPolling on assisted test for events in same analytics window`() =
-        runBlocking {
-            `test aggregation of analytics metrics`(
-                ResultReceived(VOID, RAPID_RESULT, INSIDE_APP),
-                Metrics().copy(receivedVoidLFDTestResultViaPolling = expectedLogEventCount)
-            )
-        }
-
-    @Test
-    fun `add receivedPositiveLFDTestResultViaPolling on assisted test for events in same analytics window`() =
-        runBlocking {
-            `test aggregation of analytics metrics`(
-                ResultReceived(POSITIVE, RAPID_RESULT, INSIDE_APP),
-                Metrics().copy(receivedPositiveLFDTestResultViaPolling = expectedLogEventCount)
-            )
-        }
-
-    @Test
-    fun `add receivedNegativeLFDTestResultViaPolling on assisted test for events in same analytics window`() =
-        runBlocking {
-            `test aggregation of analytics metrics`(
-                ResultReceived(NEGATIVE, RAPID_RESULT, INSIDE_APP),
-                Metrics().copy(receivedNegativeLFDTestResultViaPolling = expectedLogEventCount)
-            )
-        }
-
-    @Test
-    fun `add receivedVoidLFDTestResultEnteredManually on assisted test for events in same analytics window`() =
-        runBlocking {
-            `test aggregation of analytics metrics`(
-                ResultReceived(VOID, RAPID_RESULT, OUTSIDE_APP),
-                Metrics().copy(receivedVoidLFDTestResultEnteredManually = expectedLogEventCount)
-            )
-        }
-
-    @Test
     fun `add receivedPositiveLFDTestResultEnteredManually on assisted test for events in same analytics window`() =
         runBlocking {
             `test aggregation of analytics metrics`(
@@ -216,15 +180,6 @@ class MetricsTest {
             `test aggregation of analytics metrics`(
                 ResultReceived(POSITIVE, RAPID_SELF_REPORTED, OUTSIDE_APP),
                 Metrics().copy(receivedPositiveSelfRapidTestResultEnteredManually = expectedLogEventCount)
-            )
-        }
-
-    @Test
-    fun `add receivedNegativeLFDTestResultEnteredManually on assisted test for events in same analytics window`() =
-        runBlocking {
-            `test aggregation of analytics metrics`(
-                ResultReceived(NEGATIVE, RAPID_RESULT, OUTSIDE_APP),
-                Metrics().copy(receivedNegativeLFDTestResultEnteredManually = expectedLogEventCount)
             )
         }
 

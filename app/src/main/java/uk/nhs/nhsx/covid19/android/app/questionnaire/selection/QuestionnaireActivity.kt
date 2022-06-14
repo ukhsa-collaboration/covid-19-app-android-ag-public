@@ -16,16 +16,15 @@ import uk.nhs.nhsx.covid19.android.app.common.Lce.Loading
 import uk.nhs.nhsx.covid19.android.app.common.Lce.Success
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivityQuestionnaireBinding
-import uk.nhs.nhsx.covid19.android.app.questionnaire.NewNoSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity.Companion.EXTRA_IS_SYMPTOMATIC_SELF_ISOLATION_FOR_WALES_ENABLED
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity.Companion.EXTRA_RISK_THRESHOLD
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity.Companion.EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.AdviceScreen
-import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.NewNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.NavigationTarget.ReviewSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.adapter.QuestionnaireViewAdapter
 import uk.nhs.nhsx.covid19.android.app.startActivity
@@ -91,9 +90,6 @@ class QuestionnaireActivity : BaseActivity() {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         }
                     }
-                NewNoSymptoms -> startActivity<NewNoSymptomsActivity> {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                }
             }
         }
     }
@@ -112,6 +108,10 @@ class QuestionnaireActivity : BaseActivity() {
             putExtra(
                 EXTRA_SYMPTOMS_ONSET_WINDOW_DAYS,
                 reviewSymptomsNavigationTarget.symptomsOnsetWindowDays
+            )
+            putExtra(
+                EXTRA_IS_SYMPTOMATIC_SELF_ISOLATION_FOR_WALES_ENABLED,
+                reviewSymptomsNavigationTarget.isSymptomaticSelfIsolationForWalesEnabled
             )
         }
 

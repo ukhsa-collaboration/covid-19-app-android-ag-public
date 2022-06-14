@@ -5,9 +5,9 @@ import uk.nhs.nhsx.covid19.android.app.util.SharedPrefsDelegate.Companion.with
 import javax.inject.Inject
 
 class NewFunctionalityLabelProvider @Inject constructor(sharedPreferences: SharedPreferences) {
-    private val prefs = sharedPreferences.with<Boolean>(VALUE_KEY_REPORT_SYMPTOMS)
+    private val reportSymptomsNewLabelPrefs = sharedPreferences.with<Boolean>(VALUE_KEY_REPORT_SYMPTOMS)
 
-    private var _hasSeenReportSymptomsNewLabel: Boolean? by prefs
+    private var _hasSeenReportSymptomsNewLabel: Boolean? by reportSymptomsNewLabelPrefs
 
     var hasSeenReportSymptomsNewLabel: Boolean
     get() = _hasSeenReportSymptomsNewLabel ?: false
@@ -16,6 +16,7 @@ class NewFunctionalityLabelProvider @Inject constructor(sharedPreferences: Share
         }
 
     companion object {
+        @Deprecated("Only used in version 4.29")
         private const val VALUE_KEY_REPORT_SYMPTOMS = "REPORT_SYMPTOMS_NEW_LABEL_ENABLED"
     }
 }
