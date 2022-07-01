@@ -6,6 +6,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
@@ -59,8 +60,14 @@ class ReviewSymptomsViewModelTest {
         symptomsOnsetWindowDays = symptomsOnsetWindowDays,
         showOnsetDatePicker = false,
         datePickerSelection = fixedClock.millis(),
-        isSymptomaticSelfIsolationForWalesEnabled = false
+        isSymptomaticSelfIsolationForWalesEnabled = false,
+        country = WALES
     )
+
+    @Before
+    fun setup() {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+    }
 
     @Test
     fun `when initialized contain the correct view state`() {
@@ -140,14 +147,48 @@ class ReviewSymptomsViewModelTest {
     }
 
     @Test
-    fun `onButtonConfirmedClicked but date is not stated`() {
+    fun `onButtonConfirmedClicked when date is not stated should display error England`() {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
         val testSubject = createTestSubject()
 
         testSubject.viewState().observeForever(viewStateObserver)
 
         testSubject.onButtonConfirmedClicked()
 
-        verify { viewStateObserver.onChanged(defaultViewState.copy(showOnsetDateError = true)) }
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showOnsetDateError = true, country = ENGLAND)) }
+    }
+
+    @Test
+    fun `onButtonConfirmedClicked when date is not stated and not isSymptomaticSelfIsolationForWalesEnabled should not display error Wales`() {
+        val testSubject = createTestSubject()
+
+        testSubject.viewState().observeForever(viewStateObserver)
+
+        testSubject.onButtonConfirmedClicked()
+
+        verify { viewStateObserver.onChanged(defaultViewState.copy(showOnsetDateError = false)) }
+    }
+
+    @Test
+    fun `onButtonConfirmedClicked when date is not stated and isSymptomaticSelfIsolationForWalesEnabled should display error Wales`() {
+        val testSubject = createTestSubject()
+
+        testSubject.viewState.value = testSubject.viewState.value?.copy(
+            isSymptomaticSelfIsolationForWalesEnabled = true
+        )
+
+        testSubject.viewState().observeForever(viewStateObserver)
+
+        testSubject.onButtonConfirmedClicked()
+
+        verify {
+            viewStateObserver.onChanged(
+                defaultViewState.copy(
+                    showOnsetDateError = true,
+                    isSymptomaticSelfIsolationForWalesEnabled = true
+                )
+            )
+        }
     }
 
     @Test
@@ -159,7 +200,7 @@ class ReviewSymptomsViewModelTest {
 
         val onsetDate = ExplicitDate(LocalDate.parse("2020-05-21"))
         testSubject.viewState.value =
-            testSubject.viewState.value?.copy(onsetDate = onsetDate, showOnsetDateError = true)
+            testSubject.viewState.value?.copy(onsetDate = onsetDate, showOnsetDateError = true, country = ENGLAND)
 
         val expectedIsolationSymptomsAdvice = mockk<IsolationSymptomAdvice>()
 
@@ -176,13 +217,12 @@ class ReviewSymptomsViewModelTest {
     }
 
     @Test
-    fun `onButtonConfirmedClicked and onset date is selected does not update view state and emits correct navigation event Wales`() {
-        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+    fun `onButtonConfirmedClicked and onset date is not selected does not update view state and emits correct navigation event Wales`() {
         val testSubject = createTestSubject()
 
         testSubject.navigateToSymptomAdviceScreen().observeForever(navigateToSymptomsAdviceScreenObserver)
 
-        val onsetDate = ExplicitDate(LocalDate.parse("2020-05-21"))
+        val onsetDate = NotStated
         testSubject.viewState.value =
             testSubject.viewState.value?.copy(onsetDate = onsetDate, showOnsetDateError = true)
 

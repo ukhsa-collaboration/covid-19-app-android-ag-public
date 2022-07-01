@@ -104,12 +104,12 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {
             // Now in isolation due to self-diagnosis
-            assertEquals(1, Metrics::completedQuestionnaireAndStartedIsolation)
+            assertNull(Metrics::completedQuestionnaireAndStartedIsolation)
             assertEquals(1, Metrics::startedIsolation)
             assertEquals(1, Metrics::launchedTestOrdering)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
         }
 
         if (shouldConsentToKeySharing) {
@@ -134,7 +134,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
             }
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
             assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
@@ -151,7 +151,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
             // Still in isolation
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
             if (!shouldConsentToKeySharing || !keySharingSucceeds) {
@@ -164,7 +164,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
             // Still in isolation
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
         }
@@ -223,12 +223,12 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {
             // Now in isolation due to self-diagnosis
-            assertEquals(1, Metrics::completedQuestionnaireAndStartedIsolation)
+            assertNull(Metrics::completedQuestionnaireAndStartedIsolation)
             assertEquals(1, Metrics::startedIsolation)
             assertEquals(1, Metrics::launchedTestOrdering)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
         }
 
         // Receive negative test result via polling
@@ -246,7 +246,7 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
             }
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertLessThanTotalBackgroundTasks(Metrics::isIsolatingBackgroundTick)
-            assertLessThanTotalBackgroundTasks(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
         }
 
         // Original reason for isolation stored until 17th
@@ -293,12 +293,12 @@ class PollingTestResultAnalyticsTest : AnalyticsTest() {
         selfDiagnosis.selfDiagnosePositiveAndOrderTest(receiveResultImmediately = false)
 
         assertOnFields {
-            assertEquals(1, Metrics::completedQuestionnaireAndStartedIsolation)
+            assertNull(Metrics::completedQuestionnaireAndStartedIsolation)
             assertEquals(1, Metrics::startedIsolation)
             assertEquals(1, Metrics::launchedTestOrdering)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
         }
 
         pollingTestResult.receiveAndAcknowledgeVoidTestResult(

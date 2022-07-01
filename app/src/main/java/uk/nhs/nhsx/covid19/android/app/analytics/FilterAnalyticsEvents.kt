@@ -2,6 +2,9 @@ package uk.nhs.nhsx.covid19.android.app.analytics
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.IS_ISOLATING_FOR_SELF_DIAGNOSED_BACKGROUND_TICK
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,8 +46,12 @@ class FilterAnalyticsEvents @Inject constructor(
                 metrics.receivedRiskyVenueM1Warning = null
             }
 
-            enabledCustomAnalyticsFilters.forEach { _ ->
-                // Handle any additional custom metrics filtering here
+            enabledCustomAnalyticsFilters.forEach { customFilter ->
+                when (customFilter) {
+                    DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY -> metrics.didAskForSymptomsOnPositiveTestEntry = null
+                    IS_ISOLATING_FOR_SELF_DIAGNOSED_BACKGROUND_TICK -> metrics.isIsolatingForSelfDiagnosedBackgroundTick = null
+                    COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION -> metrics.completedQuestionnaireAndStartedIsolation = null
+                }
             }
         }
         return metrics
@@ -58,4 +65,8 @@ data class AnalyticsFilter(
     val enabledCustomAnalyticsFilters: List<CustomAnalyticsFilter>
 )
 
-enum class CustomAnalyticsFilter
+enum class CustomAnalyticsFilter {
+    DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY,
+    IS_ISOLATING_FOR_SELF_DIAGNOSED_BACKGROUND_TICK,
+    COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
+}

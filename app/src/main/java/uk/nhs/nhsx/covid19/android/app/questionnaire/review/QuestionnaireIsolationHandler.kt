@@ -3,7 +3,6 @@ package uk.nhs.nhsx.covid19.android.app.questionnaire.review
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireButDidNotStartIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
@@ -23,7 +22,6 @@ import uk.nhs.nhsx.covid19.android.app.state.GetLatestConfiguration
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.state.OnPositiveSelfAssessment
-import java.lang.IllegalStateException
 import java.lang.Long
 import java.time.Clock
 import java.time.LocalDate
@@ -60,17 +58,8 @@ class QuestionnaireIsolationHandler @Inject constructor(
         symptomsSelectionOutcome: SymptomsSelectionOutcome,
         onsetDate: SelectedDate
     ): SymptomAdvice {
-        var hadCardinalSymptoms = false
-        when (symptomsSelectionOutcome) {
-            CardinalSymptomsSelected -> {
-                hadCardinalSymptoms = true
-            }
-            OnlyNonCardinalSymptomsSelected -> {
-                analyticsEventProcessor.track(CompletedQuestionnaireButDidNotStartIsolation)
-            }
-            NoSymptomsSelected -> {
-            }
-        }
+        val hadCardinalSymptoms = (symptomsSelectionOutcome == CardinalSymptomsSelected)
+
         val isolationState = isolationStateMachine.readLogicalState()
 
         val isInActiveIsolation = isolationState.isActiveIsolation(clock)
@@ -82,8 +71,7 @@ class QuestionnaireIsolationHandler @Inject constructor(
             hadCardinalSymptoms -> {
                 val startDate: LocalDate =
                     when (onsetDate) {
-                        NotStated -> { throw IllegalStateException("Explicit date was not given or cannot remember box was not ticked") }
-                        CannotRememberDate -> LocalDate.now(clock)
+                        CannotRememberDate, NotStated -> LocalDate.now(clock)
                         is ExplicitDate -> onsetDate.date
                     }
                 val expiryDate = startDate.plusDays(getLatestConfiguration().indexCaseSinceSelfDiagnosisOnset.toLong())
@@ -115,11 +103,7 @@ class QuestionnaireIsolationHandler @Inject constructor(
                 isolationStateMachine.processEvent(OnPositiveSelfAssessment(onsetDate))
                 analyticsEventProcessor.track(CompletedQuestionnaireAndStartedIsolation)
             }
-            OnlyNonCardinalSymptomsSelected -> {
-                analyticsEventProcessor.track(CompletedQuestionnaireButDidNotStartIsolation)
-            }
-            NoSymptomsSelected -> {
-            }
+            NoSymptomsSelected, OnlyNonCardinalSymptomsSelected -> {}
         }
 
         val isolationState = isolationStateMachine.readLogicalState()

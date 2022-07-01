@@ -345,8 +345,6 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(country = WALES)
 
-        testResultRobot.checkExposureLinkIsDisplayed()
-
         testResultRobot.checkIsolationActionButtonShowsContinue()
 
         testResultRobot.clickIsolationActionButton()
@@ -435,7 +433,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         testResultRobot.checkActivityDisplaysVoidWillBeInIsolation()
         testResultRobot.checkExposureLinkIsNotDisplayed()
-        testResultRobot.checkIsolationActionButtonShowsBookFreeTest()
+        testResultRobot.checkIsolationActionButtonShowsBackHome()
 
         testResultRobot.clickIsolationActionButton()
 
@@ -489,7 +487,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         testResultRobot.checkActivityDisplaysVoidNotInIsolation()
 
-        testResultRobot.checkGoodNewsActionButtonShowsOrderFreeTest()
+        testResultRobot.checkGoodNewsActionButtonShowsBackHome()
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -523,30 +521,24 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
     }
 
     @Test
-    fun onActivityResultTestOrderingOk_navigateToStatus() {
-        runWithIntents {
-            testAppContext.setState(isolationHelper.contact().asIsolation())
+    fun onVoidTestResultConfirmAction_finish() {
+        testAppContext.setState(isolationHelper.contact().asIsolation())
 
-            testAppContext.getUnacknowledgedTestResultsProvider().add(
-                ReceivedTestResult(
-                    diagnosisKeySubmissionToken = "a",
-                    testEndDate = Instant.now(),
-                    testResult = VOID,
-                    testKitType = LAB_RESULT,
-                    diagnosisKeySubmissionSupported = false,
-                    requiresConfirmatoryTest = false
-                )
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a",
+                testEndDate = Instant.now(),
+                testResult = VOID,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = false,
+                requiresConfirmatoryTest = false
             )
+        )
 
-            val result = Instrumentation.ActivityResult(Activity.RESULT_OK, Intent())
-            intending(hasComponent(TestOrderingActivity::class.qualifiedName))
-                .respondWith(result)
+        val activity = startTestActivity<TestResultActivity>()
+        testResultRobot.clickIsolationActionButton()
 
-            startTestActivity<TestResultActivity>()
-            testResultRobot.clickIsolationActionButton()
-
-            waitFor { statusRobot.checkActivityIsDisplayed() }
-        }
+        waitFor { assertTrue(activity!!.isDestroyed) }
     }
 
     @Test
@@ -648,6 +640,32 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
         testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(country = ENGLAND)
 
         testResultRobot.checkExposureLinkIsDisplayed()
+
+        testResultRobot.checkIsolationActionButtonShowsContinue()
+
+        testResultRobot.clickIsolationActionButton()
+    }
+
+    @Test
+    fun showSelfIsolateScreenWhenReceivingPositiveConfirmatoryTestResultWales() {
+        givenLocalAuthorityIsInWales()
+
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a2",
+                testEndDate = Instant.now(),
+                testResult = POSITIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
+            )
+        )
+
+        startTestActivity<TestResultActivity>()
+
+        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(country = WALES)
+
+        testResultRobot.checkExposureLinkIsNotDisplayed()
 
         testResultRobot.checkIsolationActionButtonShowsContinue()
 

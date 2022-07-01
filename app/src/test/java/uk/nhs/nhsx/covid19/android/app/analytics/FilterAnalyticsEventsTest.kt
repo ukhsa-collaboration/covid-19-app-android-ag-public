@@ -4,6 +4,9 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.IS_ISOLATING_FOR_SELF_DIAGNOSED_BACKGROUND_TICK
 import uk.nhs.nhsx.covid19.android.app.remote.data.Metrics
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -98,10 +101,18 @@ class FilterAnalyticsEventsTest {
 
     @Test
     fun `given custom filter has values should null metrics`() = runBlocking {
-        val expectedResult = metrics.copy()
+        val expectedResult = metrics.copy(
+            didAskForSymptomsOnPositiveTestEntry = null,
+            isIsolatingForSelfDiagnosedBackgroundTick = null,
+            completedQuestionnaireAndStartedIsolation = null
+        )
 
         coEvery { analyticsFilterProvider.invoke() } returns analyticsFilter.copy(
-            enabledCustomAnalyticsFilters = listOf()
+            enabledCustomAnalyticsFilters = listOf(
+                DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY,
+                IS_ISOLATING_FOR_SELF_DIAGNOSED_BACKGROUND_TICK,
+                COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
+            )
         )
 
         val result = testSubject.invoke(metrics = metrics)

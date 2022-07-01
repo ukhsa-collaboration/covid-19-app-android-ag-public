@@ -6,6 +6,8 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.FollowUpTest
 import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.NoTest
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidNotInIsolation
+import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidWillBeInIsolation
 import javax.inject.Inject
 
 class TestResultViewModel @Inject constructor(
@@ -32,7 +34,15 @@ class TestResultViewModel @Inject constructor(
                 NavigationEvent.NavigateToShareKeys(bookFollowUpTest = completionActions.suggestBookTest == FollowUpTest)
             }
             completionActions?.suggestBookTest != NoTest -> {
-                NavigationEvent.NavigateToOrderTest
+                val shouldFinish = viewState.value?.mainState in listOf(
+                    VoidNotInIsolation,
+                    VoidWillBeInIsolation,
+                )
+                if (shouldFinish) {
+                    NavigationEvent.Finish
+                } else {
+                    NavigationEvent.NavigateToOrderTest
+                }
             }
             else -> {
                 NavigationEvent.Finish

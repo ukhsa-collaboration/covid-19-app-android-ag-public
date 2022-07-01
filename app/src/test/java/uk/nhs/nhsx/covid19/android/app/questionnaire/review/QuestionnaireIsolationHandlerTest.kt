@@ -7,7 +7,6 @@ import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
-import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireButDidNotStartIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.TranslatableString
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsDidUpdateIsolation
@@ -115,7 +114,6 @@ class QuestionnaireIsolationHandlerTest {
 
         val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = true)
 
-        verify { analyticsEventProcessor.track(CompletedQuestionnaireButDidNotStartIsolation) }
         assertEquals(NoSymptoms, symptomAdvice)
     }
 
@@ -166,7 +164,6 @@ class QuestionnaireIsolationHandlerTest {
 
         val symptomAdvice = testSubject.computeAdvice(riskThreshold, selectedSymptoms, onsetDate, isSymptomaticSelfIsolationEnabled = false)
 
-        verify { analyticsEventProcessor.track(CompletedQuestionnaireButDidNotStartIsolation) }
         assertEquals(NoSymptoms, symptomAdvice)
     }
 

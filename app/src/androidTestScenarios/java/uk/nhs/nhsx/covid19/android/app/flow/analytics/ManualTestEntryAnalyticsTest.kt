@@ -306,13 +306,13 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertEquals(1, receivedPositiveTestResultEnteredManuallyMetric)
             assertEquals(1, Metrics::startedIsolation)
             if (symptomsAndOnsetFlowConfiguration != null) {
-                assertEquals(1, Metrics::didAskForSymptomsOnPositiveTestEntry)
+                assertNull(Metrics::didAskForSymptomsOnPositiveTestEntry)
                 if (symptomsAndOnsetFlowConfiguration.didHaveSymptoms) {
                     assertEquals(1, Metrics::didHaveSymptomsBeforeReceivedTestResult)
                 }
                 if (symptomsAndOnsetFlowConfiguration.didRememberOnsetSymptomsDate) {
                     assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-                    assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+                    assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
                     assertEquals(1, Metrics::didRememberOnsetSymptomsDateBeforeReceivedTestResult)
                 }
             }
@@ -343,7 +343,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             }
             if (symptomsAndOnsetFlowConfiguration?.didRememberOnsetSymptomsDate == true) {
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-                assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+                assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             }
         }
 
@@ -392,11 +392,11 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertEquals(1, receivedPositiveTestResultEnteredManuallyMetric)
             assertEquals(1, Metrics::startedIsolation)
             if (symptomsAndOnsetFlowConfiguration != null) {
-                assertEquals(1, Metrics::didAskForSymptomsOnPositiveTestEntry)
+                assertNull(Metrics::didAskForSymptomsOnPositiveTestEntry)
                 if (symptomsAndOnsetFlowConfiguration.didHaveSymptoms) {
                     assertEquals(1, Metrics::didHaveSymptomsBeforeReceivedTestResult)
                     assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
-                    assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+                    assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
                 }
                 if (symptomsAndOnsetFlowConfiguration.didRememberOnsetSymptomsDate) {
                     assertEquals(1, Metrics::didRememberOnsetSymptomsDateBeforeReceivedTestResult)
@@ -432,7 +432,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             if (symptomsAndOnsetFlowConfiguration?.didHaveSymptoms == true) {
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             }
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
         }
 
@@ -488,10 +488,10 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {
             // Now in isolation due to self-diagnosis
-            assertEquals(1, Metrics::completedQuestionnaireAndStartedIsolation)
+            assertNull(Metrics::completedQuestionnaireAndStartedIsolation)
             assertEquals(1, Metrics::startedIsolation)
             assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
         }
 
@@ -509,7 +509,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertEquals(1, Metrics::receivedPositiveTestResult)
             assertEquals(1, receivedPositiveTestResultEnteredManuallyMetric)
             assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
@@ -532,7 +532,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             if (requiresConfirmatoryTest) {
                 assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
@@ -591,10 +591,10 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {
             // Now in isolation due to self-diagnosis
-            assertEquals(1, Metrics::completedQuestionnaireAndStartedIsolation)
+            assertNull(Metrics::completedQuestionnaireAndStartedIsolation)
             assertEquals(1, Metrics::startedIsolation)
             assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
         }
 
@@ -615,7 +615,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
             assertEquals(1, Metrics::receivedPositiveTestResult)
             assertEquals(1, receivedPositiveTestResultEnteredManuallyMetric)
             assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(hasTestedPositiveBackgroundTickMetric)
@@ -632,7 +632,7 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(5..11) {
             // Still in isolation
             assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             assertPresent(isIsolatingForTestedPositiveBackgroundTickMetric)
             assertPresent(hasTestedPositiveBackgroundTickMetric)

@@ -271,7 +271,7 @@ class StatusRobot : HasActivity {
     fun checkIsolationViewHasCorrectContentDescriptionForWales(lastDayOfIsolation: LocalDate) {
         onView(withId(R.id.isolationView))
             .check(matches(withContentDescription(context.resources.getQuantityString(
-                R.plurals.isolation_view_accessibility_description,
+                R.plurals.isolation_view_accessibility_description_england,
                 6,
                 lastDayOfIsolation.uiFormat(context),
                 "6"

@@ -8,7 +8,6 @@ sealed class AnalyticsEvent {
     object QrCodeCheckIn : AnalyticsEvent()
     object CanceledCheckIn : AnalyticsEvent()
     object CompletedQuestionnaireAndStartedIsolation : AnalyticsEvent()
-    object CompletedQuestionnaireButDidNotStartIsolation : AnalyticsEvent()
     object BackgroundTaskCompletion : AnalyticsEvent()
     object PositiveResultReceived : AnalyticsEvent()
     object NegativeResultReceived : AnalyticsEvent()

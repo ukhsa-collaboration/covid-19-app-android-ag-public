@@ -10,6 +10,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
@@ -47,17 +48,20 @@ class ReviewSymptomsViewModel @AssistedInject constructor(
     fun navigateToSymptomAdviceScreen(): LiveData<SymptomAdvice> = navigateToSymptomAdviceScreen
 
     init {
-        viewState.postValue(
-            ViewState(
-                reviewSymptomItems = generateReviewSymptomItems(questions),
-                onsetDate = NotStated,
-                showOnsetDateError = false,
-                symptomsOnsetWindowDays = symptomsOnsetWindowDays,
-                showOnsetDatePicker = false,
-                datePickerSelection = clock.millis(),
-                isSymptomaticSelfIsolationForWalesEnabled = isSymptomaticSelfIsolationForWalesEnabled
+        viewModelScope.launch {
+            viewState.postValue(
+                ViewState(
+                    reviewSymptomItems = generateReviewSymptomItems(questions),
+                    onsetDate = NotStated,
+                    showOnsetDateError = false,
+                    symptomsOnsetWindowDays = symptomsOnsetWindowDays,
+                    showOnsetDatePicker = false,
+                    datePickerSelection = clock.millis(),
+                    isSymptomaticSelfIsolationForWalesEnabled = isSymptomaticSelfIsolationForWalesEnabled,
+                    country = localAuthorityPostCodeProvider.requirePostCodeDistrict()
+                )
             )
-        )
+        }
     }
 
     private fun generateReviewSymptomItems(questions: List<Question>): List<ReviewSymptomItem> {
@@ -105,18 +109,19 @@ class ReviewSymptomsViewModel @AssistedInject constructor(
 
     fun onButtonConfirmedClicked() {
         val currentState = viewState.value ?: return
-        if (currentState.onsetDate == NotStated) {
-            val newState = currentState.copy(showOnsetDateError = true)
-            viewState.postValue(newState)
-        } else {
-            viewModelScope.launch {
-                val isSymptomaticSelfIsolationEnabled =
-                    when (localAuthorityPostCodeProvider.requirePostCodeDistrict()) {
-                        ENGLAND -> true
-                        WALES -> isSymptomaticSelfIsolationForWalesEnabled
-                        else -> throw IllegalStateException("Current local authority is not present")
-                    }
 
+        viewModelScope.launch {
+            val isSymptomaticSelfIsolationEnabled =
+                when (localAuthorityPostCodeProvider.requirePostCodeDistrict()) {
+                    ENGLAND -> true
+                    WALES -> currentState.isSymptomaticSelfIsolationForWalesEnabled
+                    else -> throw IllegalStateException("Current local authority is not present")
+                }
+
+            if (currentState.onsetDate == NotStated && isSymptomaticSelfIsolationEnabled) {
+                val newState = currentState.copy(showOnsetDateError = true)
+                viewState.postValue(newState)
+            } else {
                 val symptomAdvice = questionnaireIsolationHandler.computeAdvice(
                     riskThreshold = riskThreshold,
                     selectedSymptoms = getSelectedSymptoms(),
@@ -154,7 +159,8 @@ class ReviewSymptomsViewModel @AssistedInject constructor(
         val symptomsOnsetWindowDays: Int,
         val showOnsetDatePicker: Boolean,
         val datePickerSelection: Long,
-        val isSymptomaticSelfIsolationForWalesEnabled: Boolean
+        val isSymptomaticSelfIsolationForWalesEnabled: Boolean,
+        val country: PostCodeDistrict
     )
 
     @AssistedFactory

@@ -278,7 +278,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         testResultRobot.clickIsolationActionButton()
 
-        orderTest(negativeTestResultToken)
+        orderTestFromStatusActivity(negativeTestResultToken)
 
         isolationChecker.assertActiveIndexNoContact()
 

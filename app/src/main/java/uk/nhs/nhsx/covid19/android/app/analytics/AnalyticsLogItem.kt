@@ -35,8 +35,9 @@ enum class RegularAnalyticsEventType(
         it.acknowledgedStartOfIsolationDueToRiskyContact?.inc() }),
     QR_CODE_CHECK_IN({ it.checkedIn++ }),
     CANCELED_CHECK_IN({ it.canceledCheckIn++ }),
-    COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION({ it.completedQuestionnaireAndStartedIsolation++ }),
-    COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION({ it.completedQuestionnaireButDidNotStartIsolation++ }),
+    COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION({
+        it.completedQuestionnaireAndStartedIsolation = it.completedQuestionnaireAndStartedIsolation?.inc()
+    }),
     POSITIVE_RESULT_RECEIVED({ it.receivedPositiveTestResult++ }),
     NEGATIVE_RESULT_RECEIVED({ it.receivedNegativeTestResult++ }),
     VOID_RESULT_RECEIVED({ it.receivedVoidTestResult++ }),
@@ -50,7 +51,7 @@ enum class RegularAnalyticsEventType(
     RECEIVED_UNCONFIRMED_POSITIVE_TEST_RESULT({ it.receivedUnconfirmedPositiveTestResult++ }),
     DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT({ it.didHaveSymptomsBeforeReceivedTestResult++ }),
     DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT({ it.didRememberOnsetSymptomsDateBeforeReceivedTestResult++ }),
-    DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY({ it.didAskForSymptomsOnPositiveTestEntry++ }),
+    DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY({ it.didAskForSymptomsOnPositiveTestEntry = it.didAskForSymptomsOnPositiveTestEntry?.inc() }),
     RECEIVED_RISKY_VENUE_M1_WARNING({ it.receivedRiskyVenueM1Warning = it.receivedRiskyVenueM1Warning?.inc() }),
     RECEIVED_RISKY_VENUE_M2_WARNING({ it.receivedRiskyVenueM2Warning = it.receivedRiskyVenueM2Warning?.inc() }),
     TOTAL_ALARM_MANAGER_BACKGROUND_TASKS({ it.totalAlarmManagerBackgroundTasks++ }),
@@ -114,7 +115,8 @@ data class BackgroundTaskTicks(
         metrics.isIsolatingBackgroundTick += isIsolatingBackgroundTick.toInt()
         metrics.isIsolatingForHadRiskyContactBackgroundTick = metrics.isIsolatingForHadRiskyContactBackgroundTick?.plus(
             isIsolatingForHadRiskyContactBackgroundTick.toInt())
-        metrics.isIsolatingForSelfDiagnosedBackgroundTick += isIsolatingForSelfDiagnosedBackgroundTick.toInt()
+        metrics.isIsolatingForSelfDiagnosedBackgroundTick =
+            metrics.isIsolatingForSelfDiagnosedBackgroundTick?.plus(isIsolatingForSelfDiagnosedBackgroundTick.toInt())
         metrics.isIsolatingForTestedPositiveBackgroundTick += isIsolatingForTestedPositiveBackgroundTick.toInt()
         metrics.isIsolatingForTestedLFDPositiveBackgroundTick += isIsolatingForTestedLFDPositiveBackgroundTick.toInt()
         metrics.isIsolatingForTestedSelfRapidPositiveBackgroundTick += isIsolatingForTestedSelfRapidPositiveBackgroundTick.toInt()

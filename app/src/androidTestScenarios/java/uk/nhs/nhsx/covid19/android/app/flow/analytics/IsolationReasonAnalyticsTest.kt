@@ -41,10 +41,10 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {
             // Now in isolation due to self-diagnosis
-            assertEquals(1, Metrics::completedQuestionnaireAndStartedIsolation)
+            assertNull(Metrics::completedQuestionnaireAndStartedIsolation)
             assertEquals(1, Metrics::startedIsolation)
             assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
         }
 
@@ -52,7 +52,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
         assertOnFieldsForDateRange(4..11) {
             // Still in isolation
             assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
         }
 
@@ -91,10 +91,10 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {
             // Not in isolation due to self-diagnosis
-            assertEquals(0, Metrics::completedQuestionnaireAndStartedIsolation)
+            assertNull(Metrics::completedQuestionnaireAndStartedIsolation)
             assertEquals(0, Metrics::startedIsolation)
             assertEquals(0, Metrics::isIsolatingBackgroundTick)
-            assertEquals(0, Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertEquals(0, Metrics::hasSelfDiagnosedBackgroundTick)
         }
     }

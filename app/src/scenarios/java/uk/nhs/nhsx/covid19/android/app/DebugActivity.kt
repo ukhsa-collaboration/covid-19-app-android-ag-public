@@ -106,6 +106,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.NoSymptomsActivity
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.PositiveSymptomsNoIsolationActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SymptomsAdviceIsolateActivity
@@ -546,6 +547,10 @@ class DebugActivity : AppCompatActivity() {
 
         addScreenButton("Questionnaire Review Symptoms") {
             startActivity(reviewSymptomsIntent)
+        }
+
+        addScreenButton("Positive Symptoms No Isolation") {
+            startActivity<PositiveSymptomsNoIsolationActivity>()
         }
 
         addScreenButton("Questionnaire Isolation Advice - NoIndexCaseThenIsolationDueToSelfAssessment") {

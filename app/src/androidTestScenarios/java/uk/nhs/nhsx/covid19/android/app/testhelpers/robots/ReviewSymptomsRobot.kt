@@ -13,6 +13,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isNotChecked
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
+import org.hamcrest.Matchers
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomViewHolder
 import uk.nhs.nhsx.covid19.android.app.testhelpers.NestedScrollViewScrollToAction
@@ -65,6 +66,14 @@ class ReviewSymptomsRobot : HasActivity {
     fun checkDoNotRememberDateIsNotChecked() {
         onView(withId(R.id.checkboxNoDate))
             .check(matches(isNotChecked()))
+    }
+
+    fun checkDatePickerIsDisplayed() {
+        onView(withId(R.id.dateSelectionContainer)).check(matches(isDisplayed()))
+    }
+
+    fun checkDatePickerIsHidden() {
+        onView(withId(R.id.dateSelectionContainer)).check(matches(Matchers.not(isDisplayed())))
     }
 
     fun clickOnViewChild(viewId: Int) = object : ViewAction {

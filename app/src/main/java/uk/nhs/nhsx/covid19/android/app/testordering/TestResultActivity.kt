@@ -131,13 +131,18 @@ class TestResultActivity : BaseActivity() {
                 NegativeWillBeInIsolation
             )
 
+        val showBackToHomeIfNoBookTestAction = mainState in listOf(
+            VoidWillBeInIsolation, VoidNotInIsolation
+        )
+
         val actionButtonStringResource = when {
             acknowledgementCompletionActions.shouldAllowKeySubmission -> getButtonLabelWhenKeySubmissionIsAllowed(
                 mainState,
                 country
             )
+
             acknowledgementCompletionActions.suggestBookTest == FollowUpTest -> R.string.book_follow_up_test
-            acknowledgementCompletionActions.suggestBookTest == RegularTest -> R.string.book_free_test
+            acknowledgementCompletionActions.suggestBookTest == RegularTest -> if (showBackToHomeIfNoBookTestAction) R.string.void_test_results_primary_button_title else R.string.book_free_test
             acknowledgementCompletionActions.suggestBookTest == NoTest -> if (showBackToHomeIfNoSpecificAction) R.string.back_to_home else R.string.continue_button
             else -> R.string.back_to_home
         }
@@ -400,14 +405,13 @@ class TestResultActivity : BaseActivity() {
             showIsolationAdviceForEngland()
         } else {
             showIsolationState(
+                iconResource = R.drawable.ic_isolation_book_test,
                 remainingDaysInIsolation = remainingDaysInIsolation,
-                selfIsolationLabel = R.string.self_isolate_for,
-                stateText = R.string.state_test_positive_info,
-                exposureLinksVisible = true,
-                paragraphResources = intArrayOf(
-                    R.string.test_result_negative_then_positive_continue_explanation,
-                    R.string.exposure_faqs_title
-                )
+                selfIsolationLabel = R.string.try_to_stay_at_home_for_after_positive_test_wales,
+                stateText = R.string.infobox_after_positive_test_wales,
+                stateColor = R.color.amber,
+                exposureLinksVisible = false,
+                paragraphResources = intArrayOf(R.string.test_result_negative_then_positive_continue_explanation)
             )
         }
     }
@@ -441,7 +445,7 @@ class TestResultActivity : BaseActivity() {
         hasCloseToolbar: Boolean = false,
         hasGoodNewsLink: Boolean = true,
         @DrawableRes iconResource: Int? = R.drawable.ic_elbow_bump,
-        @StringRes titleStringResource: Int = R.string.expiration_notification_title,
+        @StringRes titleStringResource: Int = R.string.negative_test_result_good_news_title,
         @StringRes subtitleStringResource: Int,
         @StringRes goodNewsInfoViewResource: Int = R.string.test_result_no_self_isolation_description,
         @StringRes vararg paragraphResources: Int = intArrayOf(R.string.for_further_advice_visit)
@@ -478,13 +482,15 @@ class TestResultActivity : BaseActivity() {
 
     private fun showDoNotHaveToSelfIsolateScreenOnNegative() {
         showGoodNewsState(
-            subtitleStringResource = R.string.test_result_negative_no_self_isolation_subtitle_text
+            subtitleStringResource = R.string.test_result_negative_no_self_isolation_subtitle_text,
+            goodNewsInfoViewResource = R.string.negative_test_result_no_self_isolation_description
         )
     }
 
     private fun showAreNotIsolatingScreenOnNegative() {
         showGoodNewsState(
-            subtitleStringResource = R.string.test_result_negative_already_not_in_isolation_subtitle
+            subtitleStringResource = R.string.test_result_negative_already_not_in_isolation_subtitle,
+            goodNewsInfoViewResource = R.string.negative_test_result_no_self_isolation_description
         )
     }
 
@@ -492,7 +498,8 @@ class TestResultActivity : BaseActivity() {
         showGoodNewsState(
             hasCloseToolbar = true,
             titleStringResource = R.string.test_result_your_test_result,
-            subtitleStringResource = R.string.test_result_void_already_not_in_isolation_subtitle
+            subtitleStringResource = R.string.test_result_void_already_not_in_isolation_subtitle,
+            goodNewsInfoViewResource = R.string.void_test_result_no_self_isolation_warning
         )
     }
     //endregion

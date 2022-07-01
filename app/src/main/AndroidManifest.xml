@@ -260,10 +260,12 @@
         <activity
             android:name=".questionnaire.symptomchecker.SymptomCheckerAdviceActivity"
             android:label="@string/empty_accessibility_announcement" />
-
         <activity
             android:name=".questionnaire.symptomchecker.CheckYourAnswersActivity"
             android:label="@string/check_answers_heading" />
+        <activity
+            android:name=".questionnaire.review.PositiveSymptomsNoIsolationActivity"
+            android:label="@string/empty_accessibility_announcement" />
 
         <!-- Receivers -->
         <receiver

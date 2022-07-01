@@ -83,12 +83,15 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/dateSelectionContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_large"
                 android:layout_marginEnd="@dimen/vertical_margin"
                 android:layout_marginBottom="32dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <View
                     android:id="@+id/dateSelectionErrorBar"
@@ -153,9 +156,13 @@
                         android:text="@string/questionnaire_no_date"
                         android:textSize="16sp"
                         android:textStyle="normal" />
-
                 </LinearLayout>
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/buttonConfirmSymptoms"
@@ -164,7 +171,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/vertical_margin_large"
                 android:text="@string/questionnaire_confirm" />
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

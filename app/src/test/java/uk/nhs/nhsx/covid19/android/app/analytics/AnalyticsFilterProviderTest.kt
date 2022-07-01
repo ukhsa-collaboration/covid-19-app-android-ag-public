@@ -9,6 +9,9 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.IS_ISOLATING_FOR_SELF_DIAGNOSED_BACKGROUND_TICK
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
@@ -116,5 +119,18 @@ class AnalyticsFilterProviderTest {
         coRunWithFeature(feature = VENUE_CHECK_IN_BUTTON, enabled = true) {
             assert(testSubject.invoke().shouldFilterVenueCheckIn == expectedValue)
         }
+    }
+
+    @Test
+    fun `filter symptomatic questionnaire events`() = runBlocking {
+        coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns WALES
+
+        val expectedValue = listOf(
+            DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY,
+            IS_ISOLATING_FOR_SELF_DIAGNOSED_BACKGROUND_TICK,
+            COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
+        )
+
+        assert(testSubject.invoke().enabledCustomAnalyticsFilters == expectedValue)
     }
 }

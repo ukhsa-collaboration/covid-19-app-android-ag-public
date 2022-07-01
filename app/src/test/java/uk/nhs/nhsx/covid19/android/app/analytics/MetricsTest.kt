@@ -11,7 +11,6 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ACKNO
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ASKED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
-import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_REMINDER_SCREEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
@@ -217,15 +216,6 @@ class MetricsTest {
             `test aggregation of analytics metrics`(
                 Event(COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION),
                 Metrics().copy(completedQuestionnaireAndStartedIsolation = expectedLogEventCount)
-            )
-        }
-
-    @Test
-    fun `add completedQuestionnaireButDidNotStartIsolation for events in same analytics window`() =
-        runBlocking {
-            `test aggregation of analytics metrics`(
-                Event(COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION),
-                Metrics().copy(completedQuestionnaireButDidNotStartIsolation = expectedLogEventCount)
             )
         }
 

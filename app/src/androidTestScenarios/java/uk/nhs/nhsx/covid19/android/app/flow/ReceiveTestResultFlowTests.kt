@@ -111,7 +111,6 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysVoidWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
-        orderTest()
 
         isolationChecker.assertActiveIndexNoContact()
         checkNoRelevantTestResult()
@@ -238,7 +237,6 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysVoidWillBeInIsolation() }
 
         testResultRobot.clickIsolationActionButton()
-        orderTest()
 
         isolationChecker.assertActiveIndexNoContact()
         checkRelevantTestResultPreserved(previousTest)
@@ -649,7 +647,6 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
-        orderTest()
 
         isolationChecker.assertExpiredIndexNoContact()
         checkNoRelevantTestResult()
@@ -736,7 +733,6 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
-        orderTest()
 
         isolationChecker.assertExpiredIndexNoContact()
         checkRelevantTestResultPreserved(previousTest)
@@ -865,7 +861,6 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
-        orderTest()
 
         isolationChecker.assertExpiredIndexNoContact()
         checkRelevantTestResultPreserved(previousTest)
@@ -1001,7 +996,6 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
 
         testResultRobot.clickGoodNewsActionButton()
-        orderTest()
 
         isolationChecker.assertNeverIsolating()
         checkNoRelevantTestResult()

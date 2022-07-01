@@ -86,7 +86,7 @@ class RiskyContactIsolationOptOutRobot : HasActivity {
         checkAdvice(
             viewId = id.riskyContactAdviceTestingHub,
             text = context.getString(string.risky_contact_opt_out_advice_testing_hub_wales),
-            drawableRes = R.drawable.ic_testing_hub
+            drawableRes = R.drawable.ic_policy_default
         )
         checkAdvice(
             viewId = id.riskyContactAdviceWashHands,
@@ -118,7 +118,7 @@ class RiskyContactIsolationOptOutRobot : HasActivity {
         checkAdvice(
             viewId = id.riskyContactAdviceTestingHub,
             text = context.getString(string.risky_contact_opt_out_advice_testing_hub),
-            drawableRes = R.drawable.ic_testing_hub
+            drawableRes = R.drawable.ic_policy_default
         )
         checkAdvice(
             viewId = id.riskyContactAdviceWashHands,

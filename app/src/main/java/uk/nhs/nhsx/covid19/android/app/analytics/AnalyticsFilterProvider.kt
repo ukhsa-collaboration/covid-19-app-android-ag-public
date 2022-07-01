@@ -8,6 +8,9 @@ import com.jeroenmols.featureflag.framework.FeatureFlag.VENUE_CHECK_IN_BUTTON
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.IS_ISOLATING_FOR_SELF_DIAGNOSED_BACKGROUND_TICK
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
@@ -50,6 +53,10 @@ class AnalyticsFilterProvider @Inject constructor(private val localAuthorityPost
     }
 
     companion object {
-        private val CUSTOM_ANALYTICS_FILTERS = listOf<CustomAnalyticsFilter>()
+        private val CUSTOM_ANALYTICS_FILTERS = listOf(
+            DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY,
+            IS_ISOLATING_FOR_SELF_DIAGNOSED_BACKGROUND_TICK,
+            COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
+        )
     }
 }

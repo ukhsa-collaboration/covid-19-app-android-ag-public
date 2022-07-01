@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_elbow_bump" />
+                android:src="@drawable/ic_isolation_negative_or_finished" />
 
             <TextView
                 android:id="@+id/goodNewsTitle"
@@ -58,23 +58,7 @@
                 app:stateText="@string/expiration_temperature_hint" />
 
             <TextView
-                android:id="@+id/WalesTestAdvice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
-                />
-
-            <uk.nhs.nhsx.covid19.android.app.widgets.StateInfoView
-                android:id="@+id/continueIsolationIfPositiveView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:background="@color/surface_background"
-                app:stateColor="@color/amber"
-                app:stateText="@string/expiration_notification_callout_advice_after_isolation_ended_wales"
-                android:visibility="gone"/>
-
-            <TextView
+                android:id="@+id/expirationRecommendation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin"
@@ -102,24 +86,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/vertical_margin_large"
                 android:text="@string/back_to_home" />
-
-            <Button
-                android:id="@+id/covidGuidanceLinkButton"
-                style="@style/PrimaryButton.WithIcon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/expiration_notification_link_button_title_wales"
-                android:visibility="gone"/>
-
-            <Button
-                android:id="@+id/secondaryReturnToHomeScreenButton"
-                style="@style/TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/back_to_home_screen"
-                android:layout_marginBottom="@dimen/vertical_margin_small"
-                android:visibility="gone"/>
-
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

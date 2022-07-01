@@ -263,18 +263,17 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
             state = PositiveWillBeInIsolation,
             days = 6,
             hasCloseToolbar = false,
-            iconDrawableRes = R.drawable.ic_isolation_continue,
-            isolationRequestInfoStringResource = R.string.state_test_positive_info,
-            isolationRequestInfoColorResource = R.color.error_red,
-            title1 = R.string.self_isolate_for,
+            iconDrawableRes = R.drawable.ic_isolation_book_test,
+            isolationRequestInfoStringResource = R.string.infobox_after_positive_test_wales,
+            isolationRequestInfoColorResource = R.color.amber,
+            title1 = R.string.try_to_stay_at_home_for_after_positive_test_wales,
             title3Visible = false,
             actionButtonStringResource = R.string.continue_button,
-            exposureLinksVisible = true,
+            exposureLinksVisible = false,
             onlineServiceLinkText = R.string.nhs_111_online_service,
             onlineServiceLinkUrl = R.string.url_nhs_111_online,
             paragraphResources = intArrayOf(
-                R.string.test_result_negative_then_positive_continue_explanation,
-                R.string.exposure_faqs_title
+                R.string.test_result_negative_then_positive_continue_explanation
             )
         )
     }

@@ -11,7 +11,6 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
-import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
@@ -61,9 +60,6 @@ class MigrateMetricsLogStorageToLogStorageTest {
             analyticsLogStorage.add(AnalyticsLogEntry(instant, Event(CANCELED_CHECK_IN)))
             analyticsLogStorage.add(AnalyticsLogEntry(instant, Event(QR_CODE_CHECK_IN)))
             analyticsLogStorage.add(AnalyticsLogEntry(instant, Event(COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION)))
-            analyticsLogStorage.add(
-                AnalyticsLogEntry(instant, Event(COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION))
-            )
             analyticsLogStorage.add(
                 AnalyticsLogEntry(instant, UpdateNetworkStats(downloadedBytes = 25, uploadedBytes = 15))
             )
@@ -139,8 +135,6 @@ class MigrateMetricsLogStorageToLogStorageTest {
         private val completedOnboarding = logEntry.copy(metrics = Metrics(completedOnboarding = 1))
         private val completedQuestionnaireAndStartedIsolation =
             logEntry.copy(metrics = Metrics(completedQuestionnaireAndStartedIsolation = 1))
-        private val completedQuestionnaireButDidNotStartIsolation =
-            logEntry.copy(metrics = Metrics(completedQuestionnaireButDidNotStartIsolation = 1))
         private val networkStats =
             logEntry.copy(metrics = Metrics(cumulativeDownloadBytes = 25, cumulativeUploadBytes = 15))
         private val encounterDetectionPausedBackgroundTick =
@@ -181,7 +175,6 @@ class MigrateMetricsLogStorageToLogStorageTest {
             checkedIn,
             completedOnboarding,
             completedQuestionnaireAndStartedIsolation,
-            completedQuestionnaireButDidNotStartIsolation,
             networkStats,
             encounterDetectionPausedBackgroundTick,
             hasHadRiskyContactBackgroundTick,

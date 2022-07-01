@@ -71,11 +71,11 @@ class TestResultRobot(
             onView(withId(R.id.isolationRequestTitle3))
                 .check(matches(not(isDisplayed())))
         } else {
-            onView(withText(R.string.self_isolate_for))
+            onView(withText(R.string.try_to_stay_at_home_for_after_positive_test_wales))
                 .perform(scrollTo())
                 .check(matches(isDisplayed()))
 
-            onView(withText(R.string.state_test_positive_info))
+            onView(withText(R.string.infobox_after_positive_test_wales))
                 .check(matches(isDisplayed()))
 
             onView(withText(R.string.test_result_negative_then_positive_continue_explanation))
@@ -88,7 +88,7 @@ class TestResultRobot(
     }
 
     fun checkActivityDisplaysPositiveWillBeInIsolation(remainingDaysInIsolation: Int) {
-        onView(withText(R.string.self_isolate_for))
+        onView(withText(R.string.try_to_stay_at_home_for_after_positive_test_wales))
             .check(matches(isDisplayed()))
 
         val title2 = context.resources.getQuantityString(
@@ -99,7 +99,7 @@ class TestResultRobot(
         onView(withId(R.id.isolationRequestTitle2))
             .check(matches(withText(title2)))
 
-        onView(withText(R.string.state_test_positive_info))
+        onView(withText(R.string.infobox_after_positive_test_wales))
             .check(matches(isDisplayed()))
 
         onView(withText(R.string.test_result_negative_then_positive_continue_explanation))

@@ -17,7 +17,7 @@ class IsolationExpirationRobot : HasActivity {
     override val containerId: Int
         get() = R.id.isolationExpirationContainer
 
-    fun checkIsolationWillFinish(expiryDate: LocalDate) {
+    fun checkIsolationWillFinishEngland(expiryDate: LocalDate) {
         val willFinishText = context.getString(
             R.string.your_isolation_will_finish,
             expiryDate.minusDays(1).uiFormat(context)
@@ -28,10 +28,10 @@ class IsolationExpirationRobot : HasActivity {
             .check(matches(withText(willFinishText)))
     }
 
-    fun checkIsolationWillFinishWales(numberOfIsolationDays: Int) {
+    fun checkIsolationWillFinishWales(expiryDate: LocalDate) {
         val willFinishText = context.getString(
-            R.string.your_isolation_are_ending_soon_wales,
-            numberOfIsolationDays - 1
+            R.string.your_isolation_will_finish_wales,
+            expiryDate.minusDays(1).uiFormat(context)
         )
         onView(withId(R.id.expirationDescription))
             .perform(scrollTo())
@@ -39,7 +39,7 @@ class IsolationExpirationRobot : HasActivity {
             .check(matches(withText(willFinishText)))
     }
 
-    fun checkIsolationHasFinished(expiryDate: LocalDate) {
+    fun checkIsolationHasFinishedEngland(expiryDate: LocalDate) {
         val hasFinishedText = context.getString(
             R.string.expiration_notification_description_passed,
             expiryDate.minusDays(1).uiFormat(context)
@@ -51,10 +51,10 @@ class IsolationExpirationRobot : HasActivity {
             .check(matches(withText(hasFinishedText)))
     }
 
-    fun checkIsolationHasFinishedWales(numberOfIsolationDays: Int) {
+    fun checkIsolationHasFinishedWales(expiryDate: LocalDate) {
         val hasFinishedText = context.getString(
-            R.string.expiration_notification_description_passed_wales,
-            numberOfIsolationDays - 1
+            R.string.expiration_notification_description_passed,
+            expiryDate.minusDays(1).uiFormat(context)
         )
 
         onView(withId(R.id.expirationDescription))
@@ -76,16 +76,6 @@ class IsolationExpirationRobot : HasActivity {
 
     fun clickPrimaryBackToHomeButton() {
         onView(withId(R.id.primaryReturnToHomeScreenButton))
-            .perform(scrollTo(), click())
-    }
-
-    fun clickSecondaryBackToHomeButton() {
-        onView(withId(R.id.secondaryReturnToHomeScreenButton))
-            .perform(scrollTo(), click())
-    }
-
-    fun clickCovidGuidanceLinkButton() {
-        onView(withId(R.id.covidGuidanceLinkButton))
             .perform(scrollTo(), click())
     }
 }

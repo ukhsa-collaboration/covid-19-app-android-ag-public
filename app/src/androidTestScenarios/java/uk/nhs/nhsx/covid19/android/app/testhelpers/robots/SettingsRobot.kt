@@ -8,6 +8,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matchers.allOf
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.id
@@ -80,6 +81,11 @@ class SettingsRobot : HasActivity {
                     )
                 )
             )
+    }
+
+    fun venueHistorySettingIsHidden() {
+        onView(withId(R.id.venueHistoryOption))
+            .check(matches(not(isDisplayed())))
     }
 
     fun hasAnimationsSetting() {

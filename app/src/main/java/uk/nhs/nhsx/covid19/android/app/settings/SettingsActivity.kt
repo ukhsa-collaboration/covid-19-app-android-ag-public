@@ -5,6 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
+import com.jeroenmols.featureflag.framework.FeatureFlag.VENUE_CHECK_IN_BUTTON
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.about.VenueHistoryActivity
@@ -45,6 +48,7 @@ class SettingsActivity : BaseActivity() {
             upIndicator = R.drawable.ic_arrow_back_white
         )
 
+        binding.venueHistoryOption.isVisible = RuntimeBehavior.isFeatureEnabled(VENUE_CHECK_IN_BUTTON)
         setupViewModelListeners()
         setClickListeners()
         viewModel.loadSettings()

@@ -6,6 +6,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.Explici
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PositiveSymptomsNoIsolationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -21,6 +22,7 @@ class SelfDiagnosis(
     private val questionnaireRobot = QuestionnaireRobot()
     private val reviewSymptomsRobot = ReviewSymptomsRobot()
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
+    private val positiveSymptomsNoIsolationRobot = PositiveSymptomsNoIsolationRobot()
     private val orderTest = OrderTest(espressoTest)
 
     private fun selfDiagnosePositive(selectedDate: SelectedDate) {
@@ -63,7 +65,7 @@ class SelfDiagnosis(
         symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
     }
 
-    private fun selfDiagnosePositiveIsolationDisabled(selectedDate: SelectedDate) {
+    private fun selfDiagnosePositiveIsolationDisabled() {
         statusRobot.checkActivityIsDisplayed()
 
         val isContactCase = (espressoTest.testAppContext.getCurrentLogicalState() as? PossiblyIsolating)
@@ -80,15 +82,6 @@ class SelfDiagnosis(
 
         reviewSymptomsRobot.checkActivityIsDisplayed()
 
-        when (selectedDate) {
-            CannotRememberDate -> reviewSymptomsRobot.selectCannotRememberDate()
-            is ExplicitDate -> {
-                reviewSymptomsRobot.clickSelectDate()
-                reviewSymptomsRobot.selectDayOfMonth(selectedDate.date.dayOfMonth)
-            }
-            NotStated -> throw Exception("Self diagnosis onset date not stated")
-        }
-
         reviewSymptomsRobot.confirmSelection()
 
         val newState = espressoTest.testAppContext.getCurrentLogicalState()
@@ -98,7 +91,7 @@ class SelfDiagnosis(
             assertFalse(newState.remembersContactCase())
         }
 
-        symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
+        positiveSymptomsNoIsolationRobot.checkIsPositiveSymptomsNoIsolationTitleDisplayed()
     }
 
     fun selfDiagnosePositiveAndPressBack(selectedDate: SelectedDate = CannotRememberDate) {
@@ -107,9 +100,9 @@ class SelfDiagnosis(
         espressoTest.testAppContext.device.pressBack()
     }
 
-    fun selfDiagnosePositiveAndPressBackIsolationDisabled(selectedDate: SelectedDate = CannotRememberDate) {
+    fun selfDiagnosePositiveAndPressBackIsolationDisabled() {
         espressoTest.testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = false
-        selfDiagnosePositiveIsolationDisabled(selectedDate)
+        selfDiagnosePositiveIsolationDisabled()
         espressoTest.testAppContext.device.pressBack()
     }
 
@@ -118,7 +111,7 @@ class SelfDiagnosis(
         orderTest()
     }
 
-    fun selfDiagnosePositive(receiveResultImmediately: Boolean) {
+    private fun selfDiagnosePositive(receiveResultImmediately: Boolean) {
         espressoTest.testAppContext.virologyTestingApi.pollingTestResultHttpStatusCode =
             if (receiveResultImmediately) 200 else 204
 

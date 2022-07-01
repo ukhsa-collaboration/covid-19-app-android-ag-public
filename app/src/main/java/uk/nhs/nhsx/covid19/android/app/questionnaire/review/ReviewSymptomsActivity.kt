@@ -14,7 +14,10 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.assistedViewModel
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivityReviewSymptomsBinding
+import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
@@ -75,13 +78,22 @@ class ReviewSymptomsActivity : BaseActivity() {
             updateOnsetDatePicker(
                 viewState.showOnsetDatePicker,
                 viewState.symptomsOnsetWindowDays,
-                viewState.datePickerSelection
+                viewState.datePickerSelection,
+                viewState.isSymptomaticSelfIsolationForWalesEnabled,
+                viewState.country
             )
         }
 
         viewModel.navigateToSymptomAdviceScreen().observe(this) { symptomAdvice: SymptomAdvice ->
             if (symptomAdvice is IsolationSymptomAdvice) {
-                SymptomsAdviceIsolateActivity.start(this, symptomAdvice)
+                when (symptomAdvice) {
+                    is NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales -> {
+                        startActivity<PositiveSymptomsNoIsolationActivity> {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                    }
+                    else -> SymptomsAdviceIsolateActivity.start(this, symptomAdvice)
+                }
             } else {
                 startActivity<NoSymptomsActivity> {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -93,8 +105,17 @@ class ReviewSymptomsActivity : BaseActivity() {
     private fun updateOnsetDatePicker(
         showOnsetDatePicker: Boolean,
         symptomsOnsetWindowDays: Int,
-        datePickerSelection: Long
+        datePickerSelection: Long,
+        isSymptomaticSelfIsolationForWalesEnabled: Boolean,
+        country: PostCodeDistrict
     ) {
+        if (!isSymptomaticSelfIsolationForWalesEnabled && country == WALES) {
+            binding.dateSelectionContainer.gone()
+            return
+        } else {
+            binding.dateSelectionContainer.visible()
+        }
+
         if (!showOnsetDatePicker) {
             datePicker?.dismiss()
             return

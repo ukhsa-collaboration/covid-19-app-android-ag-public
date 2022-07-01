@@ -229,30 +229,41 @@ class RiskyContactIsolationAdviceActivity : BaseActivity() {
         }
 
     private fun handleAlreadyIsolating(days: Int, testingAdviceToShow: TestingAdviceToShow) = with(binding) {
-        riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_contact)
-        riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_continue_isolataion_for)
-        riskyContactIsolationAdviceRemainingDaysInIsolation.text =
-            resources.getQuantityString(R.plurals.state_isolation_days, days, days)
-        riskyContactIsolationAdviceStateInfoView.stateText =
-            getString(R.string.risky_contact_isolation_advice_already_isolating_information)
-
         adviceContainer.removeAllViews()
         if (testingAdviceToShow is WalesWithinAdviceWindow) {
-            addTestingAdviceWithDate(
-                R.string.contact_case_continue_isolation_list_item_testing_with_date,
-                testingAdviceToShow.date
-            )
-        }
-        addAdvice(
-            R.string.risky_contact_isolation_advice_already_isolating_stay_at_home_advice,
-            R.drawable.ic_stay_at_home
-        )
+            riskyContactIsolationAdviceTitle.setText(R.string.contact_case_continue_isolation_title_wls)
+            riskyContactIsolationAdviceRemainingDaysInIsolation.text =
+                resources.getQuantityString(R.plurals.state_isolation_days, days, days)
 
+            riskyContactIsolationAdviceStateInfoView.stateText =
+                getString(R.string.contact_case_continue_isolation_info_box_wls)
+
+            addAdvice(R.string.contact_case_continue_isolation_list_item_isolation_wls, R.drawable.ic_stay_at_home)
+
+            furtherAdviceTextView.setText(R.string.contact_case_continue_isolation_advice_wls)
+            nhsGuidanceLinkTextView.setText(R.string.contact_case_continue_isolation_link_title_wls)
+            primaryActionButton.setText(R.string.contact_case_continue_isolation_primary_button_title_wls)
+        } else {
+            riskyContactIsolationAdviceTitle.setText(R.string.risky_contact_isolation_advice_continue_isolataion_for)
+            riskyContactIsolationAdviceRemainingDaysInIsolation.text =
+                resources.getQuantityString(R.plurals.state_isolation_days, days, days)
+            riskyContactIsolationAdviceStateInfoView.stateText =
+                getString(R.string.risky_contact_isolation_advice_already_isolating_information)
+
+            addAdvice(
+                R.string.risky_contact_isolation_advice_already_isolating_stay_at_home_advice,
+                R.drawable.ic_stay_at_home
+            )
+            furtherAdviceTextView.setText(R.string.risky_contact_isolation_advice_further_nhs_guidance)
+            nhsGuidanceLinkTextView.setText(R.string.risky_contact_isolation_advice_nhs_guidance_link_text)
+            primaryActionButton.setText(R.string.risky_contact_isolation_advice_already_isolating_acknowledge_button_text)
+        }
+
+        riskyContactIsolationAdviceIcon.setImageResource(R.drawable.ic_isolation_contact)
         riskyContactIsolationAdviceCommonQuestions.gone()
         furtherAdviceTextView.visible()
         nhsGuidanceLinkTextView.visible()
 
-        primaryActionButton.setText(R.string.risky_contact_isolation_advice_already_isolating_acknowledge_button_text)
         primaryActionButton.setOnSingleClickListener {
             viewModel.onBackToHomeClicked()
         }

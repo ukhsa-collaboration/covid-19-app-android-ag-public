@@ -176,7 +176,6 @@ class VenueAlertBookTestScenarioTest : EspressoTest(), LocalAuthoritySetupHelper
         questionnaireRobot.reviewSymptoms()
 
         waitFor { reviewSymptomsRobot.checkActivityIsDisplayed() }
-        reviewSymptomsRobot.selectCannotRememberDate()
         reviewSymptomsRobot.confirmSelection()
 
         waitFor { symptomsAdviceIsolateRobot.checkActivityIsDisplayed() }

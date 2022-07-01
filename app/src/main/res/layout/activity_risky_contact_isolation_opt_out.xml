@@ -61,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_medium"
-                app:drawable="@drawable/ic_testing_hub"
+                app:drawable="@drawable/ic_policy_default"
                 app:text="@string/risky_contact_opt_out_advice_testing_hub" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView

@@ -106,7 +106,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
         waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
 
-        waitFor { isolationExpirationRobot.checkIsolationWillFinish(expiryDate) }
+        waitFor { isolationExpirationRobot.checkIsolationWillFinishEngland(expiryDate) }
 
         isolationExpirationRobot.clickPrimaryBackToHomeButton()
 
@@ -125,7 +125,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
     }
 
     @Test
-    fun startIndexCase_dayBeforeIndexExpiresBefore9pm_doNotInform_after9m_inform_acknowledgeExpiration_indexExpires_notInIsolation_wales() {
+    fun startIndexCase_dayBeforeIndexExpires_before9pm_doNotInform_after9pm_inform_acknowledgeExpiration_indexExpires_notInIsolation_wales() {
         givenLocalAuthorityIsInWales()
         // Day before expiry, at 8pm
         testAppContext.clock.currentInstant = Instant.parse("2020-01-01T20:00:00Z")
@@ -148,9 +148,9 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
         isolationExpirationRobot.checkActivityIsDisplayed()
 
-        waitFor { isolationExpirationRobot.checkIsolationWillFinishWales(isolationConfiguration.indexCaseSinceTestResultEndDate) }
+        waitFor { isolationExpirationRobot.checkIsolationWillFinishWales(expiryDate) }
 
-        isolationExpirationRobot.clickSecondaryBackToHomeButton()
+        isolationExpirationRobot.clickPrimaryBackToHomeButton()
 
         statusRobot.checkActivityIsDisplayed()
 
@@ -167,43 +167,8 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
     }
 
     @Test
-    fun startIndexCase_dayBeforeIndexExpiresAfter9m_inform_clickCovidGuidanceLinkButton_backToStatus_wales() {
-        givenLocalAuthorityIsInWales()
-        // Day before expiry, at 9pm
-        testAppContext.clock.currentInstant = Instant.parse("2020-01-01T21:00:00Z")
-
-        val expiryDate = LocalDate.now(testAppContext.clock).plus(1, DAYS)
-        setIsolationWithExpiryDate(expiryDate, isolationConfiguration)
-
-        startTestActivity<StatusActivity>()
-
-        isolationChecker.assertActiveIndexNoContact()
-
-        isolationExpirationRobot.checkActivityIsDisplayed()
-
-        waitFor { isolationExpirationRobot.checkIsolationWillFinishWales(isolationConfiguration.indexCaseSinceTestResultEndDate) }
-
-        isolationExpirationRobot.clickCovidGuidanceLinkButton()
-
-        testAppContext.device.pressBack()
-
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-
-        testAppContext.device.pressBack()
-
-        // Day of expiry
-        testAppContext.clock.currentInstant = Instant.parse("2020-01-02T00:00:00Z")
-
-        waitFor { isolationChecker.assertExpiredIndexNoContact() }
-
-        startTestActivity<StatusActivity>()
-
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-    }
-
-    @Test
     @RetryFlakyTest
-    fun startIndexCase_indexExpires_acknowledgeExpiration_notInIsolation_england() {
+    fun startIndexCase_indexExpires_acknowledgeExpiration_notInIsolation() {
         givenLocalAuthorityIsInEngland()
         val expiryDate = LocalDate.now(testAppContext.clock)
         setIsolationWithExpiryDate(expiryDate, isolationConfiguration)
@@ -214,62 +179,9 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
         waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
 
-        waitFor { isolationExpirationRobot.checkIsolationHasFinished(expiryDate) }
+        waitFor { isolationExpirationRobot.checkIsolationHasFinishedEngland(expiryDate) }
 
         isolationExpirationRobot.clickPrimaryBackToHomeButton()
-
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-
-        testAppContext.device.pressBack()
-
-        startTestActivity<StatusActivity>()
-
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-    }
-
-    @Test
-    @RetryFlakyTest
-    fun startIndexCase_indexExpires_acknowledgeExpiration_notInIsolation_wales() {
-        givenLocalAuthorityIsInWales()
-        val expiryDate = LocalDate.now(testAppContext.clock)
-        setIsolationWithExpiryDate(expiryDate, isolationConfiguration)
-
-        startTestActivity<StatusActivity>()
-
-        waitFor { isolationChecker.assertExpiredIndexNoContact() }
-
-        waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
-
-        waitFor { isolationExpirationRobot.checkIsolationHasFinishedWales(isolationConfiguration.indexCaseSinceTestResultEndDate) }
-
-        isolationExpirationRobot.clickSecondaryBackToHomeButton()
-
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-
-        testAppContext.device.pressBack()
-
-        startTestActivity<StatusActivity>()
-
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-    }
-
-    @Test
-    fun startIndexCase_indexExpires_clickCovidGuidanceLinkButton_wales() {
-        givenLocalAuthorityIsInWales()
-        val expiryDate = LocalDate.now(testAppContext.clock)
-        setIsolationWithExpiryDate(expiryDate, isolationConfiguration)
-
-        startTestActivity<StatusActivity>()
-
-        waitFor { isolationChecker.assertExpiredIndexNoContact() }
-
-        waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
-
-        waitFor { isolationExpirationRobot.checkIsolationHasFinishedWales(isolationConfiguration.indexCaseSinceTestResultEndDate) }
-
-        isolationExpirationRobot.clickCovidGuidanceLinkButton()
-
-        testAppContext.device.pressBack()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
@@ -292,7 +204,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
         waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
 
-        waitFor { isolationExpirationRobot.checkIsolationHasFinished(expiryDate) }
+        waitFor { isolationExpirationRobot.checkIsolationHasFinishedEngland(expiryDate) }
 
         isolationExpirationRobot.clickPrimaryBackToHomeButton()
 
@@ -317,7 +229,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
         waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
 
-        waitFor { isolationExpirationRobot.checkIsolationHasFinished(expiryDate) }
+        waitFor { isolationExpirationRobot.checkIsolationHasFinishedWales(expiryDate) }
 
         isolationExpirationRobot.clickPrimaryBackToHomeButton()
 
@@ -345,7 +257,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
         waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
 
-        waitFor { isolationExpirationRobot.checkIsolationWillFinish(expiryDate) }
+        waitFor { isolationExpirationRobot.checkIsolationWillFinishWales(expiryDate) }
 
         isolationExpirationRobot.clickPrimaryBackToHomeButton()
 
@@ -378,7 +290,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
         waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
 
-        waitFor { isolationExpirationRobot.checkIsolationWillFinish(expiryDate) }
+        waitFor { isolationExpirationRobot.checkIsolationWillFinishEngland(expiryDate) }
 
         isolationExpirationRobot.clickPrimaryBackToHomeButton()
 
@@ -416,9 +328,9 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
         waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
 
-        waitFor { isolationExpirationRobot.checkIsolationHasFinishedWales(isolationConfiguration.indexCaseSinceTestResultEndDate) }
+        waitFor { isolationExpirationRobot.checkIsolationHasFinishedWales(expiryDateIndexCase) }
 
-        isolationExpirationRobot.clickSecondaryBackToHomeButton()
+        isolationExpirationRobot.clickPrimaryBackToHomeButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
 
@@ -448,7 +360,7 @@ class IsolationExpirationFlowTests : AnalyticsTest() {
 
         waitFor { isolationExpirationRobot.checkActivityIsDisplayed() }
 
-        waitFor { isolationExpirationRobot.checkIsolationHasFinished(expiryDateContactCase) }
+        waitFor { isolationExpirationRobot.checkIsolationHasFinishedWales(expiryDateContactCase) }
 
         isolationExpirationRobot.clickPrimaryBackToHomeButton()
 

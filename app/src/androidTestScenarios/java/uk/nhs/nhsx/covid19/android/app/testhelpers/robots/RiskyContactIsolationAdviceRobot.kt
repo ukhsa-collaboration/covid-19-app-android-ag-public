@@ -481,10 +481,6 @@ class RiskyContactIsolationAdviceRobot {
     }
 
     fun checkIsInAlreadyIsolatingViewState(remainingDaysInIsolation: Int, testingAdviceToShow: TestingAdviceToShow) {
-        onView(withId(R.id.riskyContactIsolationAdviceTitle))
-            .perform(scrollTo())
-            .check(matches(withText(R.string.risky_contact_isolation_advice_continue_isolataion_for)))
-
         val expectedDaysInIsolationText = context.resources.getQuantityString(
             R.plurals.state_isolation_days,
             remainingDaysInIsolation,
@@ -494,26 +490,12 @@ class RiskyContactIsolationAdviceRobot {
             .perform(scrollTo())
             .check(matches(withText(expectedDaysInIsolationText)))
 
-        onView(withId(R.id.riskyContactIsolationAdviceStateInfoView))
-            .perform(scrollTo())
-            .apply {
-                check(matches(withStateStringResource(R.string.risky_contact_isolation_advice_already_isolating_information)))
-                check(matches(withStateColor(R.color.amber)))
-            }
-        checkAdviceList {
-            if (testingAdviceToShow is WalesWithinAdviceWindow) {
-                val formattedDate = testingAdviceToShow.date.uiLongFormat(context)
-                val expectedString = context.getString(
-                    R.string.contact_case_continue_isolation_list_item_testing_with_date,
-                    formattedDate
-                )
-                checkAdvice(text = expectedString, drawableRes = R.drawable.ic_get_free_test)
-            }
-            checkAdvice(
-                stringResId = R.string.risky_contact_isolation_advice_already_isolating_stay_at_home_advice,
-                drawableRes = R.drawable.ic_stay_at_home
-            )
+        if (testingAdviceToShow is WalesWithinAdviceWindow) {
+            checkIsInAlreadyIsolatingViewStateWales()
+        } else {
+            checkIsInAlreadyIsolatingViewStateEngland()
         }
+
         onView(withId(R.id.riskyContactIsolationAdviceCommonQuestions))
             .check(matches(not(isDisplayed())))
         onView(withId(R.id.furtherAdviceTextView))
@@ -535,6 +517,45 @@ class RiskyContactIsolationAdviceRobot {
             )
         onView(withId(R.id.secondaryActionButton))
             .check(matches(withEffectiveVisibility(GONE)))
+    }
+
+    private fun checkIsInAlreadyIsolatingViewStateWales() {
+        onView(withId(R.id.riskyContactIsolationAdviceTitle))
+            .perform(scrollTo())
+            .check(matches(withText(R.string.contact_case_continue_isolation_title_wls)))
+
+        onView(withId(R.id.riskyContactIsolationAdviceStateInfoView))
+            .perform(scrollTo())
+            .apply {
+                check(matches(withStateStringResource(R.string.contact_case_continue_isolation_info_box_wls)))
+                check(matches(withStateColor(R.color.amber)))
+            }
+        checkAdviceList {
+            checkAdvice(
+                stringResId = R.string.contact_case_continue_isolation_list_item_isolation_wls,
+                drawableRes = R.drawable.ic_stay_at_home
+            )
+        }
+    }
+
+    private fun checkIsInAlreadyIsolatingViewStateEngland() {
+        checkAdviceList {
+            checkAdvice(
+                stringResId = R.string.risky_contact_isolation_advice_already_isolating_stay_at_home_advice,
+                drawableRes = R.drawable.ic_stay_at_home
+            )
+        }
+
+        onView(withId(R.id.riskyContactIsolationAdviceTitle))
+            .perform(scrollTo())
+            .check(matches(withText(R.string.risky_contact_isolation_advice_continue_isolataion_for)))
+
+        onView(withId(R.id.riskyContactIsolationAdviceStateInfoView))
+            .perform(scrollTo())
+            .apply {
+                check(matches(withStateStringResource(R.string.risky_contact_isolation_advice_already_isolating_information)))
+                check(matches(withStateColor(R.color.amber)))
+            }
     }
 
     private fun checkAdviceList(checks: AdviceChecker.() -> Unit) {

@@ -7,7 +7,6 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.ResultReceived
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsLogItem.UpdateNetworkStats
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
-import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.POSITIVE_RESULT_RECEIVED
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.QR_CODE_CHECK_IN
@@ -49,13 +48,8 @@ class MigrateMetricsLogStorageToLogStorage @Inject constructor(
         if (metrics.canceledCheckIn > 0) {
             analyticsLogStorage.add(AnalyticsLogEntry(instant, Event(CANCELED_CHECK_IN)))
         }
-        if (metrics.completedQuestionnaireAndStartedIsolation > 0) {
-            analyticsLogStorage.add(AnalyticsLogEntry(instant, Event(COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION)))
-        }
-        if (metrics.completedQuestionnaireButDidNotStartIsolation > 0) {
-            analyticsLogStorage.add(
-                AnalyticsLogEntry(instant, Event(COMPLETED_QUESTIONNAIRE_BUT_DID_NOT_START_ISOLATION))
-            )
+        metrics.completedQuestionnaireAndStartedIsolation?.let {
+            if (it > 0) analyticsLogStorage.add(AnalyticsLogEntry(instant, Event(COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION)))
         }
         if (metrics.receivedPositiveTestResult > 0) {
             analyticsLogStorage.add(AnalyticsLogEntry(instant, Event(POSITIVE_RESULT_RECEIVED)))
@@ -112,7 +106,7 @@ class MigrateMetricsLogStorageToLogStorage @Inject constructor(
                 runningNormallyBackgroundTick = runningNormallyBackgroundTick.toBoolean(),
                 isIsolatingBackgroundTick = isIsolatingBackgroundTick.toBoolean(),
                 isIsolatingForHadRiskyContactBackgroundTick = isIsolatingForHadRiskyContactBackgroundTick?.toBoolean() ?: false,
-                isIsolatingForSelfDiagnosedBackgroundTick = isIsolatingForSelfDiagnosedBackgroundTick.toBoolean(),
+                isIsolatingForSelfDiagnosedBackgroundTick = isIsolatingForSelfDiagnosedBackgroundTick?.toBoolean() ?: false,
                 isIsolatingForTestedPositiveBackgroundTick = isIsolatingForTestedPositiveBackgroundTick.toBoolean(),
                 hasHadRiskyContactBackgroundTick = hasHadRiskyContactBackgroundTick.toBoolean(),
                 hasSelfDiagnosedBackgroundTick = hasSelfDiagnosedBackgroundTick.toBoolean(),

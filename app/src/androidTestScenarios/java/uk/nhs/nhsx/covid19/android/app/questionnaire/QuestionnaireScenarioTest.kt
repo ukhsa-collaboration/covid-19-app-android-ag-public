@@ -16,13 +16,11 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvi
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenHasSymptomsNoEffectOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.IndexCaseThenNoSymptoms
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessment
-import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.IsolationSymptomAdvice.NoIndexCaseThenSelfAssessmentNoImpactOnIsolation
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.ReviewSymptomsActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.adapter.ReviewSymptomItem.Question
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.QuestionnaireActivity
 import uk.nhs.nhsx.covid19.android.app.questionnaire.selection.Symptom
-import uk.nhs.nhsx.covid19.android.app.remote.data.DurationDays
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.report.Reported
 import uk.nhs.nhsx.covid19.android.app.report.Reporter
@@ -39,6 +37,7 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusActivity
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.NoSymptomsRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PositiveSymptomsNoIsolationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.QuestionnaireRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ReviewSymptomsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
@@ -59,6 +58,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
     private val noSymptomsRobot = NoSymptomsRobot()
     private val reviewSymptomsRobot = ReviewSymptomsRobot()
     private val symptomsAdviceIsolateRobot = SymptomsAdviceIsolateRobot()
+    private val positiveSymptomsNoIsolationRobot = PositiveSymptomsNoIsolationRobot()
 
     override val isolationHelper = IsolationHelper(testAppContext.clock)
 
@@ -181,24 +181,13 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
             stepDescription = "The user is presented a list of the selected symptoms for review"
         )
 
-        reviewSymptomsRobot.selectCannotRememberDate()
-
-        step(
-            stepName = "No Date",
-            stepDescription = "The user can specify an onset date or tick that they don't remember the onset date, before confirming"
-        )
-
         reviewSymptomsRobot.confirmSelection()
 
-        symptomsAdviceIsolateRobot.checkActivityIsDisplayed()
-
-        symptomsAdviceIsolateRobot.checkViewState(
-            NoIndexCaseThenIsolationDueToSelfAssessmentNoTimerWales(DurationDays().wales.indexCaseSinceSelfDiagnosisOnset)
-        )
+        waitFor { positiveSymptomsNoIsolationRobot.checkIsPositiveSymptomsNoIsolationTitleDisplayed() }
 
         step(
-            stepName = "Positive Symptoms screen",
-            stepDescription = "The user is asked to isolate, and given the option to book a test. They choose to close the screen."
+            stepName = "Positive Symptoms No Isolation screen",
+            stepDescription = "The user is asked try to stay at home - finishes flow"
         )
 
         testAppContext.device.pressBack()
@@ -259,9 +248,14 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
         kind = FLOW
     ) {
         givenLocalAuthorityIsInWales()
+        testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = true
+
         testAppContext.setState(isolationHelper.contact().asIsolation())
 
-        completeQuestionnaire(selectMainSymptom = false)
+        completeQuestionnaire(
+            selectMainSymptom = false,
+            isDatePickerShown = testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled
+        )
 
         symptomsAdviceIsolateRobot.checkViewState(
             NoIndexCaseThenSelfAssessmentNoImpactOnIsolation(testAppContext.getRemainingDaysInIsolation())
@@ -285,9 +279,13 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
             kind = FLOW
         ) {
             givenLocalAuthorityIsInWales()
+            testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = true
             isolatingDueToPositiveTestResult(testEndDate = LocalDate.now(testAppContext.clock).minusDays(3))
 
-            completeQuestionnaire(selectMainSymptom = true)
+            completeQuestionnaire(
+                selectMainSymptom = true,
+                isDatePickerShown = testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled
+            )
 
             symptomsAdviceIsolateRobot.checkViewState(
                 IndexCaseThenHasSymptomsDidUpdateIsolation(testAppContext.getRemainingDaysInIsolation())
@@ -310,10 +308,14 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
                     "This has no effect on the current isolation and asks the user to keep isolating.",
             kind = FLOW
         ) {
-            givenLocalAuthorityIsInEngland()
+            givenLocalAuthorityIsInWales()
+            testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = true
             isolatingDueToPositiveTestResult()
 
-            completeQuestionnaire(selectMainSymptom = true)
+            completeQuestionnaire(
+                selectMainSymptom = true,
+                isDatePickerShown = testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled
+            )
 
             symptomsAdviceIsolateRobot.checkViewState(IndexCaseThenHasSymptomsNoEffectOnIsolation)
 
@@ -335,9 +337,13 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
             kind = FLOW
         ) {
             givenLocalAuthorityIsInWales()
+            testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = true
             isolatingDueToPositiveTestResult()
 
-            completeQuestionnaire(selectMainSymptom = false)
+            completeQuestionnaire(
+                selectMainSymptom = false,
+                isDatePickerShown = testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled
+            )
 
             symptomsAdviceIsolateRobot.checkViewState(IndexCaseThenNoSymptoms)
 
@@ -384,7 +390,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
         )
     }
 
-    private fun Reporter.completeQuestionnaire(selectMainSymptom: Boolean) {
+    private fun Reporter.completeQuestionnaire(selectMainSymptom: Boolean, isDatePickerShown: Boolean) {
         startTestActivity<QuestionnaireActivity>()
 
         questionnaireRobot.checkActivityIsDisplayed()
@@ -406,12 +412,14 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
 
         reviewSymptomsRobot.checkActivityIsDisplayed()
 
-        reviewSymptomsRobot.selectCannotRememberDate()
+        if (isDatePickerShown) {
+            reviewSymptomsRobot.selectCannotRememberDate()
 
-        step(
-            stepName = "No Date",
-            stepDescription = "The user can specify an onset date or tick that they don't remember the onset date, before confirming"
-        )
+            step(
+                stepName = "No Date",
+                stepDescription = "The user can specify an onset date or tick that they don't remember the onset date, before confirming"
+            )
+        }
 
         reviewSymptomsRobot.confirmSelection()
     }
@@ -437,6 +445,8 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
 
     @Test
     fun selectNotCoronavirusSymptomsAndCannotRememberDate_StaysInDefaultState() {
+        testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = true
+
         startTestActivity<QuestionnaireActivity>()
 
         questionnaireRobot.checkActivityIsDisplayed()
@@ -517,6 +527,8 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
     @Test
     fun contactCase_SelectNotCoronavirusSymptoms_StaysInIsolation() {
         givenLocalAuthorityIsInWales()
+        testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = true
+
         testAppContext.setState(
             IsolationState(
                 isolationConfiguration = IsolationConfiguration(),
@@ -578,12 +590,14 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
 
     @Test
     @Reported
-    fun reviewSymptoms_doNotSelectDateOrTickDoNotRemember() = reporter(
+    fun reviewSymptoms_doNotSelectDateOrTickDoNotRemember_selfIsolationEnabled() = reporter(
         scenario = "Self Diagnosis",
-        title = "No onset date",
-        description = "User reviews symptoms and does not choose onset date or tap 'I don'r remember the date'",
+        title = "No onset date - self isolation enabled",
+        description = "User reviews symptoms and does not choose onset date or tap 'I don't remember the date'",
         kind = FLOW
     ) {
+        givenLocalAuthorityIsInWales()
+
         val questions = arrayListOf(
             Question(
                 Symptom(
@@ -597,6 +611,7 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
 
         startTestActivity<ReviewSymptomsActivity> {
             putParcelableArrayListExtra("EXTRA_QUESTIONS", questions)
+            putExtra("EXTRA_IS_SYMPTOMATIC_SELF_ISOLATION_FOR_WALES_ENABLED", true)
         }
 
         reviewSymptomsRobot.checkActivityIsDisplayed()
@@ -614,6 +629,86 @@ class QuestionnaireScenarioTest(override val configuration: TestConfiguration) :
             stepName = "No onset date selected",
             stepDescription = "An error message is shown to the user"
         )
+    }
+
+    @Test
+    fun reviewSymptoms_doNotSelectDateOrTickDoNotRemember_selfIsolationDisabled_shouldDisplayError_Wales() {
+        givenLocalAuthorityIsInWales()
+
+        val questions = arrayListOf(
+            Question(
+                Symptom(
+                    title = TranslatableString(mapOf("en" to "A high temperature (fever)")),
+                    description = TranslatableString(mapOf("en" to "This means that you feel hot to touch on your chest or back (you do not need to measure your temperature).")),
+                    riskWeight = 0.0
+                ),
+                isChecked = true
+            )
+        )
+
+        startTestActivity<ReviewSymptomsActivity> {
+            putParcelableArrayListExtra("EXTRA_QUESTIONS", questions)
+            putExtra("EXTRA_IS_SYMPTOMATIC_SELF_ISOLATION_FOR_WALES_ENABLED", true)
+        }
+
+        reviewSymptomsRobot.checkActivityIsDisplayed()
+
+        reviewSymptomsRobot.confirmSelection()
+
+        waitFor { reviewSymptomsRobot.checkReviewSymptomsErrorIsDisplayed() }
+    }
+
+    @Test
+    fun reviewSymptoms_doNotSelectDateOrTickDoNotRemember_selfIsolationDisabled_shouldNotDisplayError_Wales() {
+        givenLocalAuthorityIsInWales()
+        testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = false
+        startTestActivity<QuestionnaireActivity>()
+
+        questionnaireRobot.checkActivityIsDisplayed()
+
+        questionnaireRobot.selectSymptomsAtPositions(3)
+
+        questionnaireRobot.reviewSymptoms()
+
+        waitFor { reviewSymptomsRobot.checkActivityIsDisplayed() }
+
+        reviewSymptomsRobot.confirmSelection()
+
+        waitFor { noSymptomsRobot.confirmNoSymptomsScreenIsDisplayed() }
+    }
+
+    @Test
+    fun reviewSymptoms_selfIsolationDisabled_datePickerIsHidden() {
+        givenLocalAuthorityIsInWales()
+        testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = false
+        startTestActivity<QuestionnaireActivity>()
+
+        questionnaireRobot.checkActivityIsDisplayed()
+
+        questionnaireRobot.selectSymptomsAtPositions(3)
+
+        questionnaireRobot.reviewSymptoms()
+
+        waitFor { reviewSymptomsRobot.checkActivityIsDisplayed() }
+
+        waitFor { reviewSymptomsRobot.checkDatePickerIsHidden() }
+    }
+
+    @Test
+    fun reviewSymptoms_selfIsolationEnabled_datePickerIsVisible() {
+        givenLocalAuthorityIsInWales()
+        testAppContext.questionnaireApi.isSymptomaticSelfIsolationForWalesEnabled = true
+        startTestActivity<QuestionnaireActivity>()
+
+        questionnaireRobot.checkActivityIsDisplayed()
+
+        questionnaireRobot.selectSymptomsAtPositions(3)
+
+        questionnaireRobot.reviewSymptoms()
+
+        waitFor { reviewSymptomsRobot.checkActivityIsDisplayed() }
+
+        waitFor { reviewSymptomsRobot.checkDatePickerIsDisplayed() }
     }
 
     @Test

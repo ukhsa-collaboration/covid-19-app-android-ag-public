@@ -154,7 +154,6 @@ class TestingHubScenarioTest : EspressoTest(), LocalAuthoritySetupHelper {
         questionnaireRobot.reviewSymptoms()
 
         reviewSymptomsRobot.checkActivityIsDisplayed()
-        reviewSymptomsRobot.selectCannotRememberDate()
         reviewSymptomsRobot.confirmSelection()
 
         symptomsAdviceIsolateRobot.clickBottomActionButton()

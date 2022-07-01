@@ -12,11 +12,11 @@
         android:layout_height="@dimen/anim_circle_size"
         android:layout_gravity="center"
         android:contentDescription="@null"
-        app:layout_constraintBottom_toBottomOf="@id/imgRedCircle"
-        app:layout_constraintEnd_toEndOf="@id/imgRedCircle"
-        app:layout_constraintStart_toStartOf="@id/imgRedCircle"
-        app:layout_constraintTop_toTopOf="@id/imgRedCircle"
-        app:srcCompat="@drawable/ic_red_circle" />
+        app:layout_constraintBottom_toBottomOf="@id/imgColoredCircle"
+        app:layout_constraintEnd_toEndOf="@id/imgColoredCircle"
+        app:layout_constraintStart_toStartOf="@id/imgColoredCircle"
+        app:layout_constraintTop_toTopOf="@id/imgColoredCircle"
+        app:srcCompat="@drawable/ic_blue_circle" />
 
     <ImageView
         android:id="@+id/imgCircleSmallPulseAnim"
@@ -24,11 +24,11 @@
         android:layout_height="@dimen/anim_circle_size"
         android:layout_gravity="center"
         android:contentDescription="@null"
-        app:layout_constraintBottom_toBottomOf="@id/imgRedCircle"
-        app:layout_constraintEnd_toEndOf="@id/imgRedCircle"
-        app:layout_constraintStart_toStartOf="@id/imgRedCircle"
-        app:layout_constraintTop_toTopOf="@id/imgRedCircle"
-        app:srcCompat="@drawable/ic_red_circle" />
+        app:layout_constraintBottom_toBottomOf="@id/imgColoredCircle"
+        app:layout_constraintEnd_toEndOf="@id/imgColoredCircle"
+        app:layout_constraintStart_toStartOf="@id/imgColoredCircle"
+        app:layout_constraintTop_toTopOf="@id/imgColoredCircle"
+        app:srcCompat="@drawable/ic_blue_circle" />
 
     <ImageView
         android:id="@+id/imgCircleIsolationStatic"
@@ -38,11 +38,11 @@
         android:scaleType="center"
         android:contentDescription="@null"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/imgRedCircle"
-        app:layout_constraintEnd_toEndOf="@id/imgRedCircle"
-        app:layout_constraintStart_toStartOf="@id/imgRedCircle"
-        app:layout_constraintTop_toTopOf="@id/imgRedCircle"
-        app:srcCompat="@drawable/ic_red_circle_static" />
+        app:layout_constraintBottom_toBottomOf="@id/imgColoredCircle"
+        app:layout_constraintEnd_toEndOf="@id/imgColoredCircle"
+        app:layout_constraintStart_toStartOf="@id/imgColoredCircle"
+        app:layout_constraintTop_toTopOf="@id/imgColoredCircle"
+        app:srcCompat="@drawable/ic_blue_circle_static" />
 
     <LinearLayout
         android:id="@+id/isolationTitleContainer"
@@ -89,7 +89,7 @@
         app:layout_constraintTop_toBottomOf="@id/isolationTitleContainer" />
 
     <ImageView
-        android:id="@+id/imgRedCircle"
+        android:id="@+id/imgColoredCircle"
         android:layout_width="85dp"
         android:layout_height="85dp"
         android:layout_gravity="center"
@@ -98,7 +98,7 @@
         app:layout_constraintEnd_toEndOf="@id/isolationCountdownView"
         app:layout_constraintStart_toStartOf="@id/isolationCountdownView"
         app:layout_constraintTop_toTopOf="@id/isolationCountdownView"
-        app:srcCompat="@drawable/ic_red_circle" />
+        app:srcCompat="@drawable/ic_blue_circle" />
 
     <TextView
         android:id="@+id/isolationDaysToGo"
@@ -111,10 +111,10 @@
         android:textColor="?attr/colorOnError"
         android:textSize="36sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/imgRedCircle"
-        app:layout_constraintEnd_toEndOf="@+id/imgRedCircle"
-        app:layout_constraintStart_toStartOf="@+id/imgRedCircle"
-        app:layout_constraintTop_toTopOf="@+id/imgRedCircle" />
+        app:layout_constraintBottom_toBottomOf="@+id/imgColoredCircle"
+        app:layout_constraintEnd_toEndOf="@+id/imgColoredCircle"
+        app:layout_constraintStart_toStartOf="@+id/imgColoredCircle"
+        app:layout_constraintTop_toTopOf="@+id/imgColoredCircle" />
 
     <TextView
         android:id="@+id/titleDaysToGo"

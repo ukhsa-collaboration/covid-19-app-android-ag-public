@@ -21,10 +21,10 @@ class MockIsolationConfigurationApi : IsolationConfigurationApi {
             ),
             walesConfiguration = configuration?.toCountrySpecificConfiguration() ?: CountrySpecificConfiguration(
                 contactCase = 11,
-                indexCaseSinceSelfDiagnosisOnset = 6,
-                indexCaseSinceSelfDiagnosisUnknownOnset = 6,
+                indexCaseSinceSelfDiagnosisOnset = 5,
+                indexCaseSinceSelfDiagnosisUnknownOnset = 5,
                 maxIsolation = 16,
-                indexCaseSinceTestResultEndDate = 6,
+                indexCaseSinceTestResultEndDate = 5,
                 pendingTasksRetentionPeriod = 14,
                 testResultPollingTokenRetentionPeriod = 28
             ),

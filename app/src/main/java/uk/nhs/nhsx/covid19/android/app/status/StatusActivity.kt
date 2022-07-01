@@ -170,7 +170,6 @@ class StatusActivity : StatusBaseActivity() {
                 viewState.animationsEnabled,
                 viewState.bluetoothEnabled,
                 viewState.showCovidStatsButton,
-                viewState.country,
                 viewState.showIsolationHubButton
             )
             handleRiskyPostCodeViewState(viewState.areaRiskState)
@@ -293,7 +292,6 @@ class StatusActivity : StatusBaseActivity() {
         animationsEnabled: Boolean,
         bluetoothEnabled: Boolean,
         showCovidStatsButton: Boolean,
-        country: PostCodeDistrict,
         showIsolationHubButton: Boolean
     ) {
         if (statusViewModel.contactTracingSwitchedOn) {
@@ -312,7 +310,6 @@ class StatusActivity : StatusBaseActivity() {
                     exposureNotificationsEnabled,
                     animationsEnabled,
                     showCovidStatsButton,
-                    country,
                     showIsolationHubButton
                 )
             }
@@ -336,10 +333,9 @@ class StatusActivity : StatusBaseActivity() {
         exposureNotificationsEnabled: Boolean,
         animationsEnabled: Boolean,
         showCovidStatsButton: Boolean,
-        country: PostCodeDistrict,
         showIsolationHubButton: Boolean
     ) = with(binding) {
-        isolationView.initialize(isolationState, currentDate, country)
+        isolationView.initialize(isolationState, currentDate)
         val animationState = when {
             animationsEnabled && exposureNotificationsEnabled -> IsolationStatusView.AnimationState.ANIMATION_ENABLED_EN_ENABLED
             !animationsEnabled && exposureNotificationsEnabled -> IsolationStatusView.AnimationState.ANIMATION_DISABLED_EN_ENABLED

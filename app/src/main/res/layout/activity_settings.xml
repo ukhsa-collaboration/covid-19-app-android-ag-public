@@ -51,7 +51,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/list_item_space"
-                    app:settingName="@string/settings_venue_history" />
+                    app:settingName="@string/settings_venue_history"
+                    android:visibility="gone"/>
 
                 <uk.nhs.nhsx.covid19.android.app.widgets.SettingsOptionsView
                     android:id="@+id/animationsOption"

@@ -32,10 +32,10 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
             // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
             assertOnFields {
                 // Now in isolation due to self-diagnosis
-                assertEquals(1, Metrics::completedQuestionnaireAndStartedIsolation)
+                assertNull(Metrics::completedQuestionnaireAndStartedIsolation)
                 assertEquals(1, Metrics::startedIsolation)
                 assertPresent(Metrics::isIsolatingBackgroundTick)
-                assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+                assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
             }
 
@@ -54,7 +54,7 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
                 assertEquals(1, Metrics::acknowledgedStartOfIsolationDueToRiskyContact)
                 assertEquals(1, Metrics::receivedActiveIpcToken)
                 assertPresent(Metrics::isIsolatingBackgroundTick)
-                assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+                assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
@@ -65,7 +65,7 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
             assertOnFieldsForDateRange(5..11) {
                 // Still in isolation for both reasons
                 assertPresent(Metrics::isIsolatingBackgroundTick)
-                assertPresent(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
+                assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
                 assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::hasHadRiskyContactBackgroundTick)

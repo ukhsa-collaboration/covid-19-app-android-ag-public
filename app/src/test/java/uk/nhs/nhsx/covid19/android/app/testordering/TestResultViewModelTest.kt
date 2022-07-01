@@ -14,7 +14,6 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodePro
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.Finish
-import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.NavigateToOrderTest
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.NavigationEvent.NavigateToShareKeys
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel.ViewState
 import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.FollowUpTest
@@ -112,8 +111,8 @@ class TestResultViewModelTest {
         (NegativeAfterPositiveOrSymptomaticWillBeInIsolation to noKeysNoTest) to Finish,
         (PlodWillContinueWithCurrentState to noKeysNoTest) to Finish,
         (Ignore to noKeysNoTest) to Finish,
-        (VoidNotInIsolation to noKeysNonFollowUpTest) to NavigateToOrderTest,
-        (VoidWillBeInIsolation to noKeysNonFollowUpTest) to NavigateToOrderTest,
+        (VoidNotInIsolation to noKeysNonFollowUpTest) to Finish,
+        (VoidWillBeInIsolation to noKeysNonFollowUpTest) to Finish,
         (PositiveWillBeInIsolation to keysFollowUpTest) to NavigateToShareKeys(expectedBookFollowUpTest),
         (PositiveContinueIsolation to keysFollowUpTest) to NavigateToShareKeys(expectedBookFollowUpTest),
         (PositiveWontBeInIsolation to keysFollowUpTest) to NavigateToShareKeys(expectedBookFollowUpTest)

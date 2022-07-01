@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.settings
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.VENUE_CHECK_IN_BUTTON
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
@@ -16,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.SettingsRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.VenueHistoryRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.WelcomeRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 
 class SettingsActivityTest : EspressoTest() {
 
@@ -61,7 +63,7 @@ class SettingsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickManageMyDataSetting_HasSettingsOptions() {
+    fun venueIsEnabled_hasSettingsOptionsInCorrectOrder() = runWithFeature(VENUE_CHECK_IN_BUTTON, true) {
         testAppContext.setPostCode("AL1")
 
         startTestActivity<SettingsActivity>()
@@ -77,6 +79,25 @@ class SettingsActivityTest : EspressoTest() {
             hasDeleteDataOption()
         }
     }
+
+    @Test
+    fun venueIsDisabled_hasSettingsOptionsInCorrectOrderAndVenueSettingsIsHidden() =
+        runWithFeature(VENUE_CHECK_IN_BUTTON, false) {
+            testAppContext.setPostCode("AL1")
+
+            startTestActivity<SettingsActivity>()
+
+            settingsRobot.apply {
+                checkActivityIsDisplayed()
+
+                venueHistorySettingIsHidden()
+                hasLanguageSetting()
+                hasMyAreaSetting()
+                hasMyDataSetting()
+                hasAnimationsSetting()
+                hasDeleteDataOption()
+            }
+        }
 
     @Test
     fun clickMyDataSetting_shouldNavigateToMyDataActivity() {
@@ -159,17 +180,18 @@ class SettingsActivityTest : EspressoTest() {
     }
 
     @Test
-    fun clickVenueHistorySetting_shouldNavigateToVenusHistoryActivity() {
-        testAppContext.setPostCode("AL1")
+    fun venueIsEnabled_clickVenueHistorySetting_shouldNavigateToVenusHistoryActivity() =
+        runWithFeature(VENUE_CHECK_IN_BUTTON, true) {
+            testAppContext.setPostCode("AL1")
 
-        startTestActivity<SettingsActivity>()
+            startTestActivity<SettingsActivity>()
 
-        settingsRobot.checkActivityIsDisplayed()
+            settingsRobot.checkActivityIsDisplayed()
 
-        settingsRobot.clickVenueHistorySetting()
+            settingsRobot.clickVenueHistorySetting()
 
-        venueHistoryRobot.checkActivityIsDisplayed()
-    }
+            venueHistoryRobot.checkActivityIsDisplayed()
+        }
 
     @Test
     fun clickAnimationSetting_shouldNavigateToAnimationActivity() {
