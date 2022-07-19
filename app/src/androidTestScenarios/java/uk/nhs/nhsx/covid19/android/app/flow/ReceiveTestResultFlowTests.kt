@@ -653,36 +653,36 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() {
+    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_startIsolation_shareKeys() {
         setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
-        testResultRobot.clickGoodNewsActionButton()
+        testResultRobot.clickIsolationActionButton()
         shareKeys()
 
-        isolationChecker.assertExpiredIndexNoContact()
+        isolationChecker.assertActiveIndexNoContact()
         checkRelevantTestResultUpdated(testResponse)
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_withoutKeysSharing() {
+    fun whenDefaultWithPreviousIsolation_withoutPreviousTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_startIsolation_withoutKeysSharing() {
         setSelfAssessmentIsolation(expired = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
-        testResultRobot.clickGoodNewsActionButton()
+        testResultRobot.clickIsolationActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        isolationChecker.assertExpiredIndexNoContact()
+        isolationChecker.assertActiveIndexNoContact()
         checkRelevantTestResultUpdated(testResponse)
     }
 
@@ -739,81 +739,71 @@ class ReceiveTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() {
-        val previousTest =
-            setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false, shouldOfferFollowUpTest = false)
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeys() {
+        setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false, shouldOfferFollowUpTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+        val newResult = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
-        testResultRobot.clickGoodNewsActionButton()
+        testResultRobot.clickIsolationActionButton()
         shareKeys()
 
-        isolationChecker.assertExpiredIndexNoContact()
-        checkRelevantTestResultPreserved(previousTest)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(newResult)
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_shareKeys() {
-        val previousTest =
-            setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true, shouldOfferFollowUpTest = true)
+    fun whenDefaultWithPreviousIsolation_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_andStartIsolation_shareKeys() {
+        setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true, shouldOfferFollowUpTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+        val newResult = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = true)
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
-        testResultRobot.clickGoodNewsActionButton()
+        testResultRobot.clickIsolationActionButton()
         shareKeys()
 
-        isolationChecker.assertExpiredIndexNoContact()
-        checkRelevantTestResultPreserved(
-            acknowledgedTestResult = previousTest.copy(confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED),
-            confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED
-        )
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(newResult)
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation_withoutKeysSharing() {
-        val previousTest =
-            setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false, shouldOfferFollowUpTest = false)
+    fun whenDefaultWithPreviousIsolation_withPreviousConfirmedPositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_withoutKeysSharing() {
+        setExpiredPositiveTestIsolation(requiresConfirmatoryTest = false, shouldOfferFollowUpTest = false)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+        val newResult = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
-        testResultRobot.clickGoodNewsActionButton()
+        testResultRobot.clickIsolationActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        isolationChecker.assertExpiredIndexNoContact()
-        checkRelevantTestResultPreserved(previousTest)
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(newResult)
     }
 
     @Test
-    fun whenDefaultWithPreviousIsolation_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWontBeInIsolation_andNoIsolation() {
-        val previousTest =
-            setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true, shouldOfferFollowUpTest = true)
+    fun whenDefaultWithPreviousIsolation_withPreviousIndicativePositiveTest_whenAcknowledgingConfirmedPositiveTest_showPositiveWillBeInIsolation_withoutKeysSharing() {
+        setExpiredPositiveTestIsolation(requiresConfirmatoryTest = true, shouldOfferFollowUpTest = true)
 
         startTestActivity<StatusActivity>()
         statusRobot.checkActivityIsDisplayed()
 
-        receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+        val testResult = receiveConfirmedTestResult(POSITIVE, diagnosisKeySubmissionSupported = false)
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
-        testResultRobot.clickGoodNewsActionButton()
+        testResultRobot.clickIsolationActionButton()
 
         waitFor { statusRobot.checkActivityIsDisplayed() }
-        isolationChecker.assertExpiredIndexNoContact()
-        checkRelevantTestResultPreserved(
-            acknowledgedTestResult = previousTest.copy(confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED),
-            confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED
-        )
+        isolationChecker.assertActiveIndexNoContact()
+        checkRelevantTestResultUpdated(testResult)
     }
 
     @Test

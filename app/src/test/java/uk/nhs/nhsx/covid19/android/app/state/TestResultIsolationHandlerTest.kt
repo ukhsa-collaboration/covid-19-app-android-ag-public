@@ -14,10 +14,13 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.VOID
+import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.Contact
 import uk.nhs.nhsx.covid19.android.app.state.IsolationState.SelfAssessment
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.DoNotTransition
 import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandler.TransitionDueToTestResult.Transition
+import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandlerTest.ExpectedResult.NO_CHANGE
+import uk.nhs.nhsx.covid19.android.app.state.TestResultIsolationHandlerTest.ExpectedResult.PREVIOUS_TEST_IS_CONFIRMED
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED
 import uk.nhs.nhsx.covid19.android.app.testordering.ConfirmatoryTestCompletionStatus.COMPLETED_AND_CONFIRMED
@@ -32,6 +35,8 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit.DAYS
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class TestResultIsolationHandlerTest {
 
@@ -509,7 +514,7 @@ class TestResultIsolationHandlerTest {
             testAcknowledgedDate = Instant.now(fixedClock)
         )
 
-        val expectedState = state.addTestResult(
+        val expectedState = state.copy(selfAssessment = null).addTestResult(
             positiveTestResultConfirmed.toAcknowledgedTestResult()
         )
         val expectedKeySharingInfo = KeySharingInfo(
@@ -539,6 +544,277 @@ class TestResultIsolationHandlerTest {
             acknowledgedDate = Instant.now(fixedClock)
         )
         assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
+    }
+
+    @Test
+    fun `when not in isolation, with expired index case based on positive confirmed test, new positive confirmed test result after isolation end triggers isolation`() {
+        `when not in isolation, with expired index case based on positive test, new positive confirmed test result after isolation end triggers isolation`(true)
+    }
+
+    @Test
+    fun `when not in isolation, with expired index case based on positive unconfirmed test, new positive confirmed test result after isolation end triggers isolation`() {
+        `when not in isolation, with expired index case based on positive test, new positive confirmed test result after isolation end triggers isolation`(false)
+    }
+
+    private fun `when not in isolation, with expired index case based on positive test, new positive confirmed test result after isolation end triggers isolation`(isPreviousTestConfirmed: Boolean) {
+        val relevantTestDate = testEndDate.minus(IsolationConfiguration().indexCaseSinceTestResultEndDate.toLong(), DAYS)
+
+        val state = isolationPositiveTest(
+            testResult = acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = isPreviousTestConfirmed,
+                testEndDate = relevantTestDate
+            )
+        )
+
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            positiveTestResultConfirmed,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedState = isolationPositiveTest(
+            positiveTestResultConfirmed.toAcknowledgedTestResult()
+        )
+
+        val expectedKeySharingInfo = KeySharingInfo(
+            diagnosisKeySubmissionToken = positiveTestResultConfirmed.diagnosisKeySubmissionToken!!,
+            acknowledgedDate = Instant.now(fixedClock)
+        )
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
+    }
+
+    @Test
+    fun `when expired index case based on positive confirmed test, with contact case day after isolation ends and new positive confirmed test result day after contact triggers isolation and memory of contact isolation state is removed`() {
+        `expired index case based on positive test, with contact case day after isolation ends and new positive confirmed test result day after contact triggers isolation and memory of contact isolation state is removed`(true)
+    }
+
+    @Test
+    fun `when expired index case based on positive unconfirmed test, with contact case day after isolation ends and new positive confirmed test result day after contact triggers isolation and memory of contact isolation state is removed`() {
+        `expired index case based on positive test, with contact case day after isolation ends and new positive confirmed test result day after contact triggers isolation and memory of contact isolation state is removed`(false)
+    }
+
+    private fun `expired index case based on positive test, with contact case day after isolation ends and new positive confirmed test result day after contact triggers isolation and memory of contact isolation state is removed`(isPreviousTestConfirmed: Boolean) {
+        val relevantTestDate = testEndDate.minus(IsolationConfiguration().indexCaseSinceTestResultEndDate.toLong() + 1, DAYS)
+
+        val contactCaseDate = testEndDate.toLocalDate(fixedClock.zone)
+
+        val state = IsolationState(
+            isolationConfiguration = IsolationConfiguration(),
+            contact = contactCase(encounterDate = contactCaseDate),
+            testResult = acknowledgedTestResult(RelevantVirologyTestResult.POSITIVE, isConfirmed = true, testEndDate = relevantTestDate)
+        )
+
+        val newTestResult = positiveTestResultConfirmed.copy(testEndDate = Instant.now(fixedClock))
+
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            newTestResult,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedState = isolationPositiveTest(
+            newTestResult.toAcknowledgedTestResult()
+        )
+
+        val expectedKeySharingInfo = KeySharingInfo(
+            diagnosisKeySubmissionToken = newTestResult.diagnosisKeySubmissionToken!!,
+            acknowledgedDate = Instant.now(fixedClock)
+        )
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
+    }
+
+    @Test
+    fun `when not in isolation, with expired confirmed positive test, receive new positive confirmed test older than expired confirmed positive test, new test ignored`() {
+        `when not in isolation, with expired index case caused by positive test, receive new positive confirmed with test end date older than last day of recent isolation`(
+            isPreviousTestConfirmed = true,
+            isNewTestResultOlderThanExisting = true,
+            expectedResult = NO_CHANGE
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with expired unconfirmed positive test, receive new positive confirmed test older than expired confirmed positive test, new test ignored`() {
+        `when not in isolation, with expired index case caused by positive test, receive new positive confirmed with test end date older than last day of recent isolation`(
+            isPreviousTestConfirmed = false,
+            isNewTestResultOlderThanExisting = true,
+            expectedResult = NO_CHANGE
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with expired confirmed positive test, receive new positive confirmed test newer than expired confirmed positive test, but before end of recent isolation period, new test ignored`() {
+        `when not in isolation, with expired index case caused by positive test, receive new positive confirmed with test end date older than last day of recent isolation`(
+            isPreviousTestConfirmed = true,
+            isNewTestResultOlderThanExisting = false,
+            expectedResult = NO_CHANGE
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with expired unconfirmed positive test, receive new positive confirmed test newer than expired confirmed positive test, but before end of recent isolation period, confirm old test and ignore new`() {
+        `when not in isolation, with expired index case caused by positive test, receive new positive confirmed with test end date older than last day of recent isolation`(
+            isPreviousTestConfirmed = false,
+            isNewTestResultOlderThanExisting = false,
+            expectedResult = PREVIOUS_TEST_IS_CONFIRMED
+        )
+    }
+
+    enum class ExpectedResult {
+        PREVIOUS_TEST_IS_CONFIRMED, NO_CHANGE
+    }
+
+    private fun `when not in isolation, with expired index case caused by positive test, receive new positive confirmed with test end date older than last day of recent isolation`
+                (isPreviousTestConfirmed: Boolean, isNewTestResultOlderThanExisting: Boolean, expectedResult: ExpectedResult) {
+        val previousTestResult =
+            acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = isPreviousTestConfirmed,
+                testEndDate.minus(10, DAYS)
+            )
+        val state = isolationPositiveTest(previousTestResult)
+
+        val possiblyIsolating = createIsolationLogicalState(fixedClock).invoke(state) as PossiblyIsolating
+        assertFalse(possiblyIsolating.isActiveIsolation(fixedClock))
+
+        val lastDayOfIsolation = possiblyIsolating.lastDayOfIsolation
+        val newTestResult = if (isNewTestResultOlderThanExisting) {
+            positiveTestResultConfirmed.copy(testEndDate = previousTestResult.testEndDate.minusDays(1).toInstant())
+        } else {
+            positiveTestResultConfirmed.copy(testEndDate = lastDayOfIsolation.minusDays(1).toInstant())
+        }
+
+        assertTrue(newTestResult.testEndDate < lastDayOfIsolation.toInstant())
+        if (isNewTestResultOlderThanExisting) {
+            assertTrue(newTestResult.testEndDate < previousTestResult.testEndDate.toInstant())
+        } else {
+            assertTrue(newTestResult.testEndDate > previousTestResult.testEndDate.toInstant())
+        }
+
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            newTestResult,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedKeySharingInfo = KeySharingInfo(
+            diagnosisKeySubmissionToken = newTestResult.diagnosisKeySubmissionToken!!,
+            acknowledgedDate = Instant.now(fixedClock)
+        )
+        when (expectedResult) {
+            PREVIOUS_TEST_IS_CONFIRMED -> {
+                val confirmedDate = newTestResult.testEndDate(fixedClock)
+                val expectedState = state.addTestResult(
+                    testResult = previousTestResult.copy(
+                        confirmedDate = confirmedDate,
+                        confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED
+                    )
+                )
+                assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
+            }
+            NO_CHANGE -> {
+                assertEquals(DoNotTransition(preventKeySubmission = false, expectedKeySharingInfo), result)
+            }
+        }
+    }
+
+    @Test
+    fun `when not in isolation, with expired confirmed positive test with symptoms, receive new positive confirmed test older than expired confirmed positive test, new test ignored`() {
+        `when not in isolation, with expired index case caused by positive test with symptoms, receive new positive confirmed with test end date older than last day of recent isolation`(
+            isPreviousTestConfirmed = true,
+            isNewTestResultOlderThanExisting = true,
+            expectedResult = NO_CHANGE
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with expired unconfirmed positive test with symptoms, receive new positive confirmed test older than expired confirmed positive test, new test ignored`() {
+        `when not in isolation, with expired index case caused by positive test with symptoms, receive new positive confirmed with test end date older than last day of recent isolation`(
+            isPreviousTestConfirmed = false,
+            isNewTestResultOlderThanExisting = true,
+            expectedResult = NO_CHANGE
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with expired confirmed positive test with symptoms, receive new positive confirmed test newer than expired confirmed positive test, but before end of recent isolation period, new test ignored`() {
+        `when not in isolation, with expired index case caused by positive test with symptoms, receive new positive confirmed with test end date older than last day of recent isolation`(
+            isPreviousTestConfirmed = true,
+            isNewTestResultOlderThanExisting = false,
+            expectedResult = NO_CHANGE
+        )
+    }
+
+    @Test
+    fun `when not in isolation, with expired unconfirmed positive test with symptoms, receive new positive confirmed test newer than expired confirmed positive test, but before end of recent isolation period, confirm old test and ignore new`() {
+        `when not in isolation, with expired index case caused by positive test with symptoms, receive new positive confirmed with test end date older than last day of recent isolation`(
+            isPreviousTestConfirmed = false,
+            isNewTestResultOlderThanExisting = false,
+            expectedResult = PREVIOUS_TEST_IS_CONFIRMED
+        )
+    }
+
+    private fun `when not in isolation, with expired index case caused by positive test with symptoms, receive new positive confirmed with test end date older than last day of recent isolation`(
+        isPreviousTestConfirmed: Boolean,
+        isNewTestResultOlderThanExisting: Boolean,
+        expectedResult: ExpectedResult
+    ) {
+
+        val previousTestResult =
+            acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = isPreviousTestConfirmed,
+                testEndDate.minus(10, DAYS)
+            )
+
+        val state = isolationSelfAssessmentAndTest(
+            selfAssessmentDate = previousTestResult.testEndDate,
+            onsetDate = previousTestResult.testEndDate.minus(1, DAYS),
+            testResult = previousTestResult
+        )
+
+        val possiblyIsolating = createIsolationLogicalState(fixedClock).invoke(state) as PossiblyIsolating
+        assertFalse(possiblyIsolating.isActiveIsolation(fixedClock))
+
+        val lastDayOfIsolation = possiblyIsolating.lastDayOfIsolation
+        val newTestResult = if (isNewTestResultOlderThanExisting) {
+            positiveTestResultConfirmed.copy(testEndDate = previousTestResult.testEndDate.minusDays(1).toInstant())
+        } else {
+            positiveTestResultConfirmed.copy(testEndDate = lastDayOfIsolation.minusDays(1).toInstant())
+        }
+
+        assertTrue(newTestResult.testEndDate < lastDayOfIsolation.toInstant())
+        if (isNewTestResultOlderThanExisting) {
+            assertTrue(newTestResult.testEndDate < previousTestResult.testEndDate.toInstant())
+        } else {
+            assertTrue(newTestResult.testEndDate > previousTestResult.testEndDate.toInstant())
+        }
+
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            newTestResult,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedKeySharingInfo = KeySharingInfo(
+            diagnosisKeySubmissionToken = newTestResult.diagnosisKeySubmissionToken!!,
+            acknowledgedDate = Instant.now(fixedClock)
+        )
+        when (expectedResult) {
+            PREVIOUS_TEST_IS_CONFIRMED -> {
+                val confirmedDate = newTestResult.testEndDate(fixedClock)
+                val expectedState = state.addTestResult(
+                    testResult = previousTestResult.copy(
+                        confirmedDate = confirmedDate,
+                        confirmatoryTestCompletionStatus = COMPLETED_AND_CONFIRMED
+                    )
+                )
+                assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
+            }
+            NO_CHANGE -> {
+                assertEquals(DoNotTransition(preventKeySubmission = false, expectedKeySharingInfo), result)
+            }
+        }
     }
 
     //endregion
@@ -825,6 +1101,65 @@ class TestResultIsolationHandlerTest {
         assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
+    @Test
+    fun `when not in isolation, with expired index case with self-assessment, positive confirmed test result before isolation expiry, create an expired positive test isolation and mark it as confirmed`() {
+        val selfAssessmentDate = testEndDate.minus(IsolationConfiguration().indexCaseSinceSelfDiagnosisOnset.toLong(), DAYS).toLocalDate(fixedClock.zone)
+        val relevantTestDate = selfAssessmentDate.plus(2, DAYS)
+
+        val state = isolationSelfAssessment(
+            selfAssessmentDate = selfAssessmentDate,
+            onsetDate = selfAssessmentDate
+        )
+
+        val testResult = positiveTestResultConfirmed.copy(testEndDate = relevantTestDate.toInstant())
+
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            testResult,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedState = state.addTestResult(
+            testResult.toAcknowledgedTestResult()
+        )
+
+        val expectedKeySharingInfo = KeySharingInfo(
+            diagnosisKeySubmissionToken = testResult.diagnosisKeySubmissionToken!!,
+            acknowledgedDate = Instant.now(fixedClock)
+        )
+
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = expectedKeySharingInfo), result)
+    }
+
+    @Test
+    fun `when not in isolation, with expired index case with self-assessment, positive confirmed test result after isolation expiry, start new isolation and remove memory of the recent symptomatic isolation`() {
+        val selfAssessmentDate = testEndDate.minus(IsolationConfiguration().indexCaseSinceSelfDiagnosisOnset.toLong(), DAYS).toLocalDate(fixedClock.zone)
+
+        val state = isolationSelfAssessment(
+            selfAssessmentDate = selfAssessmentDate,
+            onsetDate = selfAssessmentDate
+        )
+
+        val testResult = positiveTestResultConfirmed.copy(testEndDate = Instant.now(fixedClock))
+
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            testResult,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedState = isolationPositiveTest(
+            testResult.toAcknowledgedTestResult()
+        )
+
+        val expectedKeySharingInfo = KeySharingInfo(
+            diagnosisKeySubmissionToken = testResult.diagnosisKeySubmissionToken!!,
+            acknowledgedDate = Instant.now(fixedClock)
+        )
+
+        assertEquals(Transition(expectedState.toIsolationInfo(), keySharingInfo = expectedKeySharingInfo), result)
+    }
+
     //endregion
 
     //region - Index case only with self-assessment, with relevant positive, store test result and possibly confirm
@@ -1006,11 +1341,8 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `not in isolation, with expired index case without self-assessment, with relevant positive confirmed, positive confirmed test result older than relevant test result replaces index case`() {
-        `when has index case without self-assessment, with relevant positive, positive test result older than relevant replaces index case`(
-            isolationActive = false,
+        `when has expired index case without self-assessment, with relevant positive, confirmed positive test result older than relevant is ignored`(
             relevantTestConfirmed = true,
-            receivedTestConfirmed = true,
-            shouldConfirm = false
         )
     }
 
@@ -1026,11 +1358,8 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `not in isolation, with expired index case without self-assessment, with relevant positive indicative, positive confirmed test result older than relevant test result replaces index case`() {
-        `when has index case without self-assessment, with relevant positive, positive test result older than relevant replaces index case`(
-            isolationActive = false,
+        `when has expired index case without self-assessment, with relevant positive, confirmed positive test result older than relevant is ignored`(
             relevantTestConfirmed = false,
-            receivedTestConfirmed = true,
-            shouldConfirm = false
         )
     }
 
@@ -1092,6 +1421,40 @@ class TestResultIsolationHandlerTest {
         assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
     }
 
+    private fun `when has expired index case without self-assessment, with relevant positive, confirmed positive test result older than relevant is ignored`(
+        relevantTestConfirmed: Boolean,
+    ) {
+        val relevantTestDate = testEndDate.minus(13, DAYS)
+
+        val state = isolationPositiveTest(
+            testResult = acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = relevantTestConfirmed,
+                testEndDate = relevantTestDate
+            )
+        )
+
+        val testResult = positiveTestResult(true).copy(
+            testEndDate = relevantTestDate.minus(1, DAYS)
+        )
+
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            testResult,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedKeySharingInfo =
+            if (testResult.isConfirmed())
+                KeySharingInfo(
+                    diagnosisKeySubmissionToken = testResult.diagnosisKeySubmissionToken!!,
+                    acknowledgedDate = Instant.now(fixedClock)
+                )
+            else null
+
+        assertEquals(DoNotTransition(false, expectedKeySharingInfo), result)
+    }
+
     //endregion
 
     //region - Index case only with self-assessment, with relevant positive newer than received, do not transition, possibly confirm
@@ -1138,12 +1501,7 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `not in isolation, with expired index case with self-assessment, with relevant positive confirmed, positive confirmed test result older than relevant test result is stored`() {
-        `when has index case with self-assessment, with relevant positive, positive test result older than relevant is stored`(
-            isolationActive = false,
-            relevantTestConfirmed = true,
-            receivedTestConfirmed = true,
-            shouldConfirm = false
-        )
+        `when has expired index case with self-assessment, with relevant positive, positive confirmed test result older than relevant is ignored`(relevantTestConfirmed = true)
     }
 
     @Test
@@ -1158,12 +1516,7 @@ class TestResultIsolationHandlerTest {
 
     @Test
     fun `not in isolation, with expired index case with self-assessment, with relevant positive indicative, positive confirmed test result older than relevant test result is stored`() {
-        `when has index case with self-assessment, with relevant positive, positive test result older than relevant is stored`(
-            isolationActive = false,
-            relevantTestConfirmed = false,
-            receivedTestConfirmed = true,
-            shouldConfirm = false
-        )
+        `when has expired index case with self-assessment, with relevant positive, positive confirmed test result older than relevant is ignored`(relevantTestConfirmed = false)
     }
 
     @Test
@@ -1221,6 +1574,38 @@ class TestResultIsolationHandlerTest {
                 )
             else null
         assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
+    }
+
+    private fun `when has expired index case with self-assessment, with relevant positive, positive confirmed test result older than relevant is ignored`(
+        relevantTestConfirmed: Boolean
+    ) {
+        val relevantTestDate = testEndDate.minus(13, DAYS)
+
+        val state = isolationSelfAssessmentAndTest(
+            selfAssessmentDate = relevantTestDate.minus(2, DAYS).toLocalDate(fixedClock.zone),
+            testResult = acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = relevantTestConfirmed,
+                testEndDate = relevantTestDate
+            )
+        )
+
+        val testResult = positiveTestResult(true).copy(
+            testEndDate = relevantTestDate.minus(1, DAYS)
+        )
+
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            testResult,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedKeySharingInfo =
+                KeySharingInfo(
+                    diagnosisKeySubmissionToken = testResult.diagnosisKeySubmissionToken!!,
+                    acknowledgedDate = Instant.now(fixedClock)
+                )
+        assertEquals(DoNotTransition(preventKeySubmission = false, expectedKeySharingInfo), result)
     }
 
     //endregion
@@ -2182,6 +2567,96 @@ class TestResultIsolationHandlerTest {
         )
 
         val expectedState = state.addTestResult(
+            testResult = receivedTestResult.toAcknowledgedTestResult()
+        )
+
+        val expectedKeySharingInfo = KeySharingInfo(
+            diagnosisKeySubmissionToken = receivedTestResult.diagnosisKeySubmissionToken!!,
+            acknowledgedDate = Instant.now(fixedClock)
+        )
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
+    }
+
+    @Test
+    fun `when not in isolation with expired index case due to confirmed positive followed by self-assessment day after, positive confirmed test result after isolation end, should start new isolation`() {
+        `when not in isolation with expired index case due to positive tests followed by self-assessment day after, positive confirmed test result after isolation end, should start new isolation`(true)
+    }
+
+    @Test
+    fun `when not in isolation with expired index case due to unconfirmed positive followed by self-assessment day after, positive confirmed test result after isolation end, should start new isolation`() {
+        `when not in isolation with expired index case due to positive tests followed by self-assessment day after, positive confirmed test result after isolation end, should start new isolation`(false)
+    }
+
+    private fun `when not in isolation with expired index case due to positive tests followed by self-assessment day after, positive confirmed test result after isolation end, should start new isolation`(isRelevantTestConfirmed: Boolean) {
+        val previousTestEndDate = testEndDate.minus(IsolationConfiguration().indexCaseSinceTestResultEndDate.toLong(), DAYS)
+        val symptomsOnsetDate = previousTestEndDate.plus(1, DAYS).toLocalDate(fixedClock.zone)
+
+        val state = isolationSelfAssessmentAndTest(
+            selfAssessmentDate = symptomsOnsetDate,
+            onsetDate = symptomsOnsetDate,
+            testResult = acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = isRelevantTestConfirmed,
+                testEndDate = previousTestEndDate
+            )
+        )
+
+        val receivedTestResult = positiveTestResultConfirmed.copy(
+            testEndDate = Instant.now(fixedClock)
+        )
+
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            receivedTestResult,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedState = isolationPositiveTest(
+            testResult = receivedTestResult.toAcknowledgedTestResult()
+        )
+
+        val expectedKeySharingInfo = KeySharingInfo(
+            diagnosisKeySubmissionToken = receivedTestResult.diagnosisKeySubmissionToken!!,
+            acknowledgedDate = Instant.now(fixedClock)
+        )
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
+    }
+
+    @Test
+    fun `when not in isolation with expired index case due to positive confirmed test with symptoms day before test, positive confirmed test result after isolation end, should start new isolation`() {
+        `when not in isolation with expired index case due to positive tests with symptoms day before test, positive confirmed test result after isolation end, should start new isolation`(true)
+    }
+
+    @Test
+    fun `when not in isolation with expired index case due to positive unconfirmed test with symptoms day before test, positive confirmed test result after isolation end, should start new isolation`() {
+        `when not in isolation with expired index case due to positive tests with symptoms day before test, positive confirmed test result after isolation end, should start new isolation`(false)
+    }
+
+    private fun `when not in isolation with expired index case due to positive tests with symptoms day before test, positive confirmed test result after isolation end, should start new isolation`(isRelevantTestConfirmed: Boolean) {
+        val previousTestEndDate = testEndDate.minus(IsolationConfiguration().indexCaseSinceTestResultEndDate.toLong(), DAYS)
+        val symptomsOnsetDate = previousTestEndDate.minus(1, DAYS).toLocalDate(fixedClock.zone)
+
+        val state = isolationSelfAssessmentAndTest(
+            selfAssessmentDate = previousTestEndDate.toLocalDate(fixedClock.zone),
+            onsetDate = symptomsOnsetDate,
+            testResult = acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = isRelevantTestConfirmed,
+                testEndDate = previousTestEndDate
+            )
+        )
+
+        val receivedTestResult = positiveTestResultConfirmed.copy(
+            testEndDate = Instant.now(fixedClock)
+        )
+
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            receivedTestResult,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedState = isolationPositiveTest(
             testResult = receivedTestResult.toAcknowledgedTestResult()
         )
 

@@ -357,7 +357,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
     }
 
     @Test
-    fun showDoNotHaveToSelfIsolateScreenOnPositiveConfirmatory() {
+    fun showIsolationScreenOnPositiveConfirmatoryWhenRecentlyIsolated() {
         testAppContext.setState(isolationHelper.selfAssessment(expired = true).asIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
@@ -373,13 +373,62 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation()
+        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(country = ENGLAND)
 
-        testResultRobot.checkGoodNewsActionButtonShowsContinue()
+        testResultRobot.checkExposureLinkIsDisplayed()
 
-        testResultRobot.clickGoodNewsActionButton()
+        testResultRobot.checkIsolationActionButtonShowsAnonymouslyNotifyOthers()
 
-        isolationChecker.assertExpiredIndexNoContact()
+        testResultRobot.clickIsolationActionButton()
+
+        shareKeysInformationRobot.checkActivityIsDisplayed()
+
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+        shareKeysResultRobot.clickActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        isolationChecker.assertActiveIndexNoContact()
+    }
+
+    @Test
+    fun showIsolationScreenOnPositiveConfirmatoryWhenRecentlyIsolatedWales() {
+        givenLocalAuthorityIsInWales()
+        testAppContext.setState(isolationHelper.selfAssessment(expired = true).asIsolation())
+
+        testAppContext.getUnacknowledgedTestResultsProvider().add(
+            ReceivedTestResult(
+                diagnosisKeySubmissionToken = "a",
+                testEndDate = Instant.now(),
+                testResult = POSITIVE,
+                testKitType = LAB_RESULT,
+                diagnosisKeySubmissionSupported = true,
+                requiresConfirmatoryTest = false
+            )
+        )
+
+        startTestActivity<TestResultActivity>()
+
+        testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(country = WALES)
+
+        testResultRobot.checkIsolationActionButtonShowsContinue()
+
+        testResultRobot.clickIsolationActionButton()
+
+        shareKeysInformationRobot.checkActivityIsDisplayed()
+
+        shareKeysInformationRobot.clickContinueButton()
+
+        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+        shareKeysResultRobot.clickActionButton()
+
+        waitFor { statusRobot.checkActivityIsDisplayed() }
+
+        isolationChecker.assertActiveIndexNoContact()
     }
 
     @Test

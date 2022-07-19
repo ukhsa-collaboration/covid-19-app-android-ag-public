@@ -36,7 +36,7 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
                 assertEquals(1, Metrics::startedIsolation)
                 assertPresent(Metrics::isIsolatingBackgroundTick)
                 assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
-                assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+                assertNull(Metrics::hasSelfDiagnosedBackgroundTick)
             }
 
             // Has risky contact on 3nd Jan
@@ -56,7 +56,7 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
                 assertPresent(Metrics::isIsolatingBackgroundTick)
                 assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
-                assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+                assertNull(Metrics::hasSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
                 assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
             }
@@ -67,7 +67,7 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
                 assertPresent(Metrics::isIsolatingBackgroundTick)
                 assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
-                assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+                assertNull(Metrics::hasSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
                 assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
             }
@@ -77,15 +77,15 @@ class CompoundIsolationAnalyticsTest : AnalyticsTest() {
                 // Still in isolation because of the risky contact; no longer index case
                 assertPresent(Metrics::isIsolatingBackgroundTick)
                 assertPresent(Metrics::isIsolatingForHadRiskyContactBackgroundTick)
-                assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+                assertNull(Metrics::hasSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
                 assertPresent(Metrics::haveActiveIpcTokenBackgroundTick)
             }
 
             // Dates: 15th-28th Jan -> Analytics packets for: 14th-27th Jan
             assertOnFieldsForDateRange(15..28) {
-                // Isolation is over, but isolation reason still stored for 14 days
-                assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+                // Isolation is over, but risky contact isolation is still stored for 14 days
+                assertNull(Metrics::hasSelfDiagnosedBackgroundTick)
                 assertPresent(Metrics::hasHadRiskyContactBackgroundTick)
             }
 

@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.isolation
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.contactIsolationEnded
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.indexIsolationEnded
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedConfirmedPositiveTest
+import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedConfirmedPositiveTestWithEndDateOlderThanExpiredIndexIsolationEndDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedConfirmedPositiveTestWithEndDateOlderThanRememberedNegativeTestEndDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedConfirmedPositiveTestWithIsolationPeriodOlderThanAssumedIsolationStartDate
 import uk.nhs.nhsx.covid19.android.app.isolation.Event.receivedNegativeTest
@@ -276,6 +277,24 @@ class EventHandler(
                 advanceClockPastTime(
                     isolationTestContext.clock.instant()
                         .plus(isolationConfiguration.pendingTasksRetentionPeriod.toLong(), DAYS)
+                )
+            }
+
+            receivedConfirmedPositiveTestWithEndDateOlderThanExpiredIndexIsolationEndDate -> {
+                val isolationState = isolationTestContext.getCurrentLogicalState()
+                assertTrue(isolationState is PossiblyIsolating)
+                val indexInfo = isolationState.indexInfo
+                assertTrue(indexInfo is IndexCase)
+                assertFalse(isolationState.isActiveIndexCase(isolationTestContext.clock))
+
+                isolationStateMachine.processEvent(
+                    OnTestResultAcknowledge(
+                        createPositiveConfirmedTestResult(
+                            indexInfo.expiryDate.minusDays(
+                                1
+                            )
+                        )
+                    )
                 )
             }
         }

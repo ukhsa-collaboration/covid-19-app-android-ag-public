@@ -114,7 +114,8 @@ data class BackgroundTaskTicks(
         metrics.runningNormallyBackgroundTick += runningNormallyBackgroundTick.toInt()
         metrics.isIsolatingBackgroundTick += isIsolatingBackgroundTick.toInt()
         metrics.isIsolatingForHadRiskyContactBackgroundTick = metrics.isIsolatingForHadRiskyContactBackgroundTick?.plus(
-            isIsolatingForHadRiskyContactBackgroundTick.toInt())
+            isIsolatingForHadRiskyContactBackgroundTick.toInt()
+        )
         metrics.isIsolatingForSelfDiagnosedBackgroundTick =
             metrics.isIsolatingForSelfDiagnosedBackgroundTick?.plus(isIsolatingForSelfDiagnosedBackgroundTick.toInt())
         metrics.isIsolatingForTestedPositiveBackgroundTick += isIsolatingForTestedPositiveBackgroundTick.toInt()
@@ -123,21 +124,34 @@ data class BackgroundTaskTicks(
         metrics.isIsolatingForUnconfirmedTestBackgroundTick += isIsolatingForUnconfirmedTestBackgroundTick.toInt()
         metrics.hasHadRiskyContactBackgroundTick += hasHadRiskyContactBackgroundTick.toInt()
         metrics.hasRiskyContactNotificationsEnabledBackgroundTick += hasRiskyContactNotificationsEnabledBackgroundTick.toInt()
-        metrics.hasSelfDiagnosedBackgroundTick += hasSelfDiagnosedBackgroundTick.toInt()
-        metrics.hasTestedPositiveBackgroundTick += hasTestedPositiveBackgroundTick.toInt()
-        metrics.hasTestedLFDPositiveBackgroundTick += hasTestedLFDPositiveBackgroundTick.toInt()
-        metrics.hasTestedSelfRapidPositiveBackgroundTick += hasTestedSelfRapidPositiveBackgroundTick.toInt()
+        metrics.hasSelfDiagnosedBackgroundTick =
+            metrics.hasSelfDiagnosedBackgroundTick?.plus(hasSelfDiagnosedBackgroundTick.toInt())
+        metrics.hasTestedPositiveBackgroundTick =
+            metrics.hasTestedPositiveBackgroundTick?.plus(hasTestedPositiveBackgroundTick.toInt())
+        metrics.hasTestedLFDPositiveBackgroundTick =
+            metrics.hasTestedLFDPositiveBackgroundTick?.plus(hasTestedLFDPositiveBackgroundTick.toInt())
+        metrics.hasTestedSelfRapidPositiveBackgroundTick =
+            metrics.hasTestedSelfRapidPositiveBackgroundTick?.plus(hasTestedSelfRapidPositiveBackgroundTick.toInt())
         metrics.encounterDetectionPausedBackgroundTick += encounterDetectionPausedBackgroundTick.toInt()
         metrics.haveActiveIpcTokenBackgroundTick = metrics.haveActiveIpcTokenBackgroundTick?.plus(
-            haveActiveIpcTokenBackgroundTick.toInt())
-        metrics.hasReceivedRiskyVenueM2WarningBackgroundTick = metrics.hasReceivedRiskyVenueM2WarningBackgroundTick?.plus(
-            hasReceivedRiskyVenueM2WarningBackgroundTick.toInt())
+            haveActiveIpcTokenBackgroundTick.toInt()
+        )
+        metrics.hasReceivedRiskyVenueM2WarningBackgroundTick =
+            metrics.hasReceivedRiskyVenueM2WarningBackgroundTick?.plus(
+                hasReceivedRiskyVenueM2WarningBackgroundTick.toInt()
+            )
         metrics.isDisplayingLocalInfoBackgroundTick += isDisplayingLocalInfoBackgroundTick.toInt()
         metrics.optedOutForContactIsolationBackgroundTick += optedOutForContactIsolationBackgroundTick.toInt()
         metrics.appIsUsableBackgroundTick += appIsUsableBackgroundTick.toInt()
         metrics.appIsUsableBluetoothOffBackgroundTick += appIsUsableBluetoothOffBackgroundTick.toInt()
         metrics.appIsContactTraceableBackgroundTick += appIsContactTraceableBackgroundTick.toInt()
-        metrics.hasCompletedV2SymptomsQuestionnaireBackgroundTick += hasCompletedV2SymptomsQuestionnaireBackgroundTick.toInt()
-        metrics.hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick += hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick.toInt()
+        metrics.hasCompletedV2SymptomsQuestionnaireBackgroundTick =
+            metrics.hasCompletedV2SymptomsQuestionnaireBackgroundTick?.plus(
+                hasCompletedV2SymptomsQuestionnaireBackgroundTick.toInt()
+            )
+        metrics.hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick =
+            metrics.hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick?.plus(
+                hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick.toInt()
+            )
     }
 }

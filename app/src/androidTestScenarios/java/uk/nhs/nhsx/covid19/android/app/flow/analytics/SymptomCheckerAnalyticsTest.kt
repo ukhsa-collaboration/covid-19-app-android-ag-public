@@ -41,12 +41,12 @@ class SymptomCheckerAnalyticsTest : AnalyticsTest() {
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {
             assertEquals(1, Metrics::completedV2SymptomsQuestionnaireAndStayAtHome)
-            assertPresent(Metrics::hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick)
+            assertNull(Metrics::hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick)
         }
 
-        // Keep analytics package for 14 days
+        // Analytics not kept in retention period
         assertOnFieldsForDateRange(4..16) {
-            assertPresent(Metrics::hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick)
+            assertNull(Metrics::hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick)
         }
 
         // Current date: 17th, background tick not present after two weeks (analytics date 16th)
@@ -94,12 +94,12 @@ class SymptomCheckerAnalyticsTest : AnalyticsTest() {
         // Current date: 3rd Jan -> Analytics packet for: 2nd Jan
         assertOnFields {
             assertEquals(1, Metrics::completedV2SymptomsQuestionnaire)
-            assertPresent(Metrics::hasCompletedV2SymptomsQuestionnaireBackgroundTick)
+            assertNull(Metrics::hasCompletedV2SymptomsQuestionnaireBackgroundTick)
         }
 
-        // Keep analytics package for 14 days - Dates 3nd-15th Jan.
+        // Analytics not kept in retention period
         assertOnFieldsForDateRange(dateRange = 4..16) {
-            assertPresent(Metrics::hasCompletedV2SymptomsQuestionnaireBackgroundTick)
+            assertNull(Metrics::hasCompletedV2SymptomsQuestionnaireBackgroundTick)
         }
 
         // Current date: 17th, background tick not present after two weeks (analytics date 16th)
@@ -148,14 +148,14 @@ class SymptomCheckerAnalyticsTest : AnalyticsTest() {
         assertOnFields {
             assertEquals(1, Metrics::completedV2SymptomsQuestionnaire)
             assertEquals(1, Metrics::completedV2SymptomsQuestionnaireAndStayAtHome)
-            assertPresent(Metrics::hasCompletedV2SymptomsQuestionnaireBackgroundTick)
-            assertPresent(Metrics::hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick)
+            assertNull(Metrics::hasCompletedV2SymptomsQuestionnaireBackgroundTick)
+            assertNull(Metrics::hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick)
         }
 
-        // Keep analytics package for 14 days - Dates 3nd-15th Jan.
+        // Analytics not kept in retention period
         assertOnFieldsForDateRange(dateRange = 4..16) {
-            assertPresent(Metrics::hasCompletedV2SymptomsQuestionnaireBackgroundTick)
-            assertPresent(Metrics::hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick)
+            assertNull(Metrics::hasCompletedV2SymptomsQuestionnaireBackgroundTick)
+            assertNull(Metrics::hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick)
         }
 
         // Current date: 17th, background tick not present after two weeks (analytics date 16th)

@@ -51,10 +51,10 @@ data class Metrics(
     var receivedPositiveSelfRapidTestResultEnteredManually: Int = 0,
     var runningNormallyBackgroundTick: Int = 0,
     var totalBackgroundTasks: Int = 0,
-    var hasSelfDiagnosedBackgroundTick: Int = 0,
-    var hasTestedPositiveBackgroundTick: Int = 0,
-    var hasTestedLFDPositiveBackgroundTick: Int = 0,
-    var hasTestedSelfRapidPositiveBackgroundTick: Int = 0,
+    @SerializeNulls var hasSelfDiagnosedBackgroundTick: Int? = 0,
+    @SerializeNulls var hasTestedPositiveBackgroundTick: Int? = 0,
+    @SerializeNulls var hasTestedLFDPositiveBackgroundTick: Int? = 0,
+    @SerializeNulls var hasTestedSelfRapidPositiveBackgroundTick: Int? = 0,
     @SerializeNulls var isIsolatingForSelfDiagnosedBackgroundTick: Int? = 0,
     var isIsolatingForTestedPositiveBackgroundTick: Int = 0,
     var isIsolatingForTestedLFDPositiveBackgroundTick: Int = 0,
@@ -111,6 +111,6 @@ data class Metrics(
     @SerializeNulls var didAccessSelfIsolationNoteLink: Int? = 0,
     var completedV2SymptomsQuestionnaire: Int = 0,
     var completedV2SymptomsQuestionnaireAndStayAtHome: Int = 0,
-    var hasCompletedV2SymptomsQuestionnaireBackgroundTick: Int = 0,
-    var hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick: Int = 0
+    @SerializeNulls var hasCompletedV2SymptomsQuestionnaireBackgroundTick: Int? = 0,
+    @SerializeNulls var hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick: Int? = 0
 )

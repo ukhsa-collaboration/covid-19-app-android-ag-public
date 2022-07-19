@@ -17,11 +17,8 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
     private val riskyContact = RiskyContact(this)
     private val isolationChecker = IsolationChecker(testAppContext)
 
-    // hasSelfDiagnosedBackgroundTick
-    // >0 if the app is aware that the user has completed the questionnaire with symptoms
-    // this currently happens during an isolation and for the 14 days after isolation.
     @Test
-    fun hasSelfDiagnosedBackgroundTickIsPresentWhenCompletedQuestionnaireAndFor14DaysAfterIsolationWhenSelfIsolationForWalesIsEnabled() {
+    fun hasSelfDiagnosedBackgroundTickIsNotPresentWhenCompletedQuestionnaireAndFor14DaysAfterIsolationWhenSelfIsolationForWalesIsEnabled() {
         startTestActivity<MainActivity>()
 
         // Current date: 1st Jan
@@ -45,7 +42,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
             assertEquals(1, Metrics::startedIsolation)
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::hasSelfDiagnosedBackgroundTick)
         }
 
         // Dates: 4th-11th Jan -> Analytics packets for: 3rd-10th Jan
@@ -53,15 +50,15 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
             // Still in isolation
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
-            assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::hasSelfDiagnosedBackgroundTick)
         }
 
         isolationChecker.assertExpiredIndexNoContact()
 
         // Dates: 12th-25th Jan -> Analytics packets for: 11th-24th Jan
         assertOnFieldsForDateRange(12..25) {
-            // Isolation is over, but isolation reason still stored for 14 days
-            assertPresent(Metrics::hasSelfDiagnosedBackgroundTick)
+            // Isolation is over, and analytics are not kept
+            assertNull(Metrics::hasSelfDiagnosedBackgroundTick)
         }
 
         // Current date: 26th Jan -> Analytics packet for: 25th Jan
@@ -95,7 +92,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
             assertEquals(0, Metrics::startedIsolation)
             assertEquals(0, Metrics::isIsolatingBackgroundTick)
             assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
-            assertEquals(0, Metrics::hasSelfDiagnosedBackgroundTick)
+            assertNull(Metrics::hasSelfDiagnosedBackgroundTick)
         }
     }
 

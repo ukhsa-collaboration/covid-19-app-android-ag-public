@@ -865,7 +865,7 @@
         <item quantity="other">加倍小心和保护他人 直至%1$s时23:59。还剩%2$s天。</item>
     </plurals>
     <string name="be_careful_until_date_title">加倍注意，保护他人</string>
-    <string name="about_this_app_software_information_date_of_release_description">06/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">07/2022</string>
     <string name="back_to_home_screen">返回主屏幕</string>
     <string name="covid_guidance_hub_check_ssp_description">了解 COVID-19 检测</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 检测最新指南</string>

@@ -53,7 +53,7 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
             assertEquals(1, Metrics::successfullySharedExposureKeys)
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForTestedLFDPositiveBackgroundTick)
-            assertPresent(Metrics::hasTestedLFDPositiveBackgroundTick)
+            assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
         }
 
@@ -62,7 +62,7 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
             // Still in isolation
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForTestedLFDPositiveBackgroundTick)
-            assertPresent(Metrics::hasTestedLFDPositiveBackgroundTick)
+            assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
         }
 
@@ -83,7 +83,7 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
             assertPresent(Metrics::isIsolatingForTestedLFDPositiveBackgroundTick)
-            assertPresent(Metrics::hasTestedLFDPositiveBackgroundTick)
+            assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
             assertEquals(1, Metrics::positiveLabResultAfterPositiveLFD)
             assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
             assertEquals(1, Metrics::consentedToShareExposureKeysInTheInitialFlow)
@@ -95,13 +95,13 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
             // Still in isolation
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForTestedLFDPositiveBackgroundTick)
-            assertPresent(Metrics::hasTestedLFDPositiveBackgroundTick)
+            assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
         }
 
         // Dates: 13th-26th Jan -> Analytics packets for: 12th-25th Jan
         assertOnFieldsForDateRange(13..26) {
-            // Isolation is over, but isolation reason still stored for 14 days
-            assertPresent(Metrics::hasTestedLFDPositiveBackgroundTick)
+            // Isolation is over, and analytics are not kept
+            assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
         }
 
         // Current date: 27th Jan -> Analytics packet for: 26th Jan
@@ -147,8 +147,8 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
             assertEquals(1, Metrics::consentedToShareExposureKeysInTheInitialFlow)
             assertEquals(1, Metrics::successfullySharedExposureKeys)
             assertEquals(1, Metrics::negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit)
-            assertPresent(Metrics::hasTestedSelfRapidPositiveBackgroundTick)
-            assertPresent(Metrics::hasTestedSelfRapidPositiveBackgroundTick)
+            assertNull(Metrics::hasTestedSelfRapidPositiveBackgroundTick)
+            assertNull(Metrics::hasTestedSelfRapidPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingBackgroundTick)
             assertPresent(Metrics::isIsolatingForTestedSelfRapidPositiveBackgroundTick)
             assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)

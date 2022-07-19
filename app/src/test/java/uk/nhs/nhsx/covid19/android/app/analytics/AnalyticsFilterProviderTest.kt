@@ -11,11 +11,18 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.HAS_COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME_BACKGROUND_TICK
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.HAS_COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_BACKGROUND_TICK
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.HAS_SELF_DIAGNOSED_BACKGROUND_TICK
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.HAS_TESTED_LFD_POSITIVE_BACKGROUND_TICK
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.HAS_TESTED_POSITIVE_BACKGROUND_TICK
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.HAS_TESTED_SELF_RAPID_POSITIVE_BACKGROUND_TICK
 import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.IS_ISOLATING_FOR_SELF_DIAGNOSED_BACKGROUND_TICK
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.testhelpers.coRunWithFeature
+import kotlin.test.assertEquals
 
 class AnalyticsFilterProviderTest {
     private val localAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider>()
@@ -122,15 +129,21 @@ class AnalyticsFilterProviderTest {
     }
 
     @Test
-    fun `filter symptomatic questionnaire events`() = runBlocking {
+    fun `filter custom analytics events`() = runBlocking {
         coEvery { localAuthorityPostCodeProvider.getPostCodeDistrict() } returns WALES
 
         val expectedValue = listOf(
             DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY,
             IS_ISOLATING_FOR_SELF_DIAGNOSED_BACKGROUND_TICK,
-            COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
+            COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION,
+            HAS_SELF_DIAGNOSED_BACKGROUND_TICK,
+            HAS_TESTED_POSITIVE_BACKGROUND_TICK,
+            HAS_TESTED_LFD_POSITIVE_BACKGROUND_TICK,
+            HAS_TESTED_SELF_RAPID_POSITIVE_BACKGROUND_TICK,
+            HAS_COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_BACKGROUND_TICK,
+            HAS_COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME_BACKGROUND_TICK
         )
 
-        assert(testSubject.invoke().enabledCustomAnalyticsFilters == expectedValue)
+        assertEquals(testSubject.invoke().enabledCustomAnalyticsFilters, expectedValue)
     }
 }

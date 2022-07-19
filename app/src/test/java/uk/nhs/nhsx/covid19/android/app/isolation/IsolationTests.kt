@@ -49,15 +49,15 @@ class IsolationTests(
         private fun getTransitionsForManualTest(): Iterable<Array<Any>> {
             val initialState = State(
                 contact = ContactCaseState.isolating,
-                symptomatic = SymptomaticCaseState.noIsolation,
-                positiveTest = PositiveTestCaseState.isolatingWithUnconfirmedTest
+                symptomatic = SymptomaticCaseState.notIsolatingAndHadSymptomsPreviously,
+                positiveTest = PositiveTestCaseState.noIsolation
             )
             val event =
-                Event.terminatedRiskyContactEarly
+                Event.receivedConfirmedPositiveTestWithEndDateOlderThanExpiredIndexIsolationEndDate
             val finalState = State(
-                contact = ContactCaseState.notIsolatingAndHadRiskyContactIsolationTerminatedEarly,
-                symptomatic = SymptomaticCaseState.noIsolation,
-                positiveTest = PositiveTestCaseState.isolatingWithUnconfirmedTest
+                contact = ContactCaseState.isolating,
+                symptomatic = SymptomaticCaseState.notIsolatingAndHadSymptomsPreviously,
+                positiveTest = PositiveTestCaseState.notIsolatingAndHadConfirmedTestPreviously
             )
             val representation4_10 = StateStorage4_10Representation(initialState, event)
 

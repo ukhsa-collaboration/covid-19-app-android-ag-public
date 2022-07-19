@@ -10,6 +10,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.HAS_COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME_BACKGROUND_TICK
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.HAS_COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_BACKGROUND_TICK
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.HAS_SELF_DIAGNOSED_BACKGROUND_TICK
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.HAS_TESTED_LFD_POSITIVE_BACKGROUND_TICK
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.HAS_TESTED_POSITIVE_BACKGROUND_TICK
+import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.HAS_TESTED_SELF_RAPID_POSITIVE_BACKGROUND_TICK
 import uk.nhs.nhsx.covid19.android.app.analytics.CustomAnalyticsFilter.IS_ISOLATING_FOR_SELF_DIAGNOSED_BACKGROUND_TICK
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
@@ -56,7 +62,13 @@ class AnalyticsFilterProvider @Inject constructor(private val localAuthorityPost
         private val CUSTOM_ANALYTICS_FILTERS = listOf(
             DID_ASK_FOR_SYMPTOMS_ON_POSITIVE_TEST_ENTRY,
             IS_ISOLATING_FOR_SELF_DIAGNOSED_BACKGROUND_TICK,
-            COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
+            COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION,
+            HAS_SELF_DIAGNOSED_BACKGROUND_TICK,
+            HAS_TESTED_POSITIVE_BACKGROUND_TICK,
+            HAS_TESTED_LFD_POSITIVE_BACKGROUND_TICK,
+            HAS_TESTED_SELF_RAPID_POSITIVE_BACKGROUND_TICK,
+            HAS_COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_BACKGROUND_TICK,
+            HAS_COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME_BACKGROUND_TICK
         )
     }
 }

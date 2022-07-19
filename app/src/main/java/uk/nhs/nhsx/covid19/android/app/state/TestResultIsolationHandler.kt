@@ -50,6 +50,7 @@ class TestResultIsolationHandler @Inject constructor(
             testAcknowledgedDate
         )
         return applyIsolationUpdate(
+            currentState,
             currentState.toIsolationInfo(),
             receivedTestResult,
             isolationUpdate,
@@ -122,14 +123,21 @@ class TestResultIsolationHandler @Inject constructor(
                     // isolation
                     receivedTestResult.isOlderThanPositive(previousTestResult) ->
                         when {
-                            indexCase?.isSelfAssessment() == true ->
+                            indexCase?.isSelfAssessment() == true -> {
+                                if (indexCase.hasExpired(clock) && receivedTestResult.isConfirmed()) {
+                                    return Nothing
+                                }
                                 getConfirmedDateIfNeeded(receivedTestResult, previousTestResult)?.let { confirmedDate ->
                                     Update(testInfo.confirm(confirmedDate))
-                                } ?: Update(testInfo)
-                            indexCase?.testResult?.isPositive() == true ->
+                                } ?: Update(testInfo) }
+                            indexCase?.testResult?.isPositive() == true -> {
+                                if (indexCase.hasExpired(clock) && receivedTestResult.isConfirmed()) {
+                                    return Nothing
+                                }
                                 getConfirmedDateIfNeeded(receivedTestResult, previousTestResult)?.let { confirmedDate ->
                                     Overwrite(testInfo.confirm(confirmedDate))
                                 } ?: Overwrite(testInfo)
+                            }
                             // This is not possible because it would mean index info is NegativeTest, so
                             // isOlderThanPositive() would return false
                             else -> Overwrite(testInfo)
@@ -158,13 +166,34 @@ class TestResultIsolationHandler @Inject constructor(
                         if (indexCase?.hasExpired(clock) == false) Nothing
                         else Overwrite(testInfo)
 
+                    receivedTestResult.isPositiveConfirmedAndOlderThanIndexIsolationEndDate(currentState) -> {
+                        when {
+                            previousTestResult == null -> {
+                                Update(testInfo)
+                            }
+                            !previousTestResult.isConfirmed() -> {
+                                Confirm(receivedTestResult.testEndDate(clock))
+                            }
+                            else -> {
+                                Nothing
+                            }
+                        }
+                    }
+
                     else ->
                         if (!isOrWasIndexCase) Overwrite(testInfo)
+                        else if (indexCase?.isSelfAssessment() == true && indexCase.hasExpired(clock))
+                            Overwrite(testInfo)
                         else when (previousTestResult?.testResult) {
                             RelevantVirologyTestResult.NEGATIVE -> Overwrite(testInfo)
                             RelevantVirologyTestResult.POSITIVE ->
-                                if (previousTestResult.isConfirmed()) Nothing
-                                else Confirm(receivedTestResult.testEndDate(clock))
+                                when {
+                                    indexCase?.isSelfAssessment() == false && indexCase.hasExpired(clock) -> Overwrite(
+                                        testInfo
+                                    )
+                                    previousTestResult.isConfirmed() -> Nothing
+                                    else -> Confirm(receivedTestResult.testEndDate(clock))
+                                }
                             else -> Update(testInfo)
                         }
                 }
@@ -207,7 +236,19 @@ class TestResultIsolationHandler @Inject constructor(
                     Confirm(confirmedDate = testInfo.receivedTestResult.testEndDate(clock))
                 else Nothing
 
-            testInfo.receivedTestResult.isConfirmed() -> Update(testInfo)
+            // The new test result is newer than the already stored result and symptoms, but is after isolation expiry
+            // should start new isolation
+            testInfo.receivedTestResult.isConfirmed() -> {
+                currentState.getIndexCase()?.let { indexCase ->
+                    if (!currentState.isActiveIsolation(clock) && !testInfo.receivedTestResult.testEndDate(clock)
+                            .isBefore(indexCase.expiryDate)
+                    ) {
+                        Overwrite(testInfo)
+                    } else {
+                        Update(testInfo)
+                    }
+                } ?: Update(testInfo)
+            }
 
             currentState.isActiveIndexCase(clock) -> Nothing
 
@@ -255,6 +296,7 @@ class TestResultIsolationHandler @Inject constructor(
     }
 
     private fun applyIsolationUpdate(
+        isolationState: IsolationState,
         currentInfo: IsolationInfo,
         testResult: ReceivedTestResult,
         isolationUpdate: IsolationUpdate,
@@ -269,7 +311,11 @@ class TestResultIsolationHandler @Inject constructor(
 
         // A confirmed positive test result (expired or not) removes any memory of a contact case (current or past)
         var newInfo =
-            if (testResult.isConfirmed() && testResult.isPositive()) currentInfo.clearContactCase()
+            if (testResult.isConfirmed() && testResult.isPositive() &&
+                !testResult.isPositiveConfirmedAndOlderThanIndexIsolationEndDate(
+                    createIsolationLogicalState(isolationState)
+                )
+            ) currentInfo.clearContactCase()
             else currentInfo
 
         newInfo = when (testResult.testResult) {
@@ -278,6 +324,7 @@ class TestResultIsolationHandler @Inject constructor(
                     is Update -> updateIndexCaseWithPositiveTestResult(newInfo, isolationUpdate.testInfoResult)
                     is Overwrite -> replaceIndexCaseWithPositiveTestResult(newInfo, isolationUpdate.testInfoResult)
                     is Confirm -> confirmTestResult(newInfo, isolationUpdate.confirmedDate)
+                    is Nothing -> currentInfo
                     else -> newInfo
                 }
             NEGATIVE ->
@@ -386,6 +433,16 @@ class TestResultIsolationHandler @Inject constructor(
                 previousTestResult != null &&
                 previousTestResult.isPositive() &&
                 selfAssessmentOnsetDate.isAfter(previousTestResult.testEndDate)
+    }
+
+    private fun ReceivedTestResult.isPositiveConfirmedAndOlderThanIndexIsolationEndDate(currentIsolationState: IsolationLogicalState): Boolean {
+        val indexCase = currentIsolationState.getIndexCase()
+
+        return if (indexCase == null || !isConfirmed() || !indexCase.hasExpired(clock) || indexCase.testResult?.isPositive() == false) {
+            false
+        } else {
+            testEndDate(clock).isBefore(indexCase.expiryDate)
+        }
     }
 
     private fun ReceivedTestResult.isOlderThanPositive(otherTest: AcknowledgedTestResult?): Boolean =

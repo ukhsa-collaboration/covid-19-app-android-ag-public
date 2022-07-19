@@ -3,10 +3,12 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
+import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockTestResultViewModel
+import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockTestResultViewModel.Options
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.testhelpers.assertInternalBrowserIsOpened
@@ -34,6 +36,11 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
     val context = testAppContext.app
     private val testResultRobot = TestResultRobot(context)
     private val browserRobot = BrowserRobot()
+
+    @After
+    fun cleanUp() {
+        MockTestResultViewModel.currentOptions = Options()
+    }
 
     private fun getString(resourceId: Int): String =
         context.resources.getString(resourceId)

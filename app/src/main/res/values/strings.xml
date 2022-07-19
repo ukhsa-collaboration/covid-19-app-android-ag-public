@@ -945,7 +945,7 @@
     <string name="contact_case_start_isolation_primary_button_title_wales">Get a free rapid lateral flow kit</string>
     <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-tested-coronavirus-covid-19</string>
     <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">You are advised to take a free rapid lateral flow test as soon as possible.</string>
-    <string name="about_this_app_software_information_date_of_release_description">06/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">07/2022</string>
     <string name="exposure_notification_message">Exposure notifications are off during this period</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">Limit close contact with anyone in your household who has COVID-19</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">Take a PCR test if you have symptoms of COVID-19</string>

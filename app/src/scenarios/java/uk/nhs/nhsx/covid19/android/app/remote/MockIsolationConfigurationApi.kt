@@ -12,10 +12,10 @@ class MockIsolationConfigurationApi : IsolationConfigurationApi {
         IsolationConfigurationResponse(
             englandConfiguration = configuration?.toCountrySpecificConfiguration() ?: CountrySpecificConfiguration(
                 contactCase = 11,
-                indexCaseSinceSelfDiagnosisOnset = 11,
-                indexCaseSinceSelfDiagnosisUnknownOnset = 9,
-                maxIsolation = 21,
-                indexCaseSinceTestResultEndDate = 11,
+                indexCaseSinceSelfDiagnosisOnset = 6,
+                indexCaseSinceSelfDiagnosisUnknownOnset = 4,
+                maxIsolation = 16,
+                indexCaseSinceTestResultEndDate = 6,
                 pendingTasksRetentionPeriod = 14,
                 testResultPollingTokenRetentionPeriod = 28
             ),

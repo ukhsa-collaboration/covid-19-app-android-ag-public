@@ -14,7 +14,7 @@ class SubmitKeysProgressActivityTest : EspressoTest() {
     @Test
     fun startActivityWithAllExtrasAndFailingDelayedSubmissionApi_showsLoading() {
         MockApiModule.behaviour.responseType = ALWAYS_FAIL
-        MockApiModule.behaviour.delayMillis = 500
+        MockApiModule.behaviour.delayMillis = 1000
         startTestActivity<SubmitKeysProgressActivity> {
             putParcelableArrayListExtra("EXPOSURE_KEYS_TO_SUBMIT", ArrayList<NHSTemporaryExposureKey>())
             putExtra("SHARE_KEY_DIAGNOSIS_SUBMISSION_TOKEN", "test")
