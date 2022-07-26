@@ -56,15 +56,6 @@ class RiskyContactIsolationOptOutActivityTest : EspressoTest(), LocalAuthoritySe
     }
 
     @Test
-    fun clickGuidanceShouldNavigateToExternalLink() {
-        startTestActivity<RiskyContactIsolationOptOutActivity>()
-
-        riskyContactIsolationOptOutRobot.checkActivityIsDisplayed()
-
-        riskyContactIsolationOptOutRobot.checkGuidanceUrl()
-    }
-
-    @Test
     fun verifyEnglandStringAreDisplayed() {
         startTestActivity<RiskyContactIsolationOptOutActivity>()
 

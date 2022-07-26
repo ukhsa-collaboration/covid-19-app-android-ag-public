@@ -6,9 +6,10 @@ import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNA
 import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockTestResultViewModel
-import uk.nhs.nhsx.covid19.android.app.di.viewmodel.MockTestResultViewModel.Options
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.LANDSCAPE
 import uk.nhs.nhsx.covid19.android.app.report.config.Orientation.PORTRAIT
 import uk.nhs.nhsx.covid19.android.app.testhelpers.assertInternalBrowserIsOpened
@@ -17,7 +18,6 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setScreenOrientation
-import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.FollowUpTest
 import uk.nhs.nhsx.covid19.android.app.testordering.BookTestOption.NoTest
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.NegativeAfterPositiveOrSymptomaticWillBeInIsolation
@@ -32,14 +32,17 @@ import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.Positive
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidNotInIsolation
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultViewState.VoidWillBeInIsolation
 
-class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
+class TestResultActivityStateTest : EspressoTest() {
     val context = testAppContext.app
     private val testResultRobot = TestResultRobot(context)
     private val browserRobot = BrowserRobot()
 
     @After
     fun cleanUp() {
-        MockTestResultViewModel.currentOptions = Options()
+        MockTestResultViewModel.currentOptions =
+            MockTestResultViewModel.currentOptions.copy(
+                useMock = false
+            )
     }
 
     private fun getString(resourceId: Int): String =
@@ -48,14 +51,15 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
     private fun setState(
         state: TestResultViewState,
         acknowledgementCompletionActions: AcknowledgementCompletionActions,
-        days: Int = -1
+        days: Int = -1,
+        country: PostCodeDistrict = WALES
     ) {
         MockTestResultViewModel.currentOptions = MockTestResultViewModel.currentOptions.copy(
             useMock = true,
             viewState = state,
             actions = acknowledgementCompletionActions,
             remainingDaysInIsolation = days,
-            country = WALES
+            country = country
         )
 
         startTestActivity<TestResultActivity>()
@@ -63,6 +67,7 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
 
     private fun checkGoodNewsState(
         state: TestResultViewState,
+        country: PostCodeDistrict = WALES,
         hasCloseToolbar: Boolean,
         @DrawableRes iconDrawableRes: Int?,
         @StringRes titleStringResource: Int = -1,
@@ -70,13 +75,16 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
         @StringRes actionButtonStringResource: Int,
         @StringRes vararg paragraphResources: Int,
         @StringRes goodNewsInfoStringResource: Int,
-        hasGoodNewsLink: Boolean
+        hasGoodNewsLink: Boolean,
+        @StringRes onlineServiceLinkText: Int = R.string.nhs_111_online_service,
     ) {
         setState(
-            state, AcknowledgementCompletionActions(
+            state = state,
+            acknowledgementCompletionActions = AcknowledgementCompletionActions(
                 suggestBookTest = NoTest,
                 shouldAllowKeySubmission = false
-            )
+            ),
+            country = country
         )
 
         testResultRobot.apply {
@@ -94,15 +102,20 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
             checkGoodNewsActionButtonTextStringResource(actionButtonStringResource)
             checkExposureFaqsLinkNotVisible()
             checkGoodNewsLinkVisibility(hasGoodNewsLink)
+            if (hasGoodNewsLink) checkGoodNewsOnlineServiceLinkText(onlineServiceLinkText)
         }
 
-        setScreenOrientation(LANDSCAPE)
-        testResultRobot.checkGoodNewsIconVisibility(false)
-        setScreenOrientation(PORTRAIT)
+        if (iconDrawableRes != null) {
+            setScreenOrientation(LANDSCAPE)
+            waitFor { testResultRobot.checkGoodNewsIconVisibility(false) }
+            setScreenOrientation(PORTRAIT)
+            waitFor { testResultRobot.checkGoodNewsIconVisibility(true) }
+        }
     }
 
     private fun checkIsolationState(
         state: TestResultViewState,
+        country: PostCodeDistrict = WALES,
         days: Int,
         hasCloseToolbar: Boolean,
         @DrawableRes iconDrawableRes: Int,
@@ -113,6 +126,7 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
         @StringRes title3: Int = -1,
         @StringRes actionButtonStringResource: Int,
         exposureLinksVisible: Boolean,
+        @StringRes furtherAdviceStringResource: Int = R.string.for_further_advice_visit,
         @StringRes onlineServiceLinkText: Int,
         @StringRes onlineServiceLinkUrl: Int,
         @StringRes vararg paragraphResources: Int,
@@ -121,7 +135,12 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
             shouldAllowKeySubmission = false
         )
     ) {
-        setState(state, acknowledgementCompletionActions, days)
+        setState(
+            state = state,
+            acknowledgementCompletionActions = acknowledgementCompletionActions,
+            days = days,
+            country = country
+        )
 
         val title2 = "$days day${if (days > 1) "s" else ""}"
 
@@ -156,6 +175,8 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
             if (exposureLinksVisible) checkExposureFaqsLinkVisible()
             else checkExposureFaqsLinkNotVisible()
 
+            checkFurtherAdviceStringResource(furtherAdviceStringResource)
+
             checkOnlineServiceLinkText(onlineServiceLinkText)
 
             runWithFeatureEnabled(USE_WEB_VIEW_FOR_INTERNAL_BROWSER) {
@@ -171,17 +192,35 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
     }
 
     @Test
-    fun showNegativeNotInIsolation() {
+    fun showNegativeNotInIsolation_england() {
         checkGoodNewsState(
             state = NegativeNotInIsolation,
+            country = ENGLAND,
             hasCloseToolbar = false,
             iconDrawableRes = R.drawable.ic_elbow_bump,
-            titleStringResource = R.string.expiration_notification_title,
+            titleStringResource = R.string.negative_test_result_good_news_title,
             subtitleStringResource = R.string.test_result_negative_already_not_in_isolation_subtitle,
             actionButtonStringResource = R.string.continue_button,
-            paragraphResources = intArrayOf(R.string.for_further_advice_visit),
-            goodNewsInfoStringResource = R.string.test_result_no_self_isolation_description,
-            hasGoodNewsLink = true
+            paragraphResources = intArrayOf(R.string.test_result_negative_already_not_in_isolation_advice),
+            goodNewsInfoStringResource = R.string.negative_test_result_no_self_isolation_description,
+            hasGoodNewsLink = true,
+            onlineServiceLinkText = R.string.nhs_111_online_service
+        )
+    }
+    @Test
+    fun showNegativeNotInIsolation_wales() {
+        checkGoodNewsState(
+            state = NegativeNotInIsolation,
+            country = WALES,
+            hasCloseToolbar = false,
+            iconDrawableRes = R.drawable.ic_elbow_bump,
+            titleStringResource = R.string.negative_test_result_good_news_title_wls,
+            subtitleStringResource = R.string.test_result_negative_already_not_in_isolation_subtitle_wls,
+            actionButtonStringResource = R.string.continue_button,
+            paragraphResources = intArrayOf(R.string.test_result_negative_already_not_in_isolation_advice_wls),
+            goodNewsInfoStringResource = R.string.negative_test_result_no_self_isolation_description_wls,
+            hasGoodNewsLink = true,
+            onlineServiceLinkText = R.string.nhs_111_online_service_wales
         )
     }
 
@@ -217,7 +256,7 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
             subtitleStringResource = R.string.test_result_negative_no_self_isolation_subtitle_text,
             actionButtonStringResource = R.string.continue_button,
             paragraphResources = intArrayOf(R.string.for_further_advice_visit),
-            goodNewsInfoStringResource = R.string.test_result_no_self_isolation_description,
+            goodNewsInfoStringResource = R.string.negative_test_result_no_self_isolation_description,
             hasGoodNewsLink = true
         )
     }
@@ -286,36 +325,78 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
     }
 
     @Test
-    fun showPositiveWontBeInIsolation() {
+    fun showPositiveWontBeInIsolation_england() {
         checkGoodNewsState(
             state = PositiveWontBeInIsolation,
+            country = ENGLAND,
             hasCloseToolbar = false,
             iconDrawableRes = R.drawable.ic_elbow_bump,
-            titleStringResource = R.string.test_result_your_test_result,
+            titleStringResource = R.string.test_result_positive_no_self_isolation_title,
             subtitleStringResource = R.string.test_result_positive_no_self_isolation_subtitle,
             actionButtonStringResource = R.string.continue_button,
-            paragraphResources = intArrayOf(R.string.for_further_advice_visit),
+            paragraphResources = intArrayOf(R.string.test_result_no_self_isolation_advice),
             goodNewsInfoStringResource = R.string.test_result_no_self_isolation_description,
-            hasGoodNewsLink = true
+            hasGoodNewsLink = true,
+            onlineServiceLinkText = R.string.nhs_111_online_service
         )
     }
 
     @Test
-    fun showNegativeAfterPositiveOrSymptomaticWillBeInIsolation() {
+    fun showPositiveWontBeInIsolation_wales() {
+        checkGoodNewsState(
+            state = PositiveWontBeInIsolation,
+            country = WALES,
+            hasCloseToolbar = false,
+            iconDrawableRes = R.drawable.ic_elbow_bump,
+            titleStringResource = R.string.test_result_positive_no_self_isolation_title_wls,
+            subtitleStringResource = R.string.test_result_positive_no_self_isolation_subtitle_wls,
+            actionButtonStringResource = R.string.continue_button,
+            paragraphResources = intArrayOf(R.string.test_result_no_self_isolation_advice_wls),
+            goodNewsInfoStringResource = R.string.test_result_no_self_isolation_description_wls,
+            hasGoodNewsLink = true,
+            onlineServiceLinkText = R.string.nhs_111_online_service_wales
+        )
+    }
+
+    @Test
+    fun showNegativeAfterPositiveOrSymptomaticWillBeInIsolation_england() {
         checkIsolationState(
             state = NegativeAfterPositiveOrSymptomaticWillBeInIsolation,
+            country = ENGLAND,
             days = 7,
             hasCloseToolbar = false,
             iconDrawableRes = R.drawable.ic_isolation_continue,
             isolationRequestInfoStringResource = R.string.state_test_positive_then_negative_info,
             isolationRequestInfoColorResource = R.color.error_red,
-            title1 = R.string.test_result_positive_continue_self_isolation_title_1,
+            title1 = R.string.test_result_positive_then_negative_continue_self_isolation_title_1,
             title3Visible = false,
             actionButtonStringResource = R.string.continue_button,
             exposureLinksVisible = false,
+            furtherAdviceStringResource = R.string.test_result_positive_then_negative_continue_self_isolation_for_further_advice_visit,
             onlineServiceLinkText = R.string.nhs_111_online_service,
             onlineServiceLinkUrl = R.string.url_nhs_111_online,
             paragraphResources = intArrayOf(R.string.test_result_positive_then_negative_explanation)
+        )
+    }
+
+    @Test
+    fun showNegativeAfterPositiveOrSymptomaticWillBeInIsolation_wales() {
+        checkIsolationState(
+            state = NegativeAfterPositiveOrSymptomaticWillBeInIsolation,
+            country = WALES,
+            days = 7,
+            hasCloseToolbar = false,
+            iconDrawableRes = R.drawable.ic_isolation_continue,
+            isolationRequestInfoStringResource = R.string.state_test_positive_then_negative_info_wls,
+            isolationRequestInfoColorResource = R.color.error_red,
+            title1 = R.string.test_result_positive_then_negative_continue_self_isolation_title_1_wls,
+            title3Visible = false,
+            actionButtonStringResource = R.string.continue_button,
+            exposureLinksVisible = false,
+            furtherAdviceStringResource = R.string.test_result_positive_then_negative_continue_self_isolation_for_further_advice_visit_wls,
+            onlineServiceLinkText = R.string.nhs_111_online_service_wales,
+            onlineServiceLinkUrl = R.string.url_nhs_111_online,
+            paragraphResources = intArrayOf(R.string.test_result_positive_then_negative_explanation_wls)
         )
     }
 
@@ -345,33 +426,54 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
     }
 
     @Test
-    fun showVoidNotInIsolation() {
+    fun showVoidNotInIsolation_england() {
         checkGoodNewsState(
             state = VoidNotInIsolation,
+            country = ENGLAND,
             hasCloseToolbar = true,
             iconDrawableRes = R.drawable.ic_elbow_bump,
             titleStringResource = R.string.test_result_your_test_result,
             subtitleStringResource = R.string.test_result_void_already_not_in_isolation_subtitle,
             actionButtonStringResource = R.string.continue_button,
-            paragraphResources = intArrayOf(R.string.for_further_advice_visit),
-            goodNewsInfoStringResource = R.string.test_result_no_self_isolation_description,
-            hasGoodNewsLink = true
+            paragraphResources = intArrayOf(R.string.void_test_result_no_self_isolation_advice),
+            goodNewsInfoStringResource = R.string.void_test_result_no_self_isolation_warning,
+            hasGoodNewsLink = true,
+            onlineServiceLinkText = R.string.nhs_111_online_service
         )
     }
 
     @Test
-    fun showVoidWillBeInIsolation() {
+    fun showVoidNotInIsolation_wales() {
+        checkGoodNewsState(
+            state = VoidNotInIsolation,
+            country = WALES,
+            hasCloseToolbar = true,
+            iconDrawableRes = R.drawable.ic_elbow_bump,
+            titleStringResource = R.string.test_result_your_test_result_wls,
+            subtitleStringResource = R.string.test_result_void_already_not_in_isolation_subtitle_wls,
+            actionButtonStringResource = R.string.continue_button,
+            paragraphResources = intArrayOf(R.string.void_test_result_no_self_isolation_advice_wls),
+            goodNewsInfoStringResource = R.string.void_test_result_no_self_isolation_warning_wls,
+            hasGoodNewsLink = true,
+            onlineServiceLinkText = R.string.nhs_111_online_service_wales
+        )
+    }
+
+    @Test
+    fun showVoidWillBeInIsolation_england() {
         checkIsolationState(
             state = VoidWillBeInIsolation,
+            country = ENGLAND,
             days = 8,
             hasCloseToolbar = true,
             iconDrawableRes = R.drawable.ic_isolation_book_test,
             isolationRequestInfoStringResource = R.string.state_test_void_info,
             isolationRequestInfoColorResource = R.color.error_red,
-            title1 = R.string.test_result_positive_continue_self_isolation_title_1,
+            title1 = R.string.test_result_void_continue_self_isolate_title_1,
             title3Visible = false,
             actionButtonStringResource = R.string.continue_button,
             exposureLinksVisible = false,
+            furtherAdviceStringResource = R.string.test_result_void_continue_self_isolate_advice,
             onlineServiceLinkText = R.string.test_result_void_continue_self_isolate_nhs_guidance_label,
             onlineServiceLinkUrl = R.string.url_nhs_guidance,
             paragraphResources = intArrayOf(R.string.test_result_void_continue_self_isolate_explanation)
@@ -379,9 +481,31 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
     }
 
     @Test
-    fun showPlodWillContinueWithCurrentStateScreen() {
+    fun showVoidWillBeInIsolation_wales() {
+        checkIsolationState(
+            state = VoidWillBeInIsolation,
+            country = WALES,
+            days = 8,
+            hasCloseToolbar = true,
+            iconDrawableRes = R.drawable.ic_isolation_book_test,
+            isolationRequestInfoStringResource = R.string.state_test_void_info_wls,
+            isolationRequestInfoColorResource = R.color.error_red,
+            title1 = R.string.test_result_void_continue_self_isolate_title_1_wls,
+            title3Visible = false,
+            actionButtonStringResource = R.string.continue_button,
+            exposureLinksVisible = false,
+            furtherAdviceStringResource = R.string.test_result_void_continue_self_isolate_advice_wls,
+            onlineServiceLinkText = R.string.test_result_void_continue_self_isolate_nhs_guidance_label_wls,
+            onlineServiceLinkUrl = R.string.url_nhs_guidance,
+            paragraphResources = intArrayOf(R.string.test_result_void_continue_self_isolate_explanation_wls)
+        )
+    }
+
+    @Test
+    fun showPlodWillContinueWithCurrentStateScreen_england() {
         checkGoodNewsState(
             state = PlodWillContinueWithCurrentState,
+            country = ENGLAND,
             hasCloseToolbar = true,
             iconDrawableRes = null,
             titleStringResource = R.string.test_result_plod_title,
@@ -389,6 +513,22 @@ class TestResultActivityStateTest : EspressoTest(), LocalAuthoritySetupHelper {
             actionButtonStringResource = R.string.back_to_home,
             paragraphResources = intArrayOf(R.string.test_result_plod_info),
             goodNewsInfoStringResource = R.string.test_result_plod_description,
+            hasGoodNewsLink = false,
+        )
+    }
+
+    @Test
+    fun showPlodWillContinueWithCurrentStateScreen_wales() {
+        checkGoodNewsState(
+            state = PlodWillContinueWithCurrentState,
+            country = WALES,
+            hasCloseToolbar = true,
+            iconDrawableRes = null,
+            titleStringResource = R.string.test_result_plod_title_wls,
+            subtitleStringResource = R.string.test_result_plod_subtitle_wls,
+            actionButtonStringResource = R.string.back_to_home,
+            paragraphResources = intArrayOf(R.string.test_result_plod_info_wls),
+            goodNewsInfoStringResource = R.string.test_result_plod_description_wls,
             hasGoodNewsLink = false,
         )
     }

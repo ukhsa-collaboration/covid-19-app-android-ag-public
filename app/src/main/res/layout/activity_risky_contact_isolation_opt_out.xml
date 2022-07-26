@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/riskyContactIsolationOptOutContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -61,8 +62,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_medium"
+                android:visibility="gone"
                 app:drawable="@drawable/ic_policy_default"
-                app:text="@string/risky_contact_opt_out_advice_testing_hub" />
+                app:text="@string/risky_contact_opt_out_advice_testing_hub"
+                tools:visibility="visible" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
                 android:id="@+id/riskyContactAdviceWashHands"
@@ -71,23 +74,6 @@
                 android:layout_marginTop="@dimen/vertical_margin_medium"
                 app:drawable="@drawable/ic_wash_hands"
                 app:text="@string/risky_contact_opt_out_advice_wash_hands" />
-
-            <TextView
-                android:id="@+id/furtherAdviceTextView"
-                style="@style/Body1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin_large"
-                android:visibility="gone"
-                android:text="@string/risky_contact_opt_out_further_advice" />
-
-            <TextView
-                android:id="@+id/nhsGuidanceLinkTextView"
-                style="@style/LinkText.WithIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:text="@string/risky_contact_opt_out_further_advice_link_text"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/primaryActionButton"

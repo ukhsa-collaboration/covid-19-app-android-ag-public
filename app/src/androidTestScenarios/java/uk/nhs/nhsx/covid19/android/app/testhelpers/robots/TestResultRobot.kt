@@ -32,11 +32,18 @@ class TestResultRobot(
     private val context: Context
 ) {
 
-    fun checkActivityDisplaysNegativeAlreadyNotInIsolation() {
-        onView(withText(R.string.test_result_negative_already_not_in_isolation_subtitle))
-            .check(matches(isDisplayed()))
-        onView(withText(R.string.test_result_no_self_isolation_description))
-            .check(matches(isDisplayed()))
+    fun checkActivityDisplaysNegativeAlreadyNotInIsolation(country: PostCodeDistrict) {
+        if (country == PostCodeDistrict.ENGLAND) {
+            onView(withText(R.string.test_result_negative_already_not_in_isolation_subtitle))
+                .check(matches(isDisplayed()))
+            onView(withText(R.string.negative_test_result_no_self_isolation_description))
+                .check(matches(isDisplayed()))
+        } else {
+            onView(withText(R.string.test_result_negative_already_not_in_isolation_subtitle_wls))
+                .check(matches(isDisplayed()))
+            onView(withText(R.string.negative_test_result_no_self_isolation_description_wls))
+                .check(matches(isDisplayed()))
+        }
     }
 
     fun checkActivityDisplaysNegativeWillBeInIsolation() {
@@ -50,7 +57,7 @@ class TestResultRobot(
     fun checkActivityDisplaysNegativeWontBeInIsolation() {
         onView(withText(R.string.test_result_negative_no_self_isolation_subtitle_text))
             .check(matches(isDisplayed()))
-        onView(withText(R.string.test_result_no_self_isolation_description))
+        onView(withText(R.string.negative_test_result_no_self_isolation_description))
             .check(matches(isDisplayed()))
     }
 
@@ -190,55 +197,106 @@ class TestResultRobot(
         }
     }
 
-    fun checkActivityDisplaysPositiveWontBeInIsolation() {
-        onView(withId(R.id.goodNewsSubtitle))
-            .perform(scrollTo())
-            .check(matches(isDisplayed()))
+    fun checkActivityDisplaysPositiveWontBeInIsolation(country: PostCodeDistrict) {
+        if (country == ENGLAND) {
+            onView(withId(R.id.goodNewsSubtitle))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
 
-        onView(withText(R.string.test_result_positive_no_self_isolation_subtitle))
-            .perform(scrollTo())
-            .check(matches(isDisplayed()))
+            onView(withText(R.string.test_result_positive_no_self_isolation_subtitle))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
 
-        onView(withText(R.string.test_result_no_self_isolation_description))
-            .perform(scrollTo())
-            .check(matches(isDisplayed()))
+            onView(withText(R.string.test_result_no_self_isolation_description))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+        } else {
+            onView(withId(R.id.goodNewsSubtitle))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+
+            onView(withText(R.string.test_result_positive_no_self_isolation_subtitle_wls))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+
+            onView(withText(R.string.test_result_no_self_isolation_description_wls))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+        }
     }
 
-    fun checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() {
-        onView(withText(R.string.test_result_positive_continue_self_isolation_title_1))
-            .check(matches(isDisplayed()))
+    fun checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation(country: PostCodeDistrict) {
+        if (country == ENGLAND) {
+            onView(withText(R.string.test_result_positive_then_negative_continue_self_isolation_title_1))
+                .check(matches(isDisplayed()))
 
-        onView(withText(R.string.state_test_positive_then_negative_info))
-            .check(matches(isDisplayed()))
+            onView(withText(R.string.state_test_positive_then_negative_info))
+                .check(matches(isDisplayed()))
+        } else {
+            onView(withText(R.string.test_result_positive_then_negative_continue_self_isolation_title_1_wls))
+                .check(matches(isDisplayed()))
+
+            onView(withText(R.string.state_test_positive_then_negative_info_wls))
+                .check(matches(isDisplayed()))
+        }
     }
 
-    fun checkActivityDisplaysVoidNotInIsolation() {
-        onView(withText(R.string.test_result_void_already_not_in_isolation_subtitle))
-            .perform(scrollTo())
-            .check(matches(isDisplayed()))
-        onView(withText(R.string.test_result_no_self_isolation_description))
-            .perform(scrollTo())
-            .check(matches(isDisplayed()))
+    fun checkActivityDisplaysVoidNotInIsolation(country: PostCodeDistrict) {
+        if (country == ENGLAND) {
+            onView(withText(R.string.test_result_void_already_not_in_isolation_subtitle))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+            onView(withText(R.string.void_test_result_no_self_isolation_warning))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+        } else {
+            onView(withText(R.string.test_result_void_already_not_in_isolation_subtitle_wls))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+            onView(withText(R.string.void_test_result_no_self_isolation_warning_wls))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+        }
     }
 
-    fun checkActivityDisplaysPlodScreen() {
-        onView(withText(R.string.test_result_plod_title))
-            .perform(scrollTo())
-            .check(matches(isDisplayed()))
-        onView(withText(R.string.test_result_plod_subtitle))
-            .perform(scrollTo())
-            .check(matches(isDisplayed()))
-        onView(withText(R.string.test_result_plod_description))
-            .perform(scrollTo())
-            .check(matches(isDisplayed()))
+    fun checkActivityDisplaysPlodScreen(country: PostCodeDistrict) {
+        if (country == ENGLAND) {
+            onView(withText(R.string.test_result_plod_title))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+            onView(withText(R.string.test_result_plod_subtitle))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+            onView(withText(R.string.test_result_plod_description))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+        } else {
+            onView(withText(R.string.test_result_plod_title_wls))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+            onView(withText(R.string.test_result_plod_subtitle_wls))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+            onView(withText(R.string.test_result_plod_description_wls))
+                .perform(scrollTo())
+                .check(matches(isDisplayed()))
+        }
     }
 
-    fun checkActivityDisplaysVoidWillBeInIsolation() {
-        onView(withText(R.string.test_result_positive_continue_self_isolation_title_1))
-            .check(matches(isDisplayed()))
+    fun checkActivityDisplaysVoidWillBeInIsolation(country: PostCodeDistrict) {
+        if (country == ENGLAND) {
+            onView(withText(R.string.test_result_void_continue_self_isolate_title_1))
+                .check(matches(isDisplayed()))
 
-        onView(withText(R.string.state_test_void_info))
-            .check(matches(isDisplayed()))
+            onView(withText(R.string.state_test_void_info))
+                .check(matches(isDisplayed()))
+        } else {
+            onView(withText(R.string.test_result_void_continue_self_isolate_title_1_wls))
+                .check(matches(isDisplayed()))
+
+            onView(withText(R.string.state_test_void_info_wls))
+                .check(matches(isDisplayed()))
+        }
     }
 
     fun clickIsolationActionButton() {
@@ -474,8 +532,18 @@ class TestResultRobot(
         }
     }
 
+    fun checkFurtherAdviceStringResource(stringResourceId: Int) {
+        onView(withId(R.id.isolationFurtherAdviceTextView))
+            .check(matches(withText(stringResourceId)))
+    }
+
     fun checkOnlineServiceLinkText(@StringRes text: Int) {
         onView(withId(R.id.isolationRequestOnlineServiceLink))
+            .check(matches(withText(text)))
+    }
+
+    fun checkGoodNewsOnlineServiceLinkText(@StringRes text: Int) {
+        onView(withId(R.id.goodNewsOnlineServiceLink))
             .check(matches(withText(text)))
     }
 

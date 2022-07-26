@@ -56,10 +56,7 @@ class RiskyContactIsolationOptOutActivity : BaseActivity() {
             riskyContactAdviceWashHands.updateText(getString(R.string.risky_contact_opt_out_advice_wash_hands_wales))
             primaryActionButton.text = getString(R.string.risky_contact_opt_out_primary_button_title_wales)
             secondaryActionButton.text = getString(R.string.risky_contact_opt_out_secondary_button_title_wales)
-            furtherAdviceTextView.text = getString(R.string.risky_contact_opt_out_further_advice)
-            nhsGuidanceLinkTextView.text = getString(R.string.risky_contact_opt_out_further_advice_link_text)
-            furtherAdviceTextView.gone()
-            nhsGuidanceLinkTextView.gone()
+            riskyContactAdviceTestingHub.visible()
         }
 
         setClickListeners(getString(R.string.risky_contact_opt_out_primary_button_url_wales))
@@ -70,21 +67,16 @@ class RiskyContactIsolationOptOutActivity : BaseActivity() {
             riskyContactAdviceTitle.text = getString(R.string.risky_contact_opt_out_advice_title)
             riskyContactAdviceFreshAir.updateText(getString(R.string.risky_contact_opt_out_advice_meeting_indoors))
             riskyContactAdviceFaceCovering.updateText(getString(R.string.risky_contact_opt_out_advice_mask))
-            riskyContactAdviceTestingHub.updateText(getString(R.string.risky_contact_opt_out_advice_testing_hub))
             riskyContactAdviceWashHands.updateText(getString(R.string.risky_contact_opt_out_advice_wash_hands))
             primaryActionButton.text = getString(R.string.risky_contact_opt_out_primary_button_title)
             secondaryActionButton.text = getString(R.string.risky_contact_opt_out_secondary_button_title)
-            furtherAdviceTextView.text = getString(R.string.risky_contact_opt_out_further_advice)
-            nhsGuidanceLinkTextView.text = getString(R.string.risky_contact_opt_out_further_advice_link_text)
-            furtherAdviceTextView.visible()
-            nhsGuidanceLinkTextView.visible()
+            riskyContactAdviceTestingHub.gone()
         }
 
         setClickListeners(getString(R.string.risky_contact_opt_out_primary_button_url))
     }
 
     private fun setAccessibilityText() {
-        binding.nhsGuidanceLinkTextView.setUpOpensInBrowserWarning()
         binding.primaryActionButton.setUpOpensInBrowserWarning()
     }
 
@@ -97,11 +89,6 @@ class RiskyContactIsolationOptOutActivity : BaseActivity() {
         binding.primaryActionButton.setOnSingleClickListener {
             viewModel.acknowledgeAndOptOutContactIsolation()
             openInExternalBrowserForResult(primaryButtonUrl, REQUEST_ADVICE_EXTERNAL_LINK)
-        }
-
-        binding.nhsGuidanceLinkTextView.setOnSingleClickListener {
-            viewModel.acknowledgeAndOptOutContactIsolation()
-            openInExternalBrowserForResult(getString(R.string.risky_contact_opt_out_further_advice_link_url), REQUEST_ADVICE_EXTERNAL_LINK)
         }
     }
 

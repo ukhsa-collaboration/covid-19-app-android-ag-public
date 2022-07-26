@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveContinueIsolation
 import uk.nhs.nhsx.covid19.android.app.flow.functionalities.ManualTestResultEntry.ExpectedScreenAfterPositiveTestResult.PositiveWillBeInIsolation
@@ -120,7 +121,7 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
         // Enters negative PCR test result on 1st Jan
         manualTestResultEntry.enterNegative()
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(WALES) }
         testResultRobot.clickGoodNewsActionButton()
 
         // Current date: 2nd Jan -> Analytics packet for: 1st Jan

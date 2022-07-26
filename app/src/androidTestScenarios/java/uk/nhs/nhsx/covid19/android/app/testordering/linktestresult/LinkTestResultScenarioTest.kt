@@ -113,7 +113,7 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
 
         linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(ENGLAND) }
 
         step(
             stepName = "Negative test result",
@@ -142,7 +142,7 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
 
         linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation(ENGLAND) }
 
         step(
             stepName = "Void test result",
@@ -171,7 +171,7 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
 
         linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysPlodScreen() }
+        waitFor { testResultRobot.checkActivityDisplaysPlodScreen(ENGLAND) }
 
         step(
             stepName = "Plod test result",

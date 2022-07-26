@@ -11,6 +11,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.R.id
 import uk.nhs.nhsx.covid19.android.app.R.string
@@ -43,15 +44,6 @@ class RiskyContactIsolationOptOutRobot : HasActivity {
             .perform(click())
     }
 
-    fun clickGuidance_opensInExternalBrowser() {
-        onView(withId(id.nhsGuidanceLinkTextView)).check(
-            matches(allOf(withTextViewHasDrawableEnd(), isAnnouncedAsOpenInBrowser()))
-        )
-        onView(withId(id.nhsGuidanceLinkTextView))
-            .perform(scrollTo())
-            .perform(click())
-    }
-
     fun checkPrimaryButtonUrl(country: SupportedCountry) {
         val furtherAdviceLink = if (country == ENGLAND) {
             context.getString(string.risky_contact_opt_out_primary_button_url)
@@ -60,12 +52,6 @@ class RiskyContactIsolationOptOutRobot : HasActivity {
         }
         assertBrowserIsOpened(furtherAdviceLink) {
             clickPrimaryButton_opensInExternalBrowser()
-        }
-    }
-
-    fun checkGuidanceUrl() {
-        assertBrowserIsOpened(context.getString(string.risky_contact_opt_out_further_advice_link_url)) {
-            clickGuidance_opensInExternalBrowser()
         }
     }
 
@@ -116,15 +102,12 @@ class RiskyContactIsolationOptOutRobot : HasActivity {
             drawableRes = R.drawable.ic_mask
         )
         checkAdvice(
-            viewId = id.riskyContactAdviceTestingHub,
-            text = context.getString(string.risky_contact_opt_out_advice_testing_hub),
-            drawableRes = R.drawable.ic_policy_default
-        )
-        checkAdvice(
             viewId = id.riskyContactAdviceWashHands,
             text = context.getString(string.risky_contact_opt_out_advice_wash_hands),
             drawableRes = R.drawable.ic_wash_hands
         )
+        onView(withId(id.riskyContactAdviceTestingHub))
+            .check(matches(not(isDisplayed())))
         onView(withText(string.risky_contact_opt_out_primary_button_title))
             .perform(scrollTo())
             .check(matches(isDisplayed()))

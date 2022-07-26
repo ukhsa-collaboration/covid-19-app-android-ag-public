@@ -24,12 +24,6 @@ class PositiveSymptomsNoIsolationActivity : BaseActivity() {
                 navigateToStatusActivity()
             }
 
-            positiveSymptomsNoIsolationCommonQuestionsLink.setOnSingleClickListener {
-                openUrl(
-                    getString(R.string.positive_symptoms_no_isolation_common_question_url)
-                )
-            }
-
             positiveSymptomsNoIsolationNhsLink.setOnSingleClickListener {
                 openUrl(
                     getString(R.string.nhs_111_online_link_wls)

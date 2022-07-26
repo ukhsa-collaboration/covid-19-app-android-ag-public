@@ -4,6 +4,8 @@ import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_ENGLAND_CONTACT_CASE
 import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_WALES_CONTACT_CASE_FLOW
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R.string
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.Default
 import uk.nhs.nhsx.covid19.android.app.exposure.encounter.EvaluateTestingAdviceToShow.TestingAdviceToShow.WalesWithinAdviceWindow
 import uk.nhs.nhsx.covid19.android.app.exposure.questionnaire.ExposureNotificationAgeLimitActivity
@@ -429,73 +431,54 @@ class RiskyContactScenariosTest : EspressoTest(), LocalAuthoritySetupHelper, Iso
     @Test
     fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickPrimaryButton_navigateToStatusActivity_England() {
         runWithFeature(OLD_ENGLAND_CONTACT_CASE_FLOW, false) {
-            givenLocalAuthorityIsInEngland()
             runNewAdviceJourney(acknowledgementAction = {
                 assertBrowserIsOpened(string.risky_contact_opt_out_primary_button_url) {
                     riskyContactIsolationOptOutRobot.clickPrimaryButton_opensInExternalBrowser()
                 }
-            })
+            }, country = PostCodeDistrict.ENGLAND)
         }
     }
 
     @Test
     fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickPrimaryButton_navigateToStatusActivity_Wales() {
         runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
-            givenLocalAuthorityIsInWales()
             runNewAdviceJourney(acknowledgementAction = {
-                assertBrowserIsOpened(string.risky_contact_opt_out_primary_button_url) {
+                assertBrowserIsOpened(string.risky_contact_opt_out_primary_button_url_wales) {
                     riskyContactIsolationOptOutRobot.clickPrimaryButton_opensInExternalBrowser()
                 }
-            })
+            }, country = WALES)
         }
     }
 
     @Test
     fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickSecButton_navigateToStatusActivity() {
         runWithFeature(OLD_ENGLAND_CONTACT_CASE_FLOW, false) {
-            givenLocalAuthorityIsInEngland()
-            runNewAdviceJourney(acknowledgementAction = {
-                riskyContactIsolationOptOutRobot.clickSecondaryButton()
-            })
+            runNewAdviceJourney(
+                acknowledgementAction = {
+                    riskyContactIsolationOptOutRobot.clickSecondaryButton()
+                },
+                country = PostCodeDistrict.ENGLAND
+            )
         }
     }
 
     @Test
     fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickSecButton_navigateToStatusActivity_Wales() {
         runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
-            givenLocalAuthorityIsInWales()
             runNewAdviceJourney(acknowledgementAction = {
                 riskyContactIsolationOptOutRobot.clickSecondaryButton()
-            })
+            }, country = WALES)
         }
     }
 
-    @Test
-    fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickGuidanceLink_navigateToStatusActivity_England() {
-        runWithFeature(OLD_ENGLAND_CONTACT_CASE_FLOW, false) {
-            givenLocalAuthorityIsInEngland()
-            runNewAdviceJourney(acknowledgementAction = {
-                assertBrowserIsOpened(string.risky_contact_opt_out_further_advice_link_url) {
-                    riskyContactIsolationOptOutRobot.clickGuidance_opensInExternalBrowser()
-                }
-            })
+    private fun runNewAdviceJourney(
+        acknowledgementAction: () -> Unit,
+        country: PostCodeDistrict = PostCodeDistrict.ENGLAND
+    ) {
+        when (country) {
+            WALES -> givenLocalAuthorityIsInWales()
+            else -> givenLocalAuthorityIsInEngland()
         }
-    }
-
-    @Test
-    fun whenReceivesExposureNotification_forNewAdviceJourney_navigatesToRiskyContactIsolationOptOutActivity_clickGuidanceLink_navigateToStatusActivity_Wales() {
-        runWithFeature(OLD_WALES_CONTACT_CASE_FLOW, false) {
-            givenLocalAuthorityIsInWales()
-            runNewAdviceJourney(acknowledgementAction = {
-                assertBrowserIsOpened(string.risky_contact_opt_out_further_advice_link_url) {
-                    riskyContactIsolationOptOutRobot.clickGuidance_opensInExternalBrowser()
-                }
-            })
-        }
-    }
-
-    private fun runNewAdviceJourney(acknowledgementAction: () -> Unit) {
-        givenLocalAuthorityIsInEngland()
 
         givenContactIsolation()
 

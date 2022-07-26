@@ -3,12 +3,15 @@ package uk.nhs.nhsx.covid19.android.app.testordering
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
+import androidx.annotation.StringRes
 import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import uk.nhs.nhsx.covid19.android.app.R
+import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
 import uk.nhs.nhsx.covid19.android.app.exposure.setTemporaryExposureKeyHistoryResolutionRequired
@@ -224,7 +227,18 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
     }
 
     @Test
-    fun showIsolationScreenWhenReceivingPositiveConfirmatoryAndThenNegativeConfirmatoryTestResult() {
+    fun showIsolationScreenWhenReceivingPositiveConfirmatoryAndThenNegativeConfirmatoryTestResultWales() {
+        givenLocalAuthorityIsInWales()
+        showIsolationScreenWhenReceivingPositiveConfirmatoryAndThenNegativeConfirmatoryTestResult(WALES)
+    }
+
+    @Test
+    fun showIsolationScreenWhenReceivingPositiveConfirmatoryAndThenNegativeConfirmatoryTestResultEngland() {
+        givenLocalAuthorityIsInEngland()
+        showIsolationScreenWhenReceivingPositiveConfirmatoryAndThenNegativeConfirmatoryTestResult(ENGLAND)
+    }
+
+    private fun showIsolationScreenWhenReceivingPositiveConfirmatoryAndThenNegativeConfirmatoryTestResult(country: PostCodeDistrict) {
         testAppContext.setState(
             isolationHelper.selfAssessment().asIsolation()
                 .addTestResult(
@@ -251,9 +265,12 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation()
+        testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation(country)
 
         testResultRobot.checkExposureLinkIsNotDisplayed()
+
+        @StringRes val linkText = if (country == ENGLAND) R.string.nhs_111_online_service else R.string.nhs_111_online_service_wales
+        testResultRobot.checkOnlineServiceLinkText(linkText)
 
         testResultRobot.checkIsolationActionButtonShowsContinue()
 
@@ -448,7 +465,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation()
+        testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(ENGLAND)
 
         testResultRobot.checkGoodNewsActionButtonShowsContinue()
 
@@ -480,7 +497,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysVoidWillBeInIsolation()
+        testResultRobot.checkActivityDisplaysVoidWillBeInIsolation(ENGLAND)
         testResultRobot.checkExposureLinkIsNotDisplayed()
         testResultRobot.checkIsolationActionButtonShowsBackHome()
 
@@ -495,7 +512,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
     }
 
     @Test
-    fun showAreNotIsolatingScreenOnNegativeConfirmatory() {
+    fun showNegativeAlreadyNotInIsolationOnNegativeConfirmatory() {
         testAppContext.setState(isolationHelper.neverInIsolation())
 
         testAppContext.getUnacknowledgedTestResultsProvider().add(
@@ -511,7 +528,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation()
+        testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(ENGLAND)
         testResultRobot.checkGoodNewsActionButtonShowsContinue()
 
         isolationChecker.assertNeverIsolating()
@@ -534,7 +551,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysVoidNotInIsolation()
+        testResultRobot.checkActivityDisplaysVoidNotInIsolation(ENGLAND)
 
         testResultRobot.checkGoodNewsActionButtonShowsBackHome()
 
@@ -560,7 +577,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         startTestActivity<TestResultActivity>()
 
-        testResultRobot.checkActivityDisplaysPlodScreen()
+        testResultRobot.checkActivityDisplaysPlodScreen(ENGLAND)
 
         testResultRobot.checkGoodNewsActionButtonShowsBackHome()
 

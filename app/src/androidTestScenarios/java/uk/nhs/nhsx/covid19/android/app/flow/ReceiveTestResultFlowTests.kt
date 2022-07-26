@@ -91,7 +91,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
                 .atStartOfDay().toInstant(ZoneOffset.UTC)
                 .minus(1, ChronoUnit.DAYS)
         )
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -108,7 +108,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(VOID, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysVoidWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysVoidWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -214,7 +214,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -234,7 +234,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(VOID, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysVoidWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysVoidWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -350,7 +350,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             diagnosisKeySubmissionSupported = true,
             testEndDate = testEndDate.minus(1, ChronoUnit.DAYS)
         )
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -401,7 +401,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             confirmatoryDayLimit = 2
         )
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -428,7 +428,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             confirmatoryDayLimit = 2
         )
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
         shareKeys()
@@ -518,7 +518,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
             confirmatoryDayLimit = 2
         )
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -585,7 +585,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = false)
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -604,7 +604,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -627,7 +627,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
                 .atStartOfDay().toInstant(ZoneOffset.UTC)
                 .minus(1, ChronoUnit.DAYS)
         )
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -644,7 +644,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(VOID, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -712,7 +712,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -730,7 +730,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(VOID, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -831,7 +831,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -848,7 +848,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(VOID, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -966,7 +966,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveConfirmedTestResult(NEGATIVE, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -983,7 +983,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         receiveConfirmedTestResult(VOID, diagnosisKeySubmissionSupported = true)
-        waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
 

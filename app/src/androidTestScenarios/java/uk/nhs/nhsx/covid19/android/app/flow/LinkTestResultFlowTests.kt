@@ -114,7 +114,7 @@ class LinkTestResultFlowTests : EspressoTest() {
         linkTestResultSymptomsRobot.clickNo()
 
         waitFor {
-            testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation()
+            testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation(ENGLAND)
         }
 
         testResultRobot.clickGoodNewsActionButton()

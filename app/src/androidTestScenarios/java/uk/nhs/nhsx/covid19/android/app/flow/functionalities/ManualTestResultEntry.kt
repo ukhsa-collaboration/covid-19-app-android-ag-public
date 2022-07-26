@@ -108,7 +108,7 @@ class ManualTestResultEntry(private val testAppContext: TestApplicationContext) 
                 }
             }
             is PositiveWontBeInIsolation -> {
-                waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation() }
+                waitFor { testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation(WALES) }
                 testResultRobot.clickGoodNewsActionButton()
             }
         }

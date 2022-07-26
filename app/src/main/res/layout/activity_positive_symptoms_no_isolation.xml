@@ -47,15 +47,6 @@
                 android:layout_marginTop="@dimen/vertical_margin"
                 app:rawText="@string/positive_symptoms_no_isolation_explanation" />
 
-            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
-                android:id="@+id/positiveSymptomsNoIsolationCommonQuestionsLink"
-                style="@style/LinkText.WithIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:text="@string/positive_symptoms_no_isolation_common_question_link_label"
-                app:linkUrl="@string/positive_symptoms_no_isolation_common_question_url" />
-
             <TextView
                 android:id="@+id/positiveSymptomsNoIsolationFurtherAdviceTextView"
                 style="@style/Body1"

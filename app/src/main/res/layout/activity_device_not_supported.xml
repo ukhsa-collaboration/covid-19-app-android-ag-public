@@ -38,20 +38,15 @@
                 app:rawText="@string/device_not_supported_reasons" />
 
             <TextView
+                android:id="@+id/deviceNotSupportedNextStepsTitle"
                 style="@style/Title3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/vertical_margin_large"
                 android:text="@string/device_not_supported_next_steps_title" />
 
-            <TextView
-                style="@style/Body1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:text="@string/device_not_supported_next_steps_text" />
-
             <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                android:id="@+id/deviceNotSupportedUrl"
                 style="@style/LinkText.WithIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

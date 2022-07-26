@@ -133,7 +133,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(ENGLAND) }
 
         testResultRobot.clickGoodNewsActionButton()
 
@@ -183,7 +183,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
 
         shareKeysResultRobot.clickActionButton()
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -222,7 +222,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -274,7 +274,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysVoidWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysVoidWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
@@ -289,7 +289,7 @@ class MultipleTestOrderingFlowTests : EspressoTest() {
             testAppContext.getDownloadVirologyTestResultWork().invoke()
         }
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation() }
+        waitFor { testResultRobot.checkActivityDisplaysNegativeAfterPositiveOrSymptomaticWillBeInIsolation(ENGLAND) }
 
         testResultRobot.clickIsolationActionButton()
 
