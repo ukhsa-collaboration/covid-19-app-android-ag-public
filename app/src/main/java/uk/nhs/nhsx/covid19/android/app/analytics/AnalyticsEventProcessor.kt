@@ -10,6 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CanceledCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedV2SymptomsQuestionnaire
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedV2SymptomsQuestionnaireAndStayAtHome
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedV3SymptomsQuestionnaireAndHasSymptoms
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInReminderScreen
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ConsentedToShareExposureKeysInTheInitialFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidAccessLocalInfoScreenViaBanner
@@ -61,6 +62,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCE
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_V3_SYMPTOMS_QUESTIONNAIRE_AND_HAS_SYMPTOMS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_REMINDER_SCREEN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CONSENTED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_ACCESS_LOCAL_INFO_SCREEN_VIA_BANNER
@@ -221,6 +223,7 @@ class AnalyticsEventProcessor @Inject constructor(
         DidAccessSelfIsolationNoteLink -> Event(DID_ACCESS_SELF_ISOLATION_NOTE_LINK)
         CompletedV2SymptomsQuestionnaire -> Event(COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE)
         CompletedV2SymptomsQuestionnaireAndStayAtHome -> Event(COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME)
+        CompletedV3SymptomsQuestionnaireAndHasSymptoms -> Event(COMPLETED_V3_SYMPTOMS_QUESTIONNAIRE_AND_HAS_SYMPTOMS)
     }
 
     private fun updateNetworkStats() = AnalyticsLogItem.UpdateNetworkStats(

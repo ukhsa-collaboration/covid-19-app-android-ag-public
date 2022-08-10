@@ -105,7 +105,8 @@ class AnalyticsMetricsStorageTest : ProviderTest<AnalyticsMetricsStorage, Metric
             "completedV2SymptomsQuestionnaire":90,
             "completedV2SymptomsQuestionnaireAndStayAtHome":91,
             "hasCompletedV2SymptomsQuestionnaireBackgroundTick":92,
-            "hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick":93
+            "hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick":93,
+            "completedV3SymptomsQuestionnaireAndHasSymptoms":94
             }
             """.trimIndent().replace("\n", "")
         private val metrics = Metrics(
@@ -193,7 +194,8 @@ class AnalyticsMetricsStorageTest : ProviderTest<AnalyticsMetricsStorage, Metric
             completedV2SymptomsQuestionnaire = 90,
             completedV2SymptomsQuestionnaireAndStayAtHome = 91,
             hasCompletedV2SymptomsQuestionnaireBackgroundTick = 92,
-            hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick = 93
+            hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick = 93,
+            completedV3SymptomsQuestionnaireAndHasSymptoms = 94,
         )
     }
 }

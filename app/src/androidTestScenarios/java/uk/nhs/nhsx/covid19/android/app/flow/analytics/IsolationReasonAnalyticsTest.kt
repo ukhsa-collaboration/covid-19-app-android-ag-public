@@ -93,6 +93,7 @@ class IsolationReasonAnalyticsTest : AnalyticsTest() {
             assertEquals(0, Metrics::isIsolatingBackgroundTick)
             assertNull(Metrics::isIsolatingForSelfDiagnosedBackgroundTick)
             assertNull(Metrics::hasSelfDiagnosedBackgroundTick)
+            assertEquals(1, Metrics::completedV3SymptomsQuestionnaireAndHasSymptoms)
         }
     }
 

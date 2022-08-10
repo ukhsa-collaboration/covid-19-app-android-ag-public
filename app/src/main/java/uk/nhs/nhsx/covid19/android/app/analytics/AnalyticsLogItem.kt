@@ -79,7 +79,8 @@ enum class RegularAnalyticsEventType(
     OPTED_OUT_FOR_CONTACT_ISOLATION({ it.optedOutForContactIsolation++ }),
     DID_ACCESS_SELF_ISOLATION_NOTE_LINK({ it.didAccessSelfIsolationNoteLink = it.didAccessSelfIsolationNoteLink?.inc() }),
     COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE({ it.completedV2SymptomsQuestionnaire++ }),
-    COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME({ it.completedV2SymptomsQuestionnaireAndStayAtHome++ })
+    COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME({ it.completedV2SymptomsQuestionnaireAndStayAtHome++ }),
+    COMPLETED_V3_SYMPTOMS_QUESTIONNAIRE_AND_HAS_SYMPTOMS({ it.completedV3SymptomsQuestionnaireAndHasSymptoms++ }),
 }
 
 @JsonClass(generateAdapter = true)

@@ -112,5 +112,6 @@ data class Metrics(
     var completedV2SymptomsQuestionnaire: Int = 0,
     var completedV2SymptomsQuestionnaireAndStayAtHome: Int = 0,
     @SerializeNulls var hasCompletedV2SymptomsQuestionnaireBackgroundTick: Int? = 0,
-    @SerializeNulls var hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick: Int? = 0
+    @SerializeNulls var hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick: Int? = 0,
+    var completedV3SymptomsQuestionnaireAndHasSymptoms: Int = 0
 )

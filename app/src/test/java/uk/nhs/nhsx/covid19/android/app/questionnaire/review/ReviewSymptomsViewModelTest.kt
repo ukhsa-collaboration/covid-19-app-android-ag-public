@@ -9,6 +9,8 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedV3SymptomsQuestionnaireAndHasSymptoms
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
@@ -42,6 +44,7 @@ class ReviewSymptomsViewModelTest {
     private val viewStateObserver = mockk<Observer<ViewState>>(relaxUnitFun = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-22T20:00:00Z"), ZoneOffset.UTC)
     private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider>()
+    private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxUnitFun = true)
 
     private fun createTestSubject() = ReviewSymptomsViewModel(
         symptomsAdviceIsolationHandler,
@@ -50,7 +53,8 @@ class ReviewSymptomsViewModelTest {
         riskThreshold,
         symptomsOnsetWindowDays,
         isSymptomaticSelfIsolationForWalesEnabled,
-        localAuthorityPostCodeProvider
+        localAuthorityPostCodeProvider,
+        analyticsEventProcessor,
     )
 
     private val defaultViewState = ViewState(
@@ -213,6 +217,7 @@ class ReviewSymptomsViewModelTest {
         testSubject.onButtonConfirmedClicked()
 
         verify { navigateToSymptomsAdviceScreenObserver.onChanged(expectedIsolationSymptomsAdvice) }
+        verify(exactly = 0) { analyticsEventProcessor.track(any()) }
         verify(exactly = 0) { viewStateObserver.onChanged(any()) }
     }
 
@@ -238,6 +243,55 @@ class ReviewSymptomsViewModelTest {
 
         verify { navigateToSymptomsAdviceScreenObserver.onChanged(expectedIsolationSymptomsAdvice) }
         verify(exactly = 0) { viewStateObserver.onChanged(any()) }
+    }
+
+    @Test
+    fun `onButtonConfirmedClicked and self-isolation enabled does not track analytics Wales`() {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+        val testSubject = createTestSubject()
+
+        testSubject.viewState.value = testSubject.viewState.value?.copy(
+            isSymptomaticSelfIsolationForWalesEnabled = true
+        )
+
+        val onsetDate = ExplicitDate(LocalDate.parse("2020-05-21"))
+        testSubject.viewState.value =
+            testSubject.viewState.value?.copy(onsetDate = onsetDate, showOnsetDateError = true, country = WALES)
+
+        val expectedIsolationSymptomsAdvice = mockk<IsolationSymptomAdvice>()
+
+        every {
+            symptomsAdviceIsolationHandler.computeAdvice(
+                riskThreshold, properReviewSymptomItems.toSelectedSymptoms(), onsetDate, false
+            )
+        } returns expectedIsolationSymptomsAdvice
+
+        testSubject.onButtonConfirmedClicked()
+
+        verify(exactly = 0) { analyticsEventProcessor.track(any()) }
+    }
+
+    @Test
+    fun `onButtonConfirmedClicked and self-isolation disabled track analytics Wales`() {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+
+        val testSubject = createTestSubject()
+
+        val expectedIsolationSymptomsAdvice = mockk<IsolationSymptomAdvice>()
+
+        val onsetDate = ExplicitDate(LocalDate.parse("2020-05-21"))
+        testSubject.viewState.value =
+            testSubject.viewState.value?.copy(onsetDate = onsetDate, showOnsetDateError = true, country = WALES)
+
+        every {
+            symptomsAdviceIsolationHandler.computeAdvice(
+                riskThreshold, properReviewSymptomItems.toSelectedSymptoms(), onsetDate, false
+            )
+        } returns expectedIsolationSymptomsAdvice
+
+        testSubject.onButtonConfirmedClicked()
+
+        verify(exactly = 1) { analyticsEventProcessor.track(CompletedV3SymptomsQuestionnaireAndHasSymptoms) }
     }
 
     @Test

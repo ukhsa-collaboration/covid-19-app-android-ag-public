@@ -9,6 +9,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedV3SymptomsQuestionnaireAndHasSymptoms
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.ENGLAND
@@ -37,7 +39,8 @@ class ReviewSymptomsViewModel @AssistedInject constructor(
     @Assisted private val riskThreshold: Float,
     @Assisted private val symptomsOnsetWindowDays: Int,
     @Assisted private val isSymptomaticSelfIsolationForWalesEnabled: Boolean,
-    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider,
+    private val analyticsEventProcessor: AnalyticsEventProcessor,
 ) : ViewModel() {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -111,8 +114,10 @@ class ReviewSymptomsViewModel @AssistedInject constructor(
         val currentState = viewState.value ?: return
 
         viewModelScope.launch {
+            val country = localAuthorityPostCodeProvider.requirePostCodeDistrict()
+
             val isSymptomaticSelfIsolationEnabled =
-                when (localAuthorityPostCodeProvider.requirePostCodeDistrict()) {
+                when (country) {
                     ENGLAND -> true
                     WALES -> currentState.isSymptomaticSelfIsolationForWalesEnabled
                     else -> throw IllegalStateException("Current local authority is not present")
@@ -128,6 +133,11 @@ class ReviewSymptomsViewModel @AssistedInject constructor(
                     onsetDate = currentState.onsetDate,
                     isSymptomaticSelfIsolationEnabled = isSymptomaticSelfIsolationEnabled
                 )
+
+                if (country == WALES && !currentState.isSymptomaticSelfIsolationForWalesEnabled) {
+                    analyticsEventProcessor.track(CompletedV3SymptomsQuestionnaireAndHasSymptoms)
+                }
+
                 navigateToSymptomAdviceScreen.postValue(symptomAdvice)
             }
         }

@@ -875,7 +875,7 @@
         <item quantity="other">Samey taxadar dheeraad ah oo ilaali dadka kale ilaa %1$s saacada 23:59. Waxaa jiro %2$s maalmood la aado illaa kadib.</item>
     </plurals>
     <string name="be_careful_until_date_title">Samey taxadar dheeraad oo ilaali dadka kale</string>
-    <string name="about_this_app_software_information_date_of_release_description">07/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">08/2022</string>
     <string name="back_to_home_screen">Ku laabo shaashadda soo-dhoweynta</string>
     <string name="covid_guidance_hub_check_ssp_description">Ogow waxa ku saabsan baaritaanka COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">Hagidii ugu dambeysay ee COVID-19</string>

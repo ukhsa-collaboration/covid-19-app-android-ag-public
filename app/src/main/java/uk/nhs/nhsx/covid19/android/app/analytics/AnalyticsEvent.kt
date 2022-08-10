@@ -58,4 +58,5 @@ sealed class AnalyticsEvent {
     object DidAccessSelfIsolationNoteLink : AnalyticsEvent()
     object CompletedV2SymptomsQuestionnaire : AnalyticsEvent()
     object CompletedV2SymptomsQuestionnaireAndStayAtHome : AnalyticsEvent()
+    object CompletedV3SymptomsQuestionnaireAndHasSymptoms : AnalyticsEvent()
 }
