@@ -177,7 +177,7 @@ class StatusActivity : StatusBaseActivity() {
                 viewState.showReportSymptomsButton
             )
             handleLocalMessageState(viewState.localMessage)
-            handleCovidGuidanceHubState(viewState.showCovidGuidanceHubButton)
+            handleCovidGuidanceHubState(viewState.showCovidGuidanceHubButton, viewState.showGuidanceHubNewLabel)
             setupCovidGuidanceHubListener(viewState.country)
         }
         binding.optionVenueCheckIn.isVisible = RuntimeBehavior.isFeatureEnabled(VENUE_CHECK_IN_BUTTON)
@@ -193,8 +193,9 @@ class StatusActivity : StatusBaseActivity() {
         binding.optionReportSymptoms.isVisible = showReportSymptomsButton
     }
 
-    private fun handleCovidGuidanceHubState(showCovidGuidanceHubButton: Boolean) {
+    private fun handleCovidGuidanceHubState(showCovidGuidanceHubButton: Boolean, shouldShowNewLabel: Boolean) {
         binding.optionCovidGuidance.isVisible = showCovidGuidanceHubButton
+        binding.optionCovidGuidance.shouldDisplayNewFunctionalityLabel = shouldShowNewLabel
     }
 
     private fun setClickListeners() = with(binding) {

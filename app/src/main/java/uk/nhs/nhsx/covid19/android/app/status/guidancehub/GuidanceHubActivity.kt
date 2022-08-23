@@ -7,7 +7,9 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivityGuidanceHubBinding
-import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubViewModel.NavigationTarget
+import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubViewModel.NavigationTarget.ExternalLink
+import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubViewModel.NewLabelViewState.Hidden
+import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubViewModel.NewLabelViewState.Visible
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openInExternalBrowserForResult
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
@@ -35,51 +37,67 @@ class GuidanceHubActivity : BaseActivity() {
 
         setupOnClickListeners()
         setupObservers()
+
+        viewModel.onCreate()
     }
 
     private fun setupObservers() {
         viewModel.navigationTarget().observe(this) { navTarget ->
             val url = when (navTarget) {
-                is NavigationTarget.EnglandGuidance -> getString(R.string.covid_guidance_hub_for_england_url)
-                is NavigationTarget.CheckSymptomsGuidance -> getString(R.string.covid_guidance_hub_check_symptoms_url)
-                is NavigationTarget.LatestGuidance -> getString(R.string.covid_guidance_hub_latest_url)
-                is NavigationTarget.PositiveTestResultGuidance -> getString(R.string.covid_guidance_hub_positive_test_result_url)
-                is NavigationTarget.TravellingAbroadGuidance -> getString(R.string.covid_guidance_hub_travelling_abroad_url)
-                is NavigationTarget.CheckSSPGuidance -> getString(R.string.covid_guidance_hub_check_ssp_url)
-                is NavigationTarget.CovidEnquiryGuidance -> getString(R.string.covid_guidance_hub_enquiries_url)
+                is ExternalLink -> {
+                    getString(navTarget.urlRes)
+                }
             }
             openInExternalBrowserForResult(url)
+        }
+
+        viewModel.newLabelViewState().observe(this) { state ->
+            when (state) {
+                is Hidden -> {
+                    binding.itemSeven.newLabelAccessibilityText = null
+                    binding.itemSeven.shouldDisplayNewLabel = false
+                }
+                is Visible -> {
+                    binding.itemSeven.newLabelAccessibilityText =
+                        getString(R.string.covid_guidance_hub_england_button_seven_new_label_accessibility_text)
+                    binding.itemSeven.shouldDisplayNewLabel = true
+                }
+            }
         }
     }
 
     private fun setupOnClickListeners() {
         with(binding) {
-            itemForEnglandGuidance.setOnSingleClickListener {
-                viewModel.itemForEnglandGuidanceClicked()
+            itemOne.setOnSingleClickListener {
+                viewModel.itemOneClicked()
             }
 
-            itemCheckSymptomsGuidance.setOnSingleClickListener {
-                viewModel.itemCheckSymptomsGuidanceClicked()
+            itemTwo.setOnSingleClickListener {
+                viewModel.itemTwoClicked()
             }
 
-            itemLatestGuidance.setOnSingleClickListener {
-                viewModel.itemLatestGuidanceClicked()
+            itemThree.setOnSingleClickListener {
+                viewModel.itemThreeClicked()
             }
 
-            itemPositiveTestResultGuidance.setOnSingleClickListener {
-                viewModel.itemPositiveTestResultGuidanceClicked()
+            itemFour.setOnSingleClickListener {
+                viewModel.itemFourClicked()
             }
 
-            itemTravellingAbroadGuidance.setOnSingleClickListener {
-                viewModel.itemTravellingAbroadGuidanceClicked()
+            itemFive.setOnSingleClickListener {
+                viewModel.itemFiveClicked()
             }
 
-            itemCheckSSPGuidance.setOnSingleClickListener {
-                viewModel.itemCheckSSPGuidanceClicked()
+            itemSix.setOnSingleClickListener {
+                viewModel.itemSixClicked()
             }
 
-            itemCovidEnquiriesGuidance.setOnSingleClickListener {
-                viewModel.itemCovidEnquiriesGuidanceClicked()
+            itemSeven.setOnSingleClickListener {
+                viewModel.itemSevenClicked()
+            }
+
+            itemEight.setOnSingleClickListener {
+                viewModel.itemEightClicked()
             }
         }
     }

@@ -122,4 +122,31 @@ class GuidanceHubWalesActivityTest(override val configuration: TestConfiguration
             waitFor { browserRobot.checkActivityIsDisplayed() }
         }
     }
+
+    @Test
+    fun clickItemEight_shouldOpenInExternalBrowser() {
+        startTestActivity<GuidanceHubWalesActivity>()
+
+        runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
+            guidanceHubWalesRobot.clickItemEight()
+
+            waitFor { browserRobot.checkActivityIsDisplayed() }
+        }
+    }
+
+    @Test
+    fun clickItemWithNewLabelForWales_shouldRemoveNewLabelOnNavigateBack() {
+        startTestActivity<GuidanceHubWalesActivity>()
+
+        waitFor { guidanceHubWalesRobot.checkNewLabelIsDisplayed(true) }
+
+        runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
+            guidanceHubWalesRobot.clickItemSix()
+
+            waitFor { browserRobot.checkActivityIsDisplayed() }
+            testAppContext.device.pressBack()
+        }
+
+        waitFor { guidanceHubWalesRobot.checkNewLabelIsDisplayed(false) }
+    }
 }

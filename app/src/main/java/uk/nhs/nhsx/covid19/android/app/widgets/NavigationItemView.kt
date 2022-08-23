@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.LinearLayout
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.databinding.ViewNavigationItemBinding
@@ -33,14 +34,29 @@ class NavigationItemView @JvmOverloads constructor(
             updateAccessibilityAnnouncement()
         }
 
+    var newLabelAccessibilityText: String? = null
+        set(value) {
+            field = value
+            updateAccessibilityAnnouncement(value)
+        }
+
+    var shouldDisplayNewLabel: Boolean = false
+        set(value) {
+            field = value
+            binding.navigationItemNewLabel.visibility = if (value) View.VISIBLE else View.GONE
+        }
+
     init {
         initializeViews()
         applyAttributes(context, attrs)
         updateAccessibilityAnnouncement()
     }
 
-    private fun updateAccessibilityAnnouncement() = with(binding) {
-        val accessibilityText = "${navigationItemTitle.text}. ${navigationItemDescription.text}"
+    private fun updateAccessibilityAnnouncement(newLabelText: String? = null) = with(binding) {
+        val contentAccessibilityText = "${navigationItemTitle.text}. ${navigationItemDescription.text}"
+        val newLabelAccessibilityText = if (newLabelText != null) "$newLabelText. " else ""
+        val accessibilityText = newLabelAccessibilityText + contentAccessibilityText
+
         if (attributes.isExternalLink) {
             setUpLinkTypeWithBrowserWarning(accessibilityText)
         } else {

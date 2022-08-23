@@ -111,7 +111,8 @@ class StatusViewModel @AssistedInject constructor(
     exposureNotificationPermissionHelperFactory: ExposureNotificationPermissionHelper.Factory,
     private val shouldShowBluetoothSplashScreen: ShouldShowBluetoothSplashScreen,
     @Assisted val statusActivityAction: StatusActivityAction,
-    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider,
+    private val newFunctionalityLabelProvider: NewFunctionalityLabelProvider,
 ) : ViewModel() {
 
     var contactTracingSwitchedOn = false
@@ -201,6 +202,12 @@ class StatusViewModel @AssistedInject constructor(
         viewModelScope.launch {
             val isolationState = isolationStateMachine.readLogicalState()
             val country = localAuthorityPostCodeProvider.requirePostCodeDistrict()
+            val shouldShowGuidanceHubNewLabel = when (country) {
+                ENGLAND -> !newFunctionalityLabelProvider.hasInteractedWithLongCovidEnglandNewLabel
+                WALES -> !newFunctionalityLabelProvider.hasInteractedWithLongCovidWalesNewLabel
+                else -> false
+            }
+
             val updatedViewState = ViewState(
                 currentDate = currentDate,
                 areaRiskState = getAreaRiskViewState(),
@@ -214,7 +221,7 @@ class StatusViewModel @AssistedInject constructor(
                 country = country,
                 showIsolationHubButton = shouldShowIsolationHubButtonForEngland(country) || shouldShowIsolationHubButtonForWales(country),
                 showCovidGuidanceHubButton = shouldShowCovidGuidanceHubForEngland(country) || shouldShowCovidGuidanceHubButtonForWales(country),
-                showReportSymptomsNewLabel = false
+                showGuidanceHubNewLabel = shouldShowGuidanceHubNewLabel
             )
             viewStateLiveData.postValue(updatedViewState)
         }
@@ -397,7 +404,7 @@ class StatusViewModel @AssistedInject constructor(
         val country: PostCodeDistrict,
         val showIsolationHubButton: Boolean,
         val showCovidGuidanceHubButton: Boolean,
-        val showReportSymptomsNewLabel: Boolean
+        val showGuidanceHubNewLabel: Boolean
     )
 
     sealed class PermissionRequestResult {

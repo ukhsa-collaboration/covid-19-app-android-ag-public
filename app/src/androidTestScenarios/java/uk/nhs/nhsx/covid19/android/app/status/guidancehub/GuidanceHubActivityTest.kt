@@ -48,79 +48,106 @@ class GuidanceHubActivityTest(override val configuration: TestConfiguration) : E
     }
 
     @Test
-    fun clickItemGuidanceForEngland_shouldOpenInExternalBrowser() {
+    fun clickItemOneForEngland_shouldOpenInExternalBrowser() {
         startTestActivity<GuidanceHubActivity>()
 
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
-            guidanceHubRobot.clickItemGuidanceForEngland()
+            guidanceHubRobot.clickItemOne()
 
             waitFor { browserRobot.checkActivityIsDisplayed() }
         }
     }
 
     @Test
-    fun clickItemCheckSymptoms_shouldOpenInExternalBrowser() {
+    fun clickItemTwoForEngland_shouldOpenInExternalBrowser() {
         startTestActivity<GuidanceHubActivity>()
 
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
-            guidanceHubRobot.clickItemCheckSymptoms()
+            guidanceHubRobot.clickItemTwo()
 
             waitFor { browserRobot.checkActivityIsDisplayed() }
         }
     }
 
     @Test
-    fun clickItemLatest_shouldOpenInExternalBrowser() {
+    fun clickItemThreeForEngland_shouldOpenInExternalBrowser() {
         startTestActivity<GuidanceHubActivity>()
 
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
-            guidanceHubRobot.clickItemLatest()
+            guidanceHubRobot.clickItemThree()
 
             waitFor { browserRobot.checkActivityIsDisplayed() }
         }
     }
 
     @Test
-    fun clickItemPositiveTestResult_shouldOpenInExternalBrowser() {
+    fun clickItemFourForEngland_shouldOpenInExternalBrowser() {
         startTestActivity<GuidanceHubActivity>()
 
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
-            guidanceHubRobot.clickItemPositiveTestResult()
+            guidanceHubRobot.clickItemFour()
 
             waitFor { browserRobot.checkActivityIsDisplayed() }
         }
     }
 
     @Test
-    fun clickItemTravellingAbroad_shouldOpenInExternalBrowser() {
+    fun clickItemFiveForEngland_shouldOpenInExternalBrowser() {
         startTestActivity<GuidanceHubActivity>()
 
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
-            guidanceHubRobot.clickItemTravellingAbroad()
+            guidanceHubRobot.clickItemFive()
 
             waitFor { browserRobot.checkActivityIsDisplayed() }
         }
     }
 
     @Test
-    fun clickItemCheckSSP_shouldOpenInExternalBrowser() {
+    fun clickItemSixForEngland_shouldOpenInExternalBrowser() {
         startTestActivity<GuidanceHubActivity>()
 
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
-            guidanceHubRobot.clickItemCheckSSP()
+            guidanceHubRobot.clickItemSix()
 
             waitFor { browserRobot.checkActivityIsDisplayed() }
         }
     }
 
     @Test
-    fun clickItemEnquiries_shouldOpenInExternalBrowser() {
+    fun clickItemSevenForEngland_shouldOpenInExternalBrowser() {
         startTestActivity<GuidanceHubActivity>()
 
         runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
-            guidanceHubRobot.clickItemEnquiries()
+            guidanceHubRobot.clickItemSeven()
 
             waitFor { browserRobot.checkActivityIsDisplayed() }
         }
+    }
+
+    @Test
+    fun clickItemEightForEngland_shouldOpenInExternalBrowser() {
+        startTestActivity<GuidanceHubActivity>()
+
+        runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
+            guidanceHubRobot.clickItemEight()
+
+            waitFor { browserRobot.checkActivityIsDisplayed() }
+        }
+    }
+
+    @Test
+    fun clickItemWithNewLabelForEngland_shouldRemoveNewLabelOnNavigateBack() {
+        startTestActivity<GuidanceHubActivity>()
+
+        waitFor { guidanceHubRobot.checkNewLabelIsDisplayed(true) }
+
+        runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
+            guidanceHubRobot.clickItemSeven()
+
+            waitFor { browserRobot.checkActivityIsDisplayed() }
+            testAppContext.device.pressBack()
+        }
+
+        waitFor { guidanceHubRobot.checkNewLabelIsDisplayed(false) }
     }
 }

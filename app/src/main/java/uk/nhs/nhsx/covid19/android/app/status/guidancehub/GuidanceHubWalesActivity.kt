@@ -7,6 +7,8 @@ import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivityGuidanceHubWalesBinding
+import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubWalesViewModel.NewLabelViewState.Hidden
+import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubWalesViewModel.NewLabelViewState.Visible
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openInExternalBrowserForResult
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
@@ -34,6 +36,8 @@ class GuidanceHubWalesActivity : BaseActivity() {
 
         setupOnClickListeners()
         setupObservers()
+
+        viewModel.onCreate()
     }
 
     private fun setupObservers() {
@@ -42,6 +46,20 @@ class GuidanceHubWalesActivity : BaseActivity() {
                 is GuidanceHubWalesViewModel.NavigationTarget.ExternalLink -> getString(navTarget.urlRes)
             }
             openInExternalBrowserForResult(url)
+        }
+
+        viewModel.newLabelViewState().observe(this) { state ->
+            when (state) {
+                Hidden -> {
+                    binding.itemSix.newLabelAccessibilityText = null
+                    binding.itemSix.shouldDisplayNewLabel = false
+                }
+                Visible -> {
+                    binding.itemSix.newLabelAccessibilityText =
+                        getString(R.string.covid_guidance_hub_wales_button_six_new_label_accessibility_text)
+                    binding.itemSix.shouldDisplayNewLabel = true
+                }
+            }
         }
     }
 
@@ -73,6 +91,10 @@ class GuidanceHubWalesActivity : BaseActivity() {
 
             itemSeven.setOnSingleClickListener {
                 viewModel.itemSevenClicked()
+            }
+
+            itemEight.setOnSingleClickListener {
+                viewModel.itemEightClicked()
             }
         }
     }

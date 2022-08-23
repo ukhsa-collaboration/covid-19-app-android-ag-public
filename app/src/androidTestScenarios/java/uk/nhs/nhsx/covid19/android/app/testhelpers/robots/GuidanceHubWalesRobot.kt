@@ -1,8 +1,13 @@
 package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
-import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import org.hamcrest.Matchers
+import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R.id
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
@@ -11,36 +16,52 @@ class GuidanceHubWalesRobot : HasActivity {
         get() = id.guidanceHubWalesContainer
 
     fun clickItemOne() {
-        Espresso.onView(ViewMatchers.withId(id.itemOne))
+        onView(withId(id.itemOne))
             .perform(ViewActions.scrollTo(), ViewActions.click())
     }
 
     fun clickItemTwo() {
-        Espresso.onView(ViewMatchers.withId(id.itemTwo))
+        onView(withId(id.itemTwo))
             .perform(ViewActions.scrollTo(), ViewActions.click())
     }
 
     fun clickItemThree() {
-        Espresso.onView(ViewMatchers.withId(id.itemThree)).perform(ViewActions.scrollTo(), ViewActions.click())
+        onView(withId(id.itemThree)).perform(ViewActions.scrollTo(), ViewActions.click())
     }
 
     fun clickItemFour() {
-        Espresso.onView(ViewMatchers.withId(id.itemFour))
+        onView(withId(id.itemFour))
             .perform(ViewActions.scrollTo(), ViewActions.click())
     }
 
     fun clickItemFive() {
-        Espresso.onView(ViewMatchers.withId(id.itemFive))
+        onView(withId(id.itemFive))
             .perform(ViewActions.scrollTo(), ViewActions.click())
     }
 
     fun clickItemSix() {
-        Espresso.onView(ViewMatchers.withId(id.itemSix))
+        onView(withId(id.itemSix))
             .perform(ViewActions.scrollTo(), ViewActions.click())
     }
 
     fun clickItemSeven() {
-        Espresso.onView(ViewMatchers.withId(id.itemSeven))
+        onView(withId(id.itemSeven))
             .perform(ViewActions.scrollTo(), ViewActions.click())
+    }
+
+    fun clickItemEight() {
+        onView(withId(id.itemEight))
+            .perform(ViewActions.scrollTo(), ViewActions.click())
+    }
+
+    fun checkNewLabelIsDisplayed(isDisplayed: Boolean) {
+        onView(withId(id.itemSix)).perform(ViewActions.scrollTo())
+        onView(
+            Matchers.allOf(
+                withId(id.navigationItemNewLabel),
+                isDescendantOfA(withId(id.itemSix))
+            )
+        )
+            .check(matches(if (isDisplayed) ViewMatchers.isDisplayed() else not(ViewMatchers.isDisplayed())))
     }
 }

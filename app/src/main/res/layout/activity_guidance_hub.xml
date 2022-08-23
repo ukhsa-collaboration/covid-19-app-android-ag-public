@@ -19,64 +19,78 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/white"
-            android:paddingVertical="12dp">
+            android:paddingBottom="12dp">
 
             <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
-                android:id="@+id/itemForEnglandGuidance"
+                android:id="@+id/itemOne"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:navigationItemDescription="@string/covid_guidance_hub_for_england_description"
+                android:layout_marginBottom="2dp"
+                app:navigationItemDescription="@string/covid_guidance_hub_england_button_one_description"
                 app:navigationItemIsExternalLink="true"
-                app:navigationItemTitle="@string/covid_guidance_hub_for_england_title" />
+                app:navigationItemTitle="@string/covid_guidance_hub_england_button_one_title" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
-                android:id="@+id/itemCheckSymptomsGuidance"
+                android:id="@+id/itemTwo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:navigationItemDescription="@string/covid_guidance_hub_check_symptoms_description"
+                android:layout_marginBottom="2dp"
+                app:navigationItemDescription="@string/covid_guidance_hub_england_button_two_description"
                 app:navigationItemIsExternalLink="true"
-                app:navigationItemTitle="@string/covid_guidance_hub_check_symptoms_title" />
+                app:navigationItemTitle="@string/covid_guidance_hub_england_button_two_title" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
-                android:id="@+id/itemLatestGuidance"
+                android:id="@+id/itemThree"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:navigationItemDescription="@string/covid_guidance_hub_latest_description"
+                android:layout_marginBottom="2dp"
+                app:navigationItemDescription="@string/covid_guidance_hub_england_button_three_description"
                 app:navigationItemIsExternalLink="true"
-                app:navigationItemTitle="@string/covid_guidance_hub_latest_title" />
+                app:navigationItemTitle="@string/covid_guidance_hub_england_button_three_title" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
-                android:id="@+id/itemPositiveTestResultGuidance"
+                android:id="@+id/itemFour"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:navigationItemDescription="@string/covid_guidance_hub_positive_test_result_description"
+                android:layout_marginBottom="2dp"
+                app:navigationItemDescription="@string/covid_guidance_hub_england_button_four_description"
                 app:navigationItemIsExternalLink="true"
-                app:navigationItemTitle="@string/covid_guidance_hub_positive_test_result_title" />
+                app:navigationItemTitle="@string/covid_guidance_hub_england_button_four_title" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
-                android:id="@+id/itemTravellingAbroadGuidance"
+                android:id="@+id/itemFive"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:navigationItemDescription="@string/covid_guidance_hub_travelling_abroad_description"
+                android:layout_marginBottom="2dp"
+                app:navigationItemDescription="@string/covid_guidance_hub_england_button_five_description"
                 app:navigationItemIsExternalLink="true"
-                app:navigationItemTitle="@string/covid_guidance_hub_travelling_abroad_title" />
+                app:navigationItemTitle="@string/covid_guidance_hub_england_button_five_title" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
-                android:id="@+id/itemCheckSSPGuidance"
+                android:id="@+id/itemSix"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:navigationItemDescription="@string/covid_guidance_hub_check_ssp_description"
+                android:layout_marginBottom="2dp"
+                app:navigationItemDescription="@string/covid_guidance_hub_england_button_six_description"
                 app:navigationItemIsExternalLink="true"
-                app:navigationItemTitle="@string/covid_guidance_hub_check_ssp_title" />
+                app:navigationItemTitle="@string/covid_guidance_hub_england_button_six_title" />
 
             <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
-                android:id="@+id/itemCovidEnquiriesGuidance"
+                android:id="@+id/itemSeven"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:navigationItemDescription="@string/covid_guidance_hub_covid_enquiries_description"
+                android:layout_marginBottom="2dp"
+                app:navigationItemDescription="@string/covid_guidance_hub_england_button_seven_description"
                 app:navigationItemIsExternalLink="true"
-                app:navigationItemTitle="@string/covid_guidance_hub_covid_enquiries_title" />
+                app:navigationItemTitle="@string/covid_guidance_hub_england_button_seven_title" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.NavigationItemView
+                android:id="@+id/itemEight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:navigationItemDescription="@string/covid_guidance_hub_england_button_eight_description"
+                app:navigationItemIsExternalLink="true"
+                app:navigationItemTitle="@string/covid_guidance_hub_england_button_eight_title" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

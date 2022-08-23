@@ -72,7 +72,7 @@ class StatusRobot : HasActivity {
     }
 
     fun checkNewLabelIsDisplayed(isDisplayed: Boolean) {
-        onView(allOf(withId(R.id.statusOptionNewLabel), withParent(withId(R.id.optionReportSymptoms))))
+        onView(allOf(withId(R.id.statusOptionNewLabel), withParent(withId(R.id.optionCovidGuidance))))
             .check(matches(if (isDisplayed) isDisplayed() else not(isDisplayed())))
     }
 
