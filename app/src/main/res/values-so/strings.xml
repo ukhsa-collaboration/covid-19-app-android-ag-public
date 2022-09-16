@@ -279,7 +279,7 @@
     <string name="test_result_negative_then_positive_continue_explanation">Waad sii wadi kartaa howlahaaga caadiga ah waqtigaas kadib haddii aadan qabin heerkul sareeyo iyo haddii aad dareentid fiicnaan ku filan. Tani waa ka fogaanshaha inaad u gudbisid COVID-19 dadka kale.</string>
     <string name="test_result_no_self_isolation_description">Haddii aad qabtid heerkul sareeyo ama aadan dareemin fiicnaan kugu fillan oo aad shaqada ku aadid ama aad sameysid howlo caadi ah, isku day inaad guriga joogtid illaa aad wanaag ka dareentid</string>
     <string name="test_result_positive_continue_self_isolate_explanation">Waad sii wadi kartaa howlahaaga caadiga ah waqtigaas kadib haddii aadan qabin heerkul sareeyo iyo haddii aad dareentid fiicnaan ku filan. Tani waa ka fogaanshaha inaad u gudbisid COVID-19 dadka kale.</string>
-    <string name="test_result_positive_continue_self_isolation_title_1">Sii wad inaad isku daydid inaad guriga joogtid</string>
+    <string name="test_result_positive_continue_self_isolation_title_1">Sii wad inaad isku daydo inaad joogtid guriga</string>
     <string name="test_result_positive_no_self_isolation_description">Haddii aad qabtid heerkul sareeyo ama aadan dareemin fiicnaan kugu fillan oo aad shaqada ku aadid ama aad sameysid howlo caadi ah, isku day inaad guriga joogtid illaa aad wanaag ka dareentid</string>
     <string name="test_result_positive_no_self_isolation_subtitle">Inkastoo baaritaanka lagaa helay, waad sii wadi kartaa howlaha caadiga ah haddii aad dareentid fiicnaan ku fillan</string>
     <string name="test_result_positive_then_negative_explanation">Haddii aad ka yar tahay 18, waa lagula talinayaa inaad tusto fariintaan qof weyn oo lagu kalsoon yahay.</string>
@@ -352,7 +352,7 @@
     <string name="notification_channel_recommended_app_update_name_description">Ogeysiisyadani waxay kuu sheegayaan wax ku saabsan cusbooneysiinta app-ka ee lagu taliyay</string>
     <string name="single_local_authority_description">War wanaagsan! App-ka wuxuu noqon doonaa mid sax ah marka la bixinayo macluumaad iyo hagitaan ee heerka halista coronavirus ee deegaankaaga.\n\nHa welwelin, asturnaantaada wali waa la ilaalinayaa. App-ka waligiis ma raad raaci doono aqoonsigaaga ama goobta aad joogto.</string>
     <string name="single_local_authority_title">Maamulka deegaankaaga ah ee loogu talagalay %1$s waa %2$s</string>
-    <string name="test_result_positive_continue_self_isolate_explanation_1">Si aad u ogaato qaabka uu app-ka u xisaabiyo maalmaha is-go\'doominta, booqo marrinka hoose ee su\'aalaha badana la isweydiiya.\n\nNatiijada baaritaankaaga waxay muujineysaa inaad qabtid fayras waqtiga baaritaanka. Waxaa laguu soo diray emayl ama qoraal leh macluumaad dheeri ah.</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">Waad sii wadi kartaa howlahaaga caadiga ah waqtigaas kadib haddii aadan qabin heerkul sareeyo iyo haddii aad dareentid fiicnaan ku filan. Tani waa ka fogaanshaha inaad u gudbisid COVID-19 dadka kale.</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">Ha welwelin - dadka badankood astaamahoodu waa kuwo fudud. Si kastaba ha noqotee, haddii calaamadahaagu ka sii darayaan markaa waa inaad wacdaa 111 ama booqo nhs.uk si aad u hesho talo dheeraad ah.</string>
     <string name="url_exposure_faqs">https://www.gov.uk/government/collections/nhs-covid-19-app</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
@@ -875,7 +875,7 @@
         <item quantity="other">Samey taxadar dheeraad ah oo ilaali dadka kale ilaa %1$s saacada 23:59. Waxaa jiro %2$s maalmood la aado illaa kadib.</item>
     </plurals>
     <string name="be_careful_until_date_title">Samey taxadar dheeraad oo ilaali dadka kale</string>
-    <string name="about_this_app_software_information_date_of_release_description">08/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
     <string name="back_to_home_screen">Ku laabo shaashadda soo-dhoweynta</string>
     <string name="covid_guidance_hub_check_ssp_description">Ogow waxa ku saabsan baaritaanka COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">Hagidii ugu dambeysay ee COVID-19</string>
@@ -980,8 +980,8 @@
     <string name="expiration_notification_recommendation_wales">Wixii talo dheeri ah, fadlan booqo:</string>
     <string name="expiration_notification_title_wales">War wanaagsan</string>
     <string name="expiration_temperature_hint_wales">Waad sii wadi kartaa howlaha caadiga ah haddii aadan laheyn heerkul sareeyo iyo haddii aad dareentid fiicnaan ku fillan</string>
-    <string name="index_case_continue_isolation_advice_body_england">Natiijada baaritaankaagu waxay muujinaysaa inaad qabtay COVID-19 waqtiga baaritaanka. Macluumaad dheeraad ah ayaa lagugu soo diray i-maylka, qoraal ama telefoon ahaan.\n\nSi qarsoodi ah ogaysii qof kasta oo kula lahaa xidhiidh dhow si aad u ogaysiiso inay halis ku jiri karaan. Asturnaantaada waa la dhawray oo macluumaadkaaga gaarka ah lama wadaagi doono.\n\nHaddii aad ka yar tahay 18, waa lagula talinayaa inaad tusto fariintaan qof weyn oo lagu kalsoon yahay.</string>
-    <string name="index_case_continue_isolation_advice_heading_title_england">Natiijadaada baaritaanka COVID-19 waa mid togan</string>
+    <string name="index_case_continue_isolation_advice_body_england">Waad sii wadi kartaa howlahaaga caadiga ah waqtigaas kadib haddii aadan qabin heerkul sareeyo iyo haddii aad dareentid fiicnaan ku filan. Tani waa ka fogaanshaha inaad u gudbisid COVID-19 dadka kale.</string>
+    <string name="index_case_continue_isolation_advice_heading_title_england">Sii wad inaad isku daydo inaad joogtid guriga</string>
     <string name="index_case_continue_isolation_advice_nhs_onilne_link_button_england">NHS 111 online</string>
     <string name="infobox_after_positive_test_wales">Natiijadaada baaritaanka COVID-19 waa mid togan</string>
     <string name="negative_test_result_good_news_title">War wanaagsan</string>
@@ -1060,4 +1060,5 @@
     <string name="covid_guidance_hub_wales_button_eight_title">Caawimaad ka hel su\'aalaha COVID-19</string>
     <string name="covid_guidance_hub_wales_button_eight_url">https://enquiries.test-and-trace.nhs.uk</string>
     <string name="covid_guidance_hub_wales_button_six_new_label_accessibility_text">Qayb cusub</string>
+    <string name="state_test_positive_continue_isolation_info_england">Natiijadaada baaritaanka COVID-19 waa mid togan</string>
 </resources>

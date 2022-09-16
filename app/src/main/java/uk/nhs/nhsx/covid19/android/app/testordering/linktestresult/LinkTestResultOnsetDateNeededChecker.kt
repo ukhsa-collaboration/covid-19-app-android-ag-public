@@ -9,36 +9,30 @@ import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.IndexInfo.Ind
 import uk.nhs.nhsx.covid19.android.app.state.IsolationLogicalState.PossiblyIsolating
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
-import uk.nhs.nhsx.covid19.android.app.testordering.RelevantVirologyTestResult
+import java.time.Clock
 import javax.inject.Inject
 
 class LinkTestResultOnsetDateNeededChecker @Inject constructor(
     private val isolationStateMachine: IsolationStateMachine,
-    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider
+    private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider,
+    private val clock: Clock
 ) {
 
     suspend fun isInterestedInAskingForSymptomsOnsetDay(testResult: ReceivedTestResult): Boolean {
         val currentState = isolationStateMachine.readLogicalState()
         if (localAuthorityPostCodeProvider.requirePostCodeDistrict() == WALES) {
             if (testResult.testResult == POSITIVE && !testResult.requiresConfirmatoryTest) {
-                val consideredSymptomatic = currentState.isConsideredSymptomatic()
-                return !consideredSymptomatic && !currentState.hasPositiveTestResult()
+                return !currentState.isOrWasActiveIndexCaseAtTimeOfTest(testResult)
             }
         } else if (testResult.testKitType == LAB_RESULT && testResult.testResult == POSITIVE && !testResult.requiresConfirmatoryTest) {
-            val consideredSymptomatic = currentState.isConsideredSymptomatic()
-            return !consideredSymptomatic && !currentState.hasPositiveTestResult()
+            return !currentState.isOrWasActiveIndexCaseAtTimeOfTest(testResult)
         }
         return false
     }
 
-    private fun IsolationLogicalState.isConsideredSymptomatic(): Boolean =
+    private fun IsolationLogicalState.isOrWasActiveIndexCaseAtTimeOfTest(testResult: ReceivedTestResult): Boolean =
         this is PossiblyIsolating &&
-            indexInfo is IndexCase &&
-            indexInfo.isSelfAssessment() &&
-            indexInfo.testResult?.testResult != RelevantVirologyTestResult.NEGATIVE
-
-    private fun IsolationLogicalState.hasPositiveTestResult(): Boolean =
-        this is PossiblyIsolating &&
-            indexInfo != null &&
-            indexInfo.testResult?.testResult == RelevantVirologyTestResult.POSITIVE
+                indexInfo != null &&
+                indexInfo is IndexCase &&
+                testResult.testEndDate(clock).isBefore(indexInfo.expiryDate)
 }

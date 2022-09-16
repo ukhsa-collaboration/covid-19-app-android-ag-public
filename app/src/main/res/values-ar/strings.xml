@@ -58,7 +58,7 @@
     <string name="state_index_info">قد تكون مصابا بفيروس COVID-19</string>
     <string name="you_need_to_self_isolate">أعزل نفسك</string>
     <string name="test_result_positive_no_self_isolation_subtitle">على الرغم من إصابتك بالفيروس، يمكنك الاستمرار في ممارسة الأنشطة العادية إذا كنت تشعر بصحة جيدة</string>
-    <string name="state_test_positive_info">نتيجة اختبار الكشف عن إصابتك بفيروس كورونا إيجابية</string>
+    <string name="state_test_positive_info">نتيجة اختبار COVID-19 الخاصة بك إيجابية</string>
     <string name="state_test_void_info">لا يمكننا معرفة ما إذا كنت مصابا بــــCOVID-19</string>
     <string name="test_result_void_continue_self_isolate_explanation">لا يمكننا معرفة ما إذا كنت مصابا COVID-19 عند إجراء الاختبار.\n\nإذا كان عمرك يقل عن 18 عامًا، فإننا نوصيك بعرض هذه الرسالة\nعلى شخصٍ بالغٍ محل ثقة لديك.</string>
     <string name="questionnaire_review_symptoms">مراجعة الأعراض</string>
@@ -367,7 +367,7 @@
     <string name="notification_channel_recommended_app_update_name_description">تُرشدك هذه الإشعارات إلى تحديثات التطبيق الموصى باستخدامها</string>
     <string name="single_local_authority_description">أخبارٌ سارة! سيتمكن التطبيق من تزويدك بمعلومات وإرشادات أكثر دقة تلائم مستوى الخطر المرتبط بتفشي فيروس كورونا في منطقتك.\n\nلا داعي للقلق، ما زالت خصوصيتك خاضعة للحماية. لن يقوم التطبيق بتتبع هويتك أو موقعك على الإطلاق.</string>
     <string name="single_local_authority_title">السلطة المحلية التي يتبعها %1$s هي %2$s</string>
-    <string name="test_result_positive_continue_self_isolate_explanation_1">لفهم الطريقة التي يحسب بها التطبيق عدد أيام العزل الذاتي، يُرجى زيارة الرابط أدناه المؤدي إلى الأسئلة الشائعة.\n\nتُظهر نتيجة الاختبار الذي أجريته أنك كنت مُصابًا بالفيروس في وقت إجراء الاختبار. وقد تم إرسال رسالة الكترونية أو رسالة نصية إليك تتضمن المزيد من المعلومات.</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">يمكنك الاستمرار في ممارسة أنشطتك المعتادة بعد ذلك الوقت إذا لم يكن لديك ارتفاع في درجة الحرارة وإذا كنت تشعر أنك بصحة جيدة. وهذا لكي تتجنب نقل COVID-19 إلى الآخرين.</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">لا داعي للقلق - إذ يُصاب معظم الأشخاص بأعراض طفيفة. وعلى الرغم من ذلك، يجب عليك الاتصال على رقم الهاتف 111 أو زيارة الموقع الالكتروني: nhs.uk للاطلاع على المزيد من النصائح في حال زيادة حدة الأعراض لديك.</string>
     <string name="url_exposure_faqs">https://www.gov.uk/government/collections/nhs-covid-19-app</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
@@ -914,7 +914,7 @@
         <item quantity="other">توخى المزيد من الحرص وأحمي الأخرين حتى %1$s الساعة 23:59. يتبقى %2$s أيام حتى ذلك الحين.</item>
     </plurals>
     <string name="be_careful_until_date_title">توخى المزيد من الحذر وأعمل على حماية الأخرين</string>
-    <string name="about_this_app_software_information_date_of_release_description">08/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
     <string name="back_to_home_screen">الرجوع إلى الشاشة الرئيسية</string>
     <string name="covid_guidance_hub_check_ssp_description">تعرف علي المعلومات المتعلقة باختبار COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">أحدث الإرشادات المتعلقة باختبار COVID-19</string>
@@ -1033,8 +1033,8 @@
     <string name="expiration_notification_recommendation_wales">للاطلاع على المزيد من النصائح، يرجى زيارة الموقع الإلكتروني:</string>
     <string name="expiration_notification_title_wales">أخبار جيدة</string>
     <string name="expiration_temperature_hint_wales">يمكنك الاستمرار في ممارسة الأنشطة المعتادة إذا لم يكن لديك ارتفاع في درجة الحرارة و تشعر بصحة جيدة</string>
-    <string name="index_case_continue_isolation_advice_body_england">تظهر نتيجة اختبارك أنك مصاب بـــــ COVID-19 في وقت الاختبار. لقد تم ارسال المزيد من المعلومات اليك عن طريق البريد الإلكتروني والرسائل النصية أو من خلال الهاتف. \n\nأبلغ أي شخص كان على اتصال وثيق بك دون الإفصاح عن هويتك لتعريفه بأنه قد يكون معرضا للخطر. خصوصيتك محمية ولن يتم الاطلاع على معلوماتك الشخصية. \n\nإذا كان عمرك أقل من 18 عامًا، فإننا نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقةٍ لديك.</string>
-    <string name="index_case_continue_isolation_advice_heading_title_england">نتيجة اختبار COVID-19 الخاصة بك إيجابية</string>
+    <string name="index_case_continue_isolation_advice_body_england">يمكنك الاستمرار في ممارسة أنشطتك المعتادة بعد ذلك الوقت إذا لم يكن لديك ارتفاع في درجة الحرارة وإذا كنت تشعر أنك بصحة جيدة. وهذا لكي تتجنب نقل COVID-19 إلى الآخرين.</string>
+    <string name="index_case_continue_isolation_advice_heading_title_england">استمر في محاولة البقاء في المنزل لـــ</string>
     <string name="index_case_continue_isolation_advice_nhs_onilne_link_button_england">NHS 111 online</string>
     <string name="infobox_after_positive_test_wales">نتيجة اختبار COVID-19 الخاصة بك إيجابية</string>
     <string name="negative_test_result_good_news_title_wls">أخبار جيدة</string>
@@ -1099,4 +1099,5 @@
     <string name="covid_guidance_hub_wales_button_eight_title">أحصل على المساعدة بخصوص الاستفسارات الخاصة بــ COVID-19</string>
     <string name="covid_guidance_hub_wales_button_eight_url">https://enquiries.test-and-trace.nhs.uk</string>
     <string name="covid_guidance_hub_wales_button_six_new_label_accessibility_text">قسم جديد</string>
+    <string name="state_test_positive_continue_isolation_info_england">نتيجة اختبار COVID-19 الخاصة بك إيجابية</string>
 </resources>

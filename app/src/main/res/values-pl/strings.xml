@@ -367,7 +367,7 @@
     <string name="notification_channel_recommended_app_update_name_description">Te powiadomienia informują o zalecanych aktualizacjach aplikacji</string>
     <string name="single_local_authority_description">Świetna wiadomość! Aplikacja będzie udzielać bardziej dokładnych informacji i wskazówek dotyczących poziomu ryzyka zakażenia koronawirusem w Twojej okolicy.\n\nNie obawiaj się, Twoja prywatność jest nadal chroniona. Aplikacja nigdy nie zapisuje Twojej tożsamości ani lokalizacji.</string>
     <string name="single_local_authority_title">Władze lokalne dla %1$s to %2$s</string>
-    <string name="test_result_positive_continue_self_isolate_explanation_1">Aby zrozumieć, w jaki sposób aplikacja liczy dni izolacji, kliknij w poniższy link do listy najczęściej zadawanych pytań (FAQ).\n\nOznacza to, że kiedy test został przeprowadzony, doszło do zakażenia wirusem. Wysłano do Ciebie wiadomość e-mail lub wiadomość tekstową z dalszymi informacjami.</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">Po tym czasie, możesz kontynuować normalną aktywność, chyba że będziesz mieć wysoką temperaturę lub będziesz się źle czuć. Ma to zapobiec zarażaniu innych wirusem COVID-19.</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">Nie martw się – u większości osób objawy są dość łagodne. Jeżeli jednak dojdzie do pogorszenia objawów, zadzwoń pod numer 111 lub odwiedź stronę internetową, aby uzyskać więcej informacji.</string>
     <string name="url_exposure_faqs">https://www.gov.uk/government/collections/nhs-covid-19-app</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
@@ -844,7 +844,7 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">Ogranicz bliski kontakt z ze wszystkimi członkami gospodarstwa domowego zarażonymi COVID-19</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">Noś zakrycie twarzy w zatłoczonych, zamkniętych lub słabo wentylowanych pomieszczeniach</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">Jeżeli ktoś z Twojego gospodarstwa domowego ma COVID-19, w miarę możliwości pracuj z domu</string>
-    <string name="about_this_app_software_information_date_of_release_description">08/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
     <string name="contact_case_exposure_info_screen_continue_button_england">Kontynuuj</string>
     <string name="contact_case_exposure_info_screen_continue_button_wales">Kontynuuj</string>
     <string name="contact_case_exposure_info_screen_exposure_date_england">Bliski kontakt miał miejsce dnia %s</string>
@@ -1007,8 +1007,8 @@
     <string name="expiration_notification_recommendation_wales">Aby uzyskać dalsze informacje, należy odwiedzić stronę internetową:</string>
     <string name="expiration_notification_title_wales">Dobra wiadomość</string>
     <string name="expiration_temperature_hint_wales">Możesz kontynuować normalną aktywność, jeśli nie masz wysokiej temperatury i jeśli czujesz się dostatecznie dobrze</string>
-    <string name="index_case_continue_isolation_advice_body_england">Wynik Twojego testu wskazuje, że w czasie gdy został on przeprowadzony miałeś(-aś) COVID-19 . Więcej informacji przesłaliśmy Ci e-mailem, SMS-em lub telefonicznie.\n\nAnonimowo powiadom każdego, kto był z Tobą w bliskim kontakcie, aby wiedzieli o zagrożeniu. Twoja prywatność jest chroniona, a Twoje dane osobowe nie będą udostępniane.\n\nJeżeli nie masz ukończonych 18 lat, radzimy pokazać tę wiadomość zaufanej osobie dorosłej.</string>
-    <string name="index_case_continue_isolation_advice_heading_title_england">Masz pozytywny wynik testu na COVID-19</string>
+    <string name="index_case_continue_isolation_advice_body_england">Po tym czasie, możesz kontynuować normalną aktywność, chyba że będziesz mieć wysoką temperaturę lub będziesz się źle czuć. Ma to zapobiec zarażaniu innych wirusem COVID-19.</string>
+    <string name="index_case_continue_isolation_advice_heading_title_england">Nadal staraj się pozostać w domu przez</string>
     <string name="index_case_continue_isolation_advice_nhs_onilne_link_button_england">NHS 111 online</string>
     <string name="infobox_after_positive_test_wales">Masz pozytywny wynik testu na COVID-19</string>
     <string name="negative_test_result_good_news_title">Dobra wiadomość</string>
@@ -1087,4 +1087,5 @@
     <string name="covid_guidance_hub_wales_button_eight_title">Uzyskaj pomoc z pytaniami na temat COVID-19</string>
     <string name="covid_guidance_hub_wales_button_eight_url">https://enquiries.test-and-trace.nhs.uk</string>
     <string name="covid_guidance_hub_wales_button_six_new_label_accessibility_text">Nowa sekcja</string>
+    <string name="state_test_positive_continue_isolation_info_england">Masz pozytywny wynik testu na COVID-19</string>
 </resources>

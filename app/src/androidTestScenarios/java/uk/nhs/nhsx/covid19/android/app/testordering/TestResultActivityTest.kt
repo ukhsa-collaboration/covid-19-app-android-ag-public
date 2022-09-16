@@ -83,7 +83,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
         startTestActivity<TestResultActivity>()
 
         testResultRobot.checkActivityDisplaysPositiveContinueIsolation(WALES)
-        testResultRobot.checkExposureLinkIsDisplayed()
+        testResultRobot.checkExposureLinkIsNotDisplayed()
         testResultRobot.checkIsolationActionButtonShowsContinue()
 
         testResultRobot.clickIsolationActionButton()
@@ -130,8 +130,8 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
         startTestActivity<TestResultActivity>()
 
         testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND)
-        testResultRobot.checkExposureLinkIsDisplayed()
-        testResultRobot.checkIsolationActionButtonShowsAnonymouslyNotifyOthers()
+        testResultRobot.checkExposureLinkIsNotDisplayed()
+        testResultRobot.checkIsolationActionButtonShowsContinue()
 
         testResultRobot.clickIsolationActionButton()
 
@@ -499,7 +499,7 @@ class TestResultActivityTest(override val configuration: TestConfiguration) : Es
 
         testResultRobot.checkActivityDisplaysVoidWillBeInIsolation(ENGLAND)
         testResultRobot.checkExposureLinkIsNotDisplayed()
-        testResultRobot.checkIsolationActionButtonShowsBackHome()
+        testResultRobot.checkIsolationActionButtonShowsBackHome(backToHomeResource = R.string.void_test_results_primary_button_title)
 
         testResultRobot.clickIsolationActionButton()
 

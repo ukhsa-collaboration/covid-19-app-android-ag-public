@@ -58,7 +58,7 @@
     <string name="state_index_info">您可能感染 COVID-19</string>
     <string name="you_need_to_self_isolate">自我隔离</string>
     <string name="test_result_positive_no_self_isolation_subtitle">虽然检测结果呈阳性，但若感觉足够好，您可以恢复正常生活</string>
-    <string name="state_test_positive_info">您的冠状病毒测试结果为阳性</string>
+    <string name="state_test_positive_info">您的 COVID-19 检测结果呈阳性</string>
     <string name="state_test_void_info">我们无法判断您是否感染 COVID-19</string>
     <string name="test_result_void_continue_self_isolate_explanation">我们无法判断您在检测完成时是否感染COVID-19毒。\n\n如果您还未满 18 岁，建议您将此消息提供给您信任的成年人。</string>
     <string name="questionnaire_review_symptoms">查看症状</string>
@@ -348,7 +348,7 @@
     <string name="notification_channel_recommended_app_update_name_description">这些通知告诉您推荐的应用程序更新</string>
     <string name="single_local_authority_description">好消息！该应用程序将提供更准确的信息和指导，助您了解您所在地区的冠状病毒风险水平。\n\n别担心，您的隐私仍然受到保护。该应用程序永远不会跟踪您的身份或位置。</string>
     <string name="single_local_authority_title">%1$s的地方当局是%2$s</string>
-    <string name="test_result_positive_continue_self_isolate_explanation_1">若要了解应用程序如何计算自我隔离天数，请点击以下\"常见问题解答\"链接。\n\n测试结果表明您在测试时已感染病毒。 已经发送给您包含更多信息的电子邮件或短信。</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">在这段时间之后，若无发烧且感觉良好，您可以恢复正常生活。这可避免将 COVID-19 传染给他人。</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">请放心—大多数人的症状都很轻微。 但是，如果您的症状确实恶化，则应致电111或访问nhs.uk以获取更多建议。</string>
     <string name="url_exposure_faqs">https://www.gov.uk/government/collections/nhs-covid-19-app</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
@@ -864,7 +864,7 @@
         <item quantity="other">加倍小心和保护他人 直至%1$s时23:59。还剩%2$s天。</item>
     </plurals>
     <string name="be_careful_until_date_title">加倍注意，保护他人</string>
-    <string name="about_this_app_software_information_date_of_release_description">08/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
     <string name="back_to_home_screen">返回主屏幕</string>
     <string name="covid_guidance_hub_check_ssp_description">了解 COVID-19 检测</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 检测最新指南</string>
@@ -969,8 +969,8 @@
     <string name="expiration_notification_recommendation_wales">有关更多建议，请访问：</string>
     <string name="expiration_notification_title_wales">好消息</string>
     <string name="expiration_temperature_hint_wales">若无发烧且感觉良好，您可以恢复正常生活</string>
-    <string name="index_case_continue_isolation_advice_body_england">检测结果显示您在检测时已感染 COVID-19。已通过邮件、短信或电话向您告知更多信息。\n\n匿名通知任何与您存在密切接触之人，告知其可能存在感染风险。您的隐私将受到保护，个人信息不会被共享。\n\n即使没有任何症状，您也极有可能感染和传播该病毒。如果您还未满 18 岁，建议您将此消息拿提供给您信任的成年人。</string>
-    <string name="index_case_continue_isolation_advice_heading_title_england">您的 COVID-19 检测结果呈阳性</string>
+    <string name="index_case_continue_isolation_advice_body_england">在这段时间之后，若无发烧且感觉良好，您可以恢复正常生活。这可避免将 COVID-19 传染给他人。</string>
+    <string name="index_case_continue_isolation_advice_heading_title_england">继续居家隔离</string>
     <string name="index_case_continue_isolation_advice_nhs_onilne_link_button_england">在线 NHS 111</string>
     <string name="infobox_after_positive_test_wales">您的 COVID-19 检测结果呈阳性</string>
     <string name="negative_test_result_good_news_title">好消息</string>
@@ -1049,4 +1049,5 @@
     <string name="covid_guidance_hub_wales_button_eight_title">获取 COVID-19 查询帮助</string>
     <string name="covid_guidance_hub_wales_button_eight_url">https://enquiries.test-and-trace.nhs.uk</string>
     <string name="covid_guidance_hub_wales_button_six_new_label_accessibility_text">全新版块</string>
+    <string name="state_test_positive_continue_isolation_info_england">您的 COVID-19 检测结果呈阳性</string>
 </resources>

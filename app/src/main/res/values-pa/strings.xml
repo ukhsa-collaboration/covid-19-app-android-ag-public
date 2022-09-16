@@ -351,7 +351,7 @@
     <string name="notification_channel_recommended_app_update_name_description">ਇਹ ਨੋਟੀਫਿਕੇਸ਼ਨ ਤੁਹਾਨੂੰ ਐਪ ਦੀਆਂ ਸਿਫਾਰਸ਼ ਕੀਤੀਆਂ ਤਾਜ਼ਾ-ਜਾਣਕਾਰੀਆਂ ਬਾਰੇ ਦੱਸਦੇ ਹਨ</string>
     <string name="single_local_authority_description">ਖੁਸ਼ਖਬਰੀ! ਐਪ ਤੁਹਾਡੇ ਖੇਤਰ ਵਿੱਚ ਕੋਰੋਨਾਵਾਇਰਸ ਦੇ ਜੋਖਮ ਦੇ ਪੱਧਰ ਲਈ ਜਾਣਕਾਰੀ ਅਤੇ ਮਾਰਗ ਦਰਸ਼ਨ ਦੇਣ ਲਈ ਵਧੇਰੇ ਸਹੀ ਹੋਣ ਜਾ ਰਹੀ ਹੈ।\n\nਚਿੰਤਾ ਨਾ ਕਰੋ, ਤੁਹਾਡੀ ਗੁਪਤਤਾ ਅਜੇ ਵੀ ਸੁਰੱਖਿਅਤ ਹੈ। ਐਪ ਤੁਹਾਡੀ ਪਛਾਣ ਜਾਂ ਸਥਾਨ ਨੂੰ ਕਦੇ ਵੀ ਟਰੈਕ ਨਹੀਂ ਕਰੇਗੀ।</string>
     <string name="single_local_authority_title">%1$s ਲਈ ਸਥਾਨਕ ਅਥਾਰਟੀ %2$s ਹੈ</string>
-    <string name="test_result_positive_continue_self_isolate_explanation_1">ਇਹ ਸਮਝਣ ਲਈ ਕਿ ਐਪ ਸਵੈ-ਇਕਾਂਤਵਾਸ ਦੇ ਦਿਨਾਂ ਦੀ ਗਣਨਾ ਕਿਵੇਂ ਕਰਦੀ ਹੈ, ਹੇਠ ਦਿੱਤੇ ਅਕਸਰ ਪੁੱਛੇ ਜਾਂਦੇ ਪ੍ਰਸ਼ਨਾਂ ਦੇ ਲਿੰਕ \'ਤੇ ਜਾਓ।\n\nਤੁਹਾਡੇ ਟੈਸਟ ਦੇ ਨਤੀਜੇ ਤੋਂ ਪਤਾ ਲੱਗਦਾ ਹੈ ਕਿ ਟੈਸਟ ਦੇ ਸਮੇਂ ਤੁਹਾਨੂੰ ਵਾਇਰਸ ਸੀ। ਤੁਹਾਨੂੰ ਵਧੇਰੇ ਜਾਣਕਾਰੀ ਯੁਕਤ ਈਮੇਲ ਜਾਂ ਟੈਕਸਟ ਭੇਜਿਆ ਗਿਆ ਹੈ।</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">ਜੇਕਰ ਤੁਹਾਨੂੰ ਤੇਜ਼ ਬੁਖ਼ਾਰ ਨਹੀਂ ਹੈ ਅਤੇ ਜੇਕਰ ਤੁਸੀਂ ਠੀਕ ਮਹਿਸੂਸ ਕਰਦੇ ਹੋ ਤਾਂ ਉਸ ਸਮੇਂ ਤੋਂ ਬਾਅਦ ਤੁਸੀਂ ਆਪਣੀਆਂ ਆਮ ਗਤੀਵਿਧੀਆਂ ਨੂੰ ਜਾਰੀ ਰੱਖ ਸਕਦੇ ਹੋ। ਇਹ COVID-19 ਨੂੰ ਦੂਜਿਆਂ ਤਕ ਪਹੁੰਚਾਉਣ ਤੋਂ ਬਚਣ ਲਈ ਹੈ।</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">ਚਿੰਤਾ ਨਾ ਕਰੋ - ਜ਼ਿਆਦਾਤਰ ਲੋਕਾਂ ਦੇ ਲੱਛਣ ਕਾਫ਼ੀ ਹਲਕੇ ਹੁੰਦੇ ਹਨ। ਹਾਲਾਂਕਿ, ਜੇ ਤੁਹਾਡੇ ਲੱਛਣ ਵਿਗੜ ਜਾਂਦੇ ਹਨ ਤਾਂ ਤੁਹਾਨੂੰ ਵਧੇਰੇ ਸਲਾਹ ਲਈ 111 ‘ਤੇ ਕਾਲ ਕਰਨਾ ਚਾਹੀਦਾ ਹੈ ਜਾਂ nhs.uk ਤੇ ਜਾਣਾ ਚਾਹੀਦਾ ਹੈ।</string>
     <string name="url_exposure_faqs">https://www.gov.uk/government/collections/nhs-covid-19-app</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
@@ -814,7 +814,7 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">ਆਪਣੇ ਪਰਿਵਾਰ ਵਿੱਚ ਉਸ ਕਿਸੇ ਵੀ ਵਿਅਕਤੀ ਨਾਲ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਨੂੰ ਸੀਮਿਤ ਕਰੋ ਜਿਸ ਨੂੰ COVID-19 ਹੈ</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">ਭੀੜ-ਭੜੱਕੇ ਵਾਲੀਆਂ, ਬੰਦ ਜਾਂ ਮਾੜੀ ਹਵਾਦਾਰੀ ਵਾਲੀਆਂ ਥਾਵਾਂ \'ਤੇ ਚਿਹਰੇ ਦੀ ਕਵਰਿੰਗ ਪਹਿਨੋ</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">ਜੇਕਰ ਤੁਹਾਡੇ ਘਰ ਵਿੱਚ ਕਿਸੇ ਨੂੰ COVID-19 ਹੈ ਤਾਂ ਜੇ ਹੋ ਸਕੇ ਤਾਂ ਘਰੋਂ ਕੰਮ ਕਰੋ</string>
-    <string name="about_this_app_software_information_date_of_release_description">08/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
     <string name="contact_case_exposure_info_screen_continue_button_england">ਜਾਰੀ ਰੱਖੋ</string>
     <string name="contact_case_exposure_info_screen_continue_button_wales">ਜਾਰੀ ਰੱਖੋ</string>
     <string name="contact_case_exposure_info_screen_exposure_date_england">%s ਨੂੰ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਹੋਇਆ</string>
@@ -979,8 +979,8 @@
     <string name="expiration_notification_recommendation_wales">ਵਧੇਰੇ ਸਲਾਹ ਲਈ, ਹੇਠਾਂ ਦਿੱਤੇ ਲਿੰਕ ‘ਤੇ ਜਾਓ:</string>
     <string name="expiration_notification_title_wales">ਚੰਗੀ ਖਬਰ ਹੈ</string>
     <string name="expiration_temperature_hint_wales">ਜੇਕਰ ਤੁਹਾਨੂੰ ਤੇਜ਼ ਬੁਖ਼ਾਰ ਨਹੀਂ ਹੈ ਅਤੇ ਜੇਕਰ ਤੁਸੀਂ ਠੀਕ ਮਹਿਸੂਸ ਕਰਦੇ ਹੋ ਤਾਂ ਤੁਸੀਂ ਆਮ ਗਤੀਵਿਧੀਆਂ ਨੂੰ ਜਾਰੀ ਰੱਖ ਸਕਦੇ ਹੋ</string>
-    <string name="index_case_continue_isolation_advice_body_england">ਤੁਹਾਡੇ ਟੈਸਟ ਦੇ ਨਤੀਜੇ ਦਰਸਾਉਂਦੇ ਹਨ ਕਿ ਟੈਸਟ ਦੇ ਸਮੇਂ ਤੁਹਾਨੂੰ COVID-19 ਸੀ। ਤੁਹਾਨੂੰ ਈਮੇਲ , ਟੈਕਸਟ ਸੁਨੇਹੇ ਜਾਂ ਫੋਨ ਦੁਆਰਾ ਵਧੇਰੇ ਜਾਣਕਾਰੀ ਭੇਜੀ ਗਈ ਹੈ।\n\nਉਸ ਕਿਸੇ ਵੀ ਵਿਅਕਤੀ ਨੂੰ ਗੁੰਮਨਾਮ ਤੌਰ \'ਤੇ ਸੂਚਿਤ ਕਰੋ ਜੋ ਤੁਹਾਡੇ ਨਾਲ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਵਿੱਚ ਰਿਹਾ ਹੈ, ਉਹਨਾਂ ਨੂੰ ਇਹ ਦੱਸਣ ਲਈ ਕਿ ਉਹਨਾਂ ਨੂੰ ਜੋਖਮ ਹੋ ਸਕਦਾ ਹੈ। ਤੁਹਾਡੀ ਪਰਦੇਦਾਰੀ ਦੀ ਰੱਖਿਆ ਕੀਤੀ ਜਾਂਦੀ ਹੈ ਅਤੇ ਤੁਹਾਡੀ ਨਿੱਜੀ ਜਾਣਕਾਰੀ ਸਾਂਝੀ ਨਹੀਂ ਕੀਤੀ ਜਾਵੇਗੀ।\n\nਜੇ ਤੁਹਾਡੀ ਉਮਰ 18 ਸਾਲ ਤੋਂ ਘੱਟ, ਤਾਂ ਤੁਹਾਨੂੰ ਸਲਾਹ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਕਿ ਤੁਸੀਂ ਇਹ ਸੁਨੇਹਾ ਕਿਸੇ ਭਰੋਸੇਮੰਦ ਬਾਲਗ ਨੂੰ ਦਿਖਾਓ।</string>
-    <string name="index_case_continue_isolation_advice_heading_title_england">ਤੁਹਾਡੇ COVID-19 ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਪਾਜ਼ਿਟਿਵ ਹੈ</string>
+    <string name="index_case_continue_isolation_advice_body_england">ਜੇਕਰ ਤੁਹਾਨੂੰ ਤੇਜ਼ ਬੁਖ਼ਾਰ ਨਹੀਂ ਹੈ ਅਤੇ ਜੇਕਰ ਤੁਸੀਂ ਠੀਕ ਮਹਿਸੂਸ ਕਰਦੇ ਹੋ ਤਾਂ ਉਸ ਸਮੇਂ ਤੋਂ ਬਾਅਦ ਤੁਸੀਂ ਆਪਣੀਆਂ ਆਮ ਗਤੀਵਿਧੀਆਂ ਨੂੰ ਜਾਰੀ ਰੱਖ ਸਕਦੇ ਹੋ। ਇਹ COVID-19 ਨੂੰ ਦੂਜਿਆਂ ਤਕ ਪਹੁੰਚਾਉਣ ਤੋਂ ਬਚਣ ਲਈ ਹੈ।</string>
+    <string name="index_case_continue_isolation_advice_heading_title_england">ਇਸਦੇ ਲਈ ਘਰ ਰਹਿਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰਨਾ ਜਾਰੀ ਰੱਖੋ</string>
     <string name="index_case_continue_isolation_advice_nhs_onilne_link_button_england">NHS 111 online</string>
     <string name="infobox_after_positive_test_wales">ਤੁਹਾਡੇ COVID-19 ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਪਾਜ਼ਿਟਿਵ ਹੈ</string>
     <string name="negative_test_result_good_news_title">ਚੰਗੀ ਖਬਰ ਹੈ</string>
@@ -1059,4 +1059,5 @@
     <string name="covid_guidance_hub_wales_button_eight_title">COVID-19 ਬਾਰੇ ਪੁੱਛ-ਗਿਛ ਲਈ ਮਦਦ ਪ੍ਰਾਪਤ ਕਰੋ</string>
     <string name="covid_guidance_hub_wales_button_eight_url">https://enquiries.test-and-trace.nhs.uk</string>
     <string name="covid_guidance_hub_wales_button_six_new_label_accessibility_text">ਨਵਾਂ ਸੈਕਸ਼ਨ</string>
+    <string name="state_test_positive_continue_isolation_info_england">ਤੁਹਾਡੇ COVID-19 ਟੈਸਟ ਦਾ ਨਤੀਜਾ ਪਾਜ਼ਿਟਿਵ ਹੈ</string>
 </resources>

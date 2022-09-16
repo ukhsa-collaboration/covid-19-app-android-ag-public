@@ -63,6 +63,14 @@
                 android:orientation="vertical"
                 android:visibility="gone" />
 
+            <LinearLayout
+                android:id="@+id/externalLinkListContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:orientation="vertical"
+                android:visibility="gone"/>
+
             <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
                 android:id="@+id/riskLevelFooter"
                 android:layout_width="match_parent"

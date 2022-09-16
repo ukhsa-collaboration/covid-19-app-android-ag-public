@@ -22,6 +22,8 @@ import uk.nhs.nhsx.covid19.android.app.util.viewutils.setCloseToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpOpensInBrowserWarning
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.visible
+import uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+import uk.nhs.nhsx.covid19.android.app.widgets.NonDistrictLinkTextView
 import uk.nhs.nhsx.covid19.android.app.widgets.PolicyItemView
 import javax.inject.Inject
 
@@ -75,6 +77,7 @@ class RiskLevelActivity : BaseActivity() {
         }
 
         val policyData = risk.riskIndicator.policyData
+        val externalUrls = risk.riskIndicator.externalUrls
 
         titleRiskLevel.text = if (risk.riskLevelFromLocalAuthority) {
             risk.riskIndicator.policyData?.localAuthorityRiskTitle?.translate()
@@ -108,6 +111,23 @@ class RiskLevelActivity : BaseActivity() {
                 }
             }
             policyItemsContainer.isVisible = policyData.policies.isNotEmpty()
+        }
+
+        if (externalUrls != null && externalUrls.urls.isNotEmpty()) {
+            externalLinkListContainer.visible()
+            if (!externalUrls.title?.translate(localeProvider.default()).isNullOrEmpty()) {
+                val headerView = HeadingTextView(this@RiskLevelActivity)
+                headerView.setTextAppearance(R.style.Title3)
+                headerView.setPadding(0, 0, 0, resources.getDimension(R.dimen.vertical_margin_small).toInt())
+                headerView.text = externalUrls.title?.translate(localeProvider.default())
+                externalLinkListContainer.addView(headerView)
+            }
+            for (url in externalUrls.urls) {
+                val linksView = NonDistrictLinkTextView(this@RiskLevelActivity)
+                linksView.text = url.title.translate(localeProvider.default())
+                linksView.setUrl(url.url.translate(localeProvider.default()))
+                externalLinkListContainer.addView(linksView)
+            }
         }
     }
 

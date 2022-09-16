@@ -262,7 +262,7 @@ class TestResultActivityStateTest : EspressoTest() {
     }
 
     @Test
-    fun showPositiveContinueIsolation() {
+    fun showPositiveContinueIsolation_wales() {
         checkIsolationState(
             state = PositiveContinueIsolation,
             days = 4,
@@ -273,19 +273,39 @@ class TestResultActivityStateTest : EspressoTest() {
             title1 = R.string.test_result_positive_continue_self_isolation_title_1,
             title3Visible = false,
             actionButtonStringResource = R.string.continue_button,
-            exposureLinksVisible = true,
+            exposureLinksVisible = false,
             onlineServiceLinkText = R.string.nhs_111_online_service,
             onlineServiceLinkUrl = R.string.url_nhs_111_online,
             paragraphResources = intArrayOf(
-                R.string.test_result_positive_continue_self_isolate_explanation_1,
-                R.string.test_result_positive_continue_self_isolate_explanation_2,
-                R.string.exposure_faqs_title
+                R.string.test_result_positive_continue_self_isolate_explanation_1
             )
         )
     }
 
     @Test
-    fun showPositiveContinueIsolationNoChange() {
+    fun showPositiveContinueIsolation_england() {
+        checkIsolationState(
+            state = PositiveContinueIsolation,
+            country = ENGLAND,
+            days = 4,
+            hasCloseToolbar = false,
+            iconDrawableRes = R.drawable.ic_isolation_continue,
+            isolationRequestInfoStringResource = R.string.state_test_positive_continue_isolation_info_england,
+            isolationRequestInfoColorResource = R.color.error_red,
+            title1 = R.string.index_case_continue_isolation_advice_heading_title_england,
+            title3Visible = false,
+            actionButtonStringResource = R.string.continue_button,
+            exposureLinksVisible = false,
+            onlineServiceLinkText = R.string.nhs_111_online_service,
+            onlineServiceLinkUrl = R.string.url_nhs_111_online,
+            paragraphResources = intArrayOf(
+                R.string.index_case_continue_isolation_advice_body_england
+            )
+        )
+    }
+
+    @Test
+    fun showPositiveContinueIsolationNoChange_wales() {
         checkIsolationState(
             state = PositiveContinueIsolationNoChange,
             days = 5,
@@ -300,6 +320,26 @@ class TestResultActivityStateTest : EspressoTest() {
             onlineServiceLinkText = R.string.nhs_111_online_service,
             onlineServiceLinkUrl = R.string.url_nhs_111_online,
             paragraphResources = intArrayOf(R.string.test_result_positive_continue_self_isolate_no_change_explanation_1)
+        )
+    }
+
+    @Test
+    fun showPositiveContinueIsolationNoChange_england() {
+        checkIsolationState(
+            state = PositiveContinueIsolationNoChange,
+            country = ENGLAND,
+            days = 5,
+            hasCloseToolbar = false,
+            iconDrawableRes = R.drawable.ic_isolation_continue,
+            isolationRequestInfoStringResource = R.string.state_test_positive_continue_isolation_info_england,
+            isolationRequestInfoColorResource = R.color.error_red,
+            title1 = R.string.index_case_continue_isolation_advice_heading_title_england,
+            title3Visible = false,
+            actionButtonStringResource = R.string.continue_button,
+            exposureLinksVisible = false,
+            onlineServiceLinkText = R.string.nhs_111_online_service,
+            onlineServiceLinkUrl = R.string.url_nhs_111_online,
+            paragraphResources = intArrayOf(R.string.index_case_continue_isolation_advice_body_england)
         )
     }
 

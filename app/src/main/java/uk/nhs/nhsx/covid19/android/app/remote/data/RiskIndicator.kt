@@ -25,7 +25,22 @@ data class RiskIndicator(
     val content: TranslatableString,
     val linkTitle: TranslatableString,
     val linkUrl: TranslatableString,
+    val externalUrls: ExternalUrlsWrapper?,
     val policyData: PolicyData?
+) : Parcelable
+
+@Parcelize
+@JsonClass(generateAdapter = true)
+data class ExternalUrlsWrapper(
+    val title: TranslatableString?,
+    val urls: List<ExternalUrlData>
+) : Parcelable
+
+@Parcelize
+@JsonClass(generateAdapter = true)
+data class ExternalUrlData(
+    val title: TranslatableString,
+    val url: TranslatableString
 ) : Parcelable
 
 @Parcelize

@@ -9,6 +9,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.MAROON
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.NEUTRAL
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.RED
 import uk.nhs.nhsx.covid19.android.app.remote.data.ColorScheme.YELLOW
+import uk.nhs.nhsx.covid19.android.app.remote.data.ExternalUrlData
+import uk.nhs.nhsx.covid19.android.app.remote.data.ExternalUrlsWrapper
 import uk.nhs.nhsx.covid19.android.app.remote.data.Policy
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyIcon
@@ -70,6 +72,27 @@ class MockRiskyPostDistrictsApi : RiskyPostDistrictsApi {
         localAuthorityRiskTitle = TranslatableString(mapOf("en" to "[local authority] ([postcode]) is in local COVID alert level: Tier 5"))
     )
 
+    val externalUrls = ExternalUrlsWrapper(
+        title = TranslatableString(mapOf("en" to "Keep your app updated:")),
+        urls = listOf(
+            ExternalUrlData(
+                title = TranslatableString(mapOf("en" to "Check the App Store")),
+                url = TranslatableString(mapOf(
+                    "en" to "https://apps.apple.com/gb/app/nhs-covid-19/id1520427663"))
+            ),
+            ExternalUrlData(
+                title = TranslatableString(mapOf("en" to "Check the Google Play Store")),
+                url = TranslatableString(mapOf(
+                    "en" to "https://play.google.com/store/apps/details?id=uk.nhs.covid19.production&hl=en_US&gl=UK"))
+            ),
+            ExternalUrlData(
+                title = TranslatableString(mapOf("en" to "Check the app website")),
+                url = TranslatableString(mapOf(
+                    "en" to "https://www.gov.uk/government/collections/nhs-covid-19-app"))
+            ),
+        )
+    )
+
     private val successResponse: RiskyPostCodeDistributionResponse = RiskyPostCodeDistributionResponse(
         postDistricts = mapOf(
             "A1" to "red",
@@ -98,7 +121,8 @@ class MockRiskyPostDistrictsApi : RiskyPostDistrictsApi {
                 content = TranslatableString(mapOf("en" to "Content low")),
                 linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
                 linkUrl = TranslatableString(mapOf("en" to "https://a.b.c/")),
-                policyData = lowPolicyData
+                policyData = lowPolicyData,
+                externalUrls = null
             ),
             "green" to RiskIndicator(
                 colorScheme = GREEN,
@@ -108,7 +132,8 @@ class MockRiskyPostDistrictsApi : RiskyPostDistrictsApi {
                 content = TranslatableString(mapOf("en" to "Content low")),
                 linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
                 linkUrl = TranslatableString(mapOf("en" to "https://a.b.c/")),
-                policyData = lowPolicyData
+                policyData = lowPolicyData,
+                externalUrls = externalUrls
             ),
             "yellow" to RiskIndicator(
                 colorScheme = YELLOW,
@@ -118,7 +143,8 @@ class MockRiskyPostDistrictsApi : RiskyPostDistrictsApi {
                 content = TranslatableString(mapOf("en" to "Content medium")),
                 linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
                 linkUrl = TranslatableString(mapOf("en" to "https://a.b.c/")),
-                policyData = mediumPolicyData
+                policyData = mediumPolicyData,
+                externalUrls = null
             ),
             "amber" to RiskIndicator(
                 colorScheme = AMBER,
@@ -128,7 +154,8 @@ class MockRiskyPostDistrictsApi : RiskyPostDistrictsApi {
                 content = TranslatableString(mapOf("en" to "Content medium")),
                 linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
                 linkUrl = TranslatableString(mapOf("en" to "https://a.b.c/")),
-                policyData = mediumPolicyData
+                policyData = mediumPolicyData,
+                externalUrls = externalUrls
             ),
             "red" to RiskIndicator(
                 colorScheme = RED,
@@ -138,7 +165,8 @@ class MockRiskyPostDistrictsApi : RiskyPostDistrictsApi {
                 content = TranslatableString(mapOf("en" to "Content high")),
                 linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
                 linkUrl = TranslatableString(mapOf("en" to "https://a.b.c/")),
-                policyData = null
+                policyData = null,
+                externalUrls = externalUrls
             ),
             "maroon" to RiskIndicator(
                 colorScheme = RED,
@@ -148,7 +176,8 @@ class MockRiskyPostDistrictsApi : RiskyPostDistrictsApi {
                 content = TranslatableString(mapOf("en" to "Content Tier 4")),
                 linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
                 linkUrl = TranslatableString(mapOf("en" to "https://a.b.c/")),
-                policyData = tierFourPolicyData
+                policyData = tierFourPolicyData,
+                externalUrls = null
             ),
             "black" to RiskIndicator(
                 colorScheme = RED,
@@ -158,7 +187,8 @@ class MockRiskyPostDistrictsApi : RiskyPostDistrictsApi {
                 content = TranslatableString(mapOf("en" to "Content Tier 5")),
                 linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
                 linkUrl = TranslatableString(mapOf("en" to "https://a.b.c/")),
-                policyData = tierFivePolicyData
+                policyData = tierFivePolicyData,
+                externalUrls = externalUrls
             ),
         )
     )

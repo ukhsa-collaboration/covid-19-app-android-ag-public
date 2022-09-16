@@ -58,7 +58,7 @@
     <string name="state_index_info">آپ کو COVID-19 ہو سکتا ہے</string>
     <string name="you_need_to_self_isolate">خود کو الگ تھلگ رکھیں</string>
     <string name="test_result_positive_no_self_isolation_subtitle">اگرچہ آپ کی جانچ مثبت آئی ہے، تاہم اگر آپ کافی بہتر محسوس کرتے ہیں تو آپ معمول کی سرگرمیاں جاری رکھ سکتے ہیں</string>
-    <string name="state_test_positive_info">آپ کے کوروناوائرس کے ٹیسٹ کا نتیجہ مثبت ہے</string>
+    <string name="state_test_positive_info">آپ کا COVID-19 کی جانچ کا نتیجہ مثبت ہے</string>
     <string name="state_test_void_info">ہم یہ نہیں کہہ سکتے کہ آیا آپ کو COVID-19 تھا</string>
     <string name="test_result_void_continue_self_isolate_explanation">جب جانچ کی گئی تھی اس وقت ہم یہ نہیں کہہ سکتے تھے نہیں کہہ سکتے کہ آیا آپ کو COVID-19 تھا۔ \n\nاگر آپ کی عمر 18 سال سے کم ہے تو آپ کو مشورہ دیا جاتا ہے کہ یہ پیغام کسی قابل اعتماد بالغ کو دکھائیں۔</string>
     <string name="questionnaire_review_symptoms">علامات پر نظر ثانی کریں</string>
@@ -351,7 +351,7 @@
     <string name="notification_channel_recommended_app_update_name_description">یہ اطلاعات (نوٹیفیکیشن) آپ کو ایپ کی تجویز کردہ  تجدید کے بارے میں بتاتی ہیں</string>
     <string name="single_local_authority_description">بڑی خبر! آپ کے علاقے میں کورونا وائرس کے خطرے کی سطح کے لئے معلومات اور رہنمائی فراہم کرنے میں ایپ زیادہ درست ثابت ہوگی۔\n\nپریشان نہ ہوں، آپ کی رازداری اب بھی محفوظ ہے۔ ایپ کبھی بھی آپ کی شناخت یا مقام کی کھوج نہیں لگائے گی۔</string>
     <string name="single_local_authority_title">%1$s کے لئے مقامی اتھارٹی %2$s ہے</string>
-    <string name="test_result_positive_continue_self_isolate_explanation_1">یہ سمجھنے کے لئے کہ ایپ خود کو تنہائی  میں رکھنے  کے دنوں کا حساب کیسے دیتی ہے ، نیچے دیئے گئے عمومی سوالنامہ کے لنک پر جائیں۔\n\nآپ کے ٹیسٹ کے نتیجے سے ظاہر ہوتا ہے کہ ٹیسٹ کے وقت آپ میں وائرس موجود تھا۔ آپ کو ای میل یا ٹیکسٹ میں مزید معلومات ارسال کی گئی ہیں۔</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">اگر آپ کا درجۂ حرارت زیادہ نہیں ہے اور اگر آپ کافی بہتر محسوس کرتے ہیں تو آپ اس مدت کے بعد اپنی معمول کی سرگرمیاں جاری رکھ سکتے ہیں۔ ایسا دوسروں تک COVID-19 کو منتقل کرنے سے بچنے کے لیے ہے۔</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">فکر مت کریں - زیادہ تر لوگوں کے لئے علامات کافی ہلکی ہوتی ہیں۔ تاہم، اگر آپ کی علامات خراب ہوگئی ہیں تو آپ کو 111 پر فون کرنا چاہئے یا مزید مشوروں کے لئے nhs.uk دیکھنا چاہئے۔</string>
     <string name="url_exposure_faqs">https://www.gov.uk/government/collections/nhs-covid-19-app</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
@@ -874,7 +874,7 @@
         <item quantity="other">تک اضافی نگہداشت کریں اور دوسروں کی حفاظت کریں تک %1$s  بجے 23:59۔ اس وقت میں ابھی %2$s دن باقی ہے۔</item>
     </plurals>
     <string name="be_careful_until_date_title">اضافی دھیان رکھیں اور دوسروں کو بچائیں</string>
-    <string name="about_this_app_software_information_date_of_release_description">08/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
     <string name="back_to_home_screen">ہوم اسکرین پر واپس جائیں</string>
     <string name="covid_guidance_hub_check_ssp_description">COVID-19 کی جانچ کے بارے میں جانکاری حاصل کریں</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 کی جانچ سے متعلق تازہ ترین صلاح</string>
@@ -979,8 +979,8 @@
     <string name="expiration_notification_recommendation_wales">مزید مشورے کے لئے براہ کرم دیکھیے:</string>
     <string name="expiration_notification_title_wales">اچھی خبر</string>
     <string name="expiration_temperature_hint_wales">اگر آپ کا درجۂ حرارت زیادہ نہیں ہے اور اگر آپ کافی بہتر محسوس کرتے ہیں تو آپ معمول کی سرگرمیاں جاری رکھ سکتے ہیں</string>
-    <string name="index_case_continue_isolation_advice_body_england">آپ کی جانچ کے نتیجہ سے پتہ چلتا ہے کہ جانچ کے وقت آپ کو COVID-19 تھا۔ ای میل، ٹیکسٹ یا فون کے ذریعہ آپ کو مزید معلومات بھیجی گئی ہیں۔\n\nگمنام طور پر کسی بھی ایسے شخص کو مطلع کریں جو آپ کے قریبی رابطہ میں رہا ہے تاکہ انہیں بتا سکیں کہ وہ خطرے میں ہو سکتے ہیں۔ آپ کی رازداری کی حفاظت کی جاتی ہے اور آپ کی ذاتی معلومات نہیں شیئر کی جائے گی۔\n\nاگر آپ کی عمر 18 سال سے کم ہے تو، آپ کو یہ پیغام کسی قابل اعتماد بالغ فرد کو دکھانے کا مشورہ دیا جاتا ہے.</string>
-    <string name="index_case_continue_isolation_advice_heading_title_england">آپ کا COVID-19 کی جانچ کا نتیجہ مثبت ہے</string>
+    <string name="index_case_continue_isolation_advice_body_england">اگر آپ کا درجۂ حرارت زیادہ نہیں ہے اور اگر آپ کافی بہتر محسوس کرتے ہیں تو آپ اس مدت کے بعد اپنی معمول کی سرگرمیاں جاری رکھ سکتے ہیں۔ ایسا دوسروں تک COVID-19 کو منتقل کرنے سے بچنے کے لیے ہے۔</string>
+    <string name="index_case_continue_isolation_advice_heading_title_england">گھر پر رہنے کی کوشش کرنا جاری رکھیں برائے</string>
     <string name="index_case_continue_isolation_advice_nhs_onilne_link_button_england">NHS 111 online</string>
     <string name="infobox_after_positive_test_wales">آپ کا COVID-19 کی جانچ کا نتیجہ مثبت ہے</string>
     <string name="negative_test_result_good_news_title">اچھی خبر</string>
@@ -1059,4 +1059,5 @@
     <string name="covid_guidance_hub_wales_button_eight_title">COVID-19 سے متعلق انکوائریز کے ضمن میں مدد حاصل کریں</string>
     <string name="covid_guidance_hub_wales_button_eight_url">https://enquiries.test-and-trace.nhs.uk</string>
     <string name="covid_guidance_hub_wales_button_six_new_label_accessibility_text">نیا سیکشن</string>
+    <string name="state_test_positive_continue_isolation_info_england">آپ کا COVID-19 کی جانچ کا نتیجہ مثبت ہے</string>
 </resources>

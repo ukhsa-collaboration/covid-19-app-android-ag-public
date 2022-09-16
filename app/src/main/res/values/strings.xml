@@ -226,7 +226,8 @@
     <string name="state_and_book_a_test">and get a COVID-19 test</string>
     <string name="state_index_info">You may have COVID-19</string>
     <string name="you_do_not_appear_to_have_symptoms">You do not appear to have coronavirus symptoms</string>
-    <string name="state_test_positive_info">Your coronavirus test result is positive</string>
+    <string name="state_test_positive_info">Your COVID-19 test result is positive</string>
+    <string name="state_test_positive_continue_isolation_info_england">Your COVID-19 test result is positive</string>
     <string name="state_test_negative_info">Your coronavirus test result is negative but you may still develop symptoms, so you should stay in isolation</string>
     <string name="state_test_void_info">We could not tell if you had COVID-19</string>
     <string name="state_test_void_info_wls">We could not tell if you had COVID-19</string>
@@ -287,15 +288,15 @@
     <string name="index_case_isolation_advice_nhs_onilne_link_button_england">NHS 111 online</string>
     <string name="index_case_isolation_advice_primary_button_title_england">Anonymously notify others</string>
 
-    <string name="index_case_continue_isolation_advice_heading_title_england">Your COVID-19 test result is positive</string>
+    <string name="index_case_continue_isolation_advice_heading_title_england">Continue to try to stay at home for</string>
     <string name="index_case_continue_isolation_advice_information_box_description_england">If you are under 18, you are advised to show this message to a trusted adult.</string>
-    <string name="index_case_continue_isolation_advice_body_england">Your test results shows that you had COVID-19 at the time of the test. You have been sent more information by email, text or phone.\n\nAnonymously notify anyone who has been in close contact with you to let them know they may have been at risk. Your privacy is protected and your personal information will not be shared.\n\nIf you are under 18, you are advised to show this message to a trusted adult.</string>
+    <string name="index_case_continue_isolation_advice_body_england">You can continue with your normal activities after that time if you don\'t have a high temperature and if you feel well enough. This is to avoid passing COVID-19 on to others.</string>
     <string name="index_case_continue_isolation_advice_common_question_link_button_england">Visit the app website</string>
     <string name="index_case_continue_isolation_advice_further_advice_england">For further advice, please visit:</string>
     <string name="index_case_continue_isolation_advice_nhs_onilne_link_button_england">NHS 111 online</string>
     <string name="index_case_continue_isolation_advice_primary_button_title_england">Continue</string>
 
-    <string name="test_result_positive_continue_self_isolate_explanation_1">To understand how the app calculates self-isolation days, visit the link to the FAQs below.\n\nYour test result shows that you had the virus at the time of the test. You have been sent an email or text with more information.</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">You can continue with your normal activities after that time if you don\'t have a high temperature and if you feel well enough. This is to avoid passing COVID-19 on to others.</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">Don’t worry - for most people symptoms are quite mild. However, if your symptoms do worsen then you should call 111 or visit nhs.uk for more advice.</string>
     <string name="test_result_positive_continue_self_isolate_no_change_explanation_1">If you are under 18, you are advised to show this message to a trusted adult.</string>
     <string name="test_result_positive_self_isolate_and_book_test_title_3">and book a follow-up test</string>
@@ -1004,7 +1005,7 @@
     <string name="contact_case_start_isolation_primary_button_title_wales">Get a free rapid lateral flow kit</string>
     <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-tested-coronavirus-covid-19</string>
     <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">You are advised to take a free rapid lateral flow test as soon as possible.</string>
-    <string name="about_this_app_software_information_date_of_release_description">08/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
     <string name="exposure_notification_message">Exposure notifications are off during this period</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">Limit close contact with anyone in your household who has COVID-19</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">Take a PCR test if you have symptoms of COVID-19</string>

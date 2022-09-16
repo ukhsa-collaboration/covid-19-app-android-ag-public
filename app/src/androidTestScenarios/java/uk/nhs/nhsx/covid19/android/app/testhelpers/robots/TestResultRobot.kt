@@ -122,7 +122,7 @@ class TestResultRobot(
             onView(
                 allOf(
                     withId(R.id.stateTextView),
-                    withText(R.string.index_case_isolation_advice_information_box_description_england)
+                    withText(R.string.state_test_positive_continue_isolation_info_england)
                 )
             )
                 .perform(scrollTo())
@@ -131,7 +131,7 @@ class TestResultRobot(
             onView(withId(R.id.isolationRequestTitle1))
                 .check(matches(isDisplayed()))
             onView(withId(R.id.isolationRequestTitle2))
-                .check(matches(not(isDisplayed())))
+                .check(matches(isDisplayed()))
             onView(withId(R.id.isolationRequestTitle3))
                 .check(matches(not(isDisplayed())))
         } else {
@@ -346,9 +346,10 @@ class TestResultRobot(
             .check(matches(withText(R.string.index_case_isolation_advice_primary_button_title_england)))
     }
 
-    fun checkIsolationActionButtonShowsBackHome() {
+    fun checkIsolationActionButtonShowsBackHome(@StringRes backToHomeResource: Int = R.string.back_to_home) {
         onView(withId(R.id.isolationRequestActionButton))
-            .check(matches(withText(R.string.back_to_home)))
+            .perform(scrollTo())
+            .check(matches(withText(backToHomeResource)))
     }
 
     fun checkExposureLinkIsDisplayed() {

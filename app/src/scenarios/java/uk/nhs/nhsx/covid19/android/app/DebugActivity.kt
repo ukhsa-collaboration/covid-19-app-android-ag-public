@@ -131,6 +131,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyIcon.MEETING_PEOPLE
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TEST
+import uk.nhs.nhsx.covid19.android.app.remote.data.ExternalUrlData
+import uk.nhs.nhsx.covid19.android.app.remote.data.ExternalUrlsWrapper
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.scenariodialog.MockApiDialogFragment
@@ -658,7 +660,29 @@ class DebugActivity : AppCompatActivity() {
             ),
             linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
             linkUrl = TranslatableString(mapOf("en" to "https://faq.covid19.nhs.uk/article/KA-01270/en-us")),
-            policyData = null
+            policyData = null,
+            externalUrls = null
+        )
+
+        val riskIndicatorExternalUrls = ExternalUrlsWrapper(
+            title = TranslatableString(mapOf("en" to "Keep your app updated:")),
+            urls = listOf(
+                ExternalUrlData(
+                    title = TranslatableString(mapOf("en" to "Check the App Store")),
+                    url = TranslatableString(mapOf(
+                        "en" to "https://apps.apple.com/gb/app/nhs-covid-19/id1520427663"))
+                ),
+                ExternalUrlData(
+                    title = TranslatableString(mapOf("en" to "Check the Google Play Store")),
+                    url = TranslatableString(mapOf(
+                        "en" to "https://play.google.com/store/apps/details?id=uk.nhs.covid19.production&hl=en_US&gl=UK"))
+                ),
+                ExternalUrlData(
+                    title = TranslatableString(mapOf("en" to "Check the app website")),
+                    url = TranslatableString(mapOf(
+                        "en" to "https://www.gov.uk/government/collections/nhs-covid-19-app"))
+                ),
+            )
         )
 
         addScreenButton("Risk level from post code") {
@@ -667,6 +691,17 @@ class DebugActivity : AppCompatActivity() {
                 RiskyPostCodeViewState.Risk(
                     "CM2",
                     riskIndicatorWithEmptyPolicyData,
+                    riskLevelFromLocalAuthority = false
+                )
+            )
+        }
+
+        addScreenButton("Risk level from post code with links") {
+            RiskLevelActivity.start(
+                this,
+                RiskyPostCodeViewState.Risk(
+                    "CM2",
+                    riskIndicatorWithEmptyPolicyData.copy(externalUrls = riskIndicatorExternalUrls),
                     riskLevelFromLocalAuthority = false
                 )
             )
@@ -701,25 +736,41 @@ class DebugActivity : AppCompatActivity() {
             startActivity<LocalAuthorityInformationActivity>()
         }
 
+        val riskIndicatorPolicyData = PolicyData(
+                heading = TranslatableString(mapOf("en" to "Coronavirus cases are very high in your area")),
+                content = TranslatableString(mapOf("en" to "Local Authority content high")),
+                footer = TranslatableString(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
+                policies = listOf(
+                    Policy(
+                        policyIcon = MEETING_PEOPLE,
+                        policyHeading = TranslatableString(mapOf("en" to "Meeting people")),
+                        policyContent = TranslatableString(mapOf("en" to "Rule of six indoors and outdoors, in all settings."))
+                    )
+                ),
+                localAuthorityRiskTitle = TranslatableString(mapOf("en" to "Local Authority is in local COVID alert level: high"))
+            )
+
         addScreenButton("Risk level from local authority") {
             RiskLevelActivity.start(
                 this,
                 RiskyPostCodeViewState.Risk(
                     "CM2",
                     riskIndicatorWithEmptyPolicyData.copy(
-                        policyData = PolicyData(
-                            heading = TranslatableString(mapOf("en" to "Coronavirus cases are very high in your area")),
-                            content = TranslatableString(mapOf("en" to "Local Authority content high")),
-                            footer = TranslatableString(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
-                            policies = listOf(
-                                Policy(
-                                    policyIcon = MEETING_PEOPLE,
-                                    policyHeading = TranslatableString(mapOf("en" to "Meeting people")),
-                                    policyContent = TranslatableString(mapOf("en" to "Rule of six indoors and outdoors, in all settings."))
-                                )
-                            ),
-                            localAuthorityRiskTitle = TranslatableString(mapOf("en" to "Local Authority is in local COVID alert level: high"))
-                        )
+                        policyData = riskIndicatorPolicyData
+                    ),
+                    riskLevelFromLocalAuthority = true
+                )
+            )
+        }
+
+        addScreenButton("Risk level from local authority with links") {
+            RiskLevelActivity.start(
+                this,
+                RiskyPostCodeViewState.Risk(
+                    "CM2",
+                    riskIndicatorWithEmptyPolicyData.copy(
+                        policyData = riskIndicatorPolicyData,
+                        externalUrls = riskIndicatorExternalUrls
                     ),
                     riskLevelFromLocalAuthority = true
                 )

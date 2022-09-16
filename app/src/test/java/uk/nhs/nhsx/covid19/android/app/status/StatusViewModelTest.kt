@@ -146,7 +146,8 @@ class StatusViewModelTest {
         ),
         linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
         linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
-        policyData = null
+        policyData = null,
+        externalUrls = null
     )
 
     private val mediumRiskyPostCodeIndicator = RiskIndicator(
@@ -161,7 +162,8 @@ class StatusViewModelTest {
         ),
         linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
         linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
-        policyData = null
+        policyData = null,
+        externalUrls = null
     )
 
     private val highRiskyPostCodeIndicator = RiskIndicator(
@@ -176,7 +178,8 @@ class StatusViewModelTest {
         ),
         linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
         linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
-        policyData = null
+        policyData = null,
+        externalUrls = null
     )
 
     private val lowRisk = Risk(

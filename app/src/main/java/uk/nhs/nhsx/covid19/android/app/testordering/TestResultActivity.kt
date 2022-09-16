@@ -165,8 +165,7 @@ class TestResultActivity : BaseActivity() {
         mainState: TestResultViewState,
         country: PostCodeDistrict?
     ): Int {
-        return if ((mainState == PositiveContinueIsolation || mainState == PositiveContinueIsolationNoChange || mainState == PositiveWillBeInIsolation) &&
-            country == ENGLAND) {
+        return if (mainState == PositiveWillBeInIsolation && country == ENGLAND) {
             R.string.index_case_isolation_advice_primary_button_title_england
         } else {
             R.string.continue_button
@@ -320,23 +319,21 @@ class TestResultActivity : BaseActivity() {
 
     private fun showContinueToSelfIsolationScreenOnPositive(remainingDaysInIsolation: Int, country: PostCodeDistrict?) {
         if (country == ENGLAND) {
-            showIsolationAdviceForEngland(
+            showIsolationState(
                 hasCloseToolbar = false,
-                stateText = R.string.index_case_isolation_advice_information_box_description_england,
-                title = R.string.index_case_continue_isolation_advice_heading_title_england,
+                selfIsolationLabel = R.string.index_case_continue_isolation_advice_heading_title_england,
+                stateText = R.string.state_test_positive_continue_isolation_info_england,
+                remainingDaysInIsolation = remainingDaysInIsolation,
+                exposureLinksVisible = false,
                 onlineServiceLinkText = R.string.index_case_continue_isolation_advice_nhs_onilne_link_button_england,
                 onlineServiceLinkUrl = R.string.url_nhs_111_online,
-                paragraphText = R.string.index_case_continue_isolation_advice_body_england
+                paragraphResources = intArrayOf(R.string.index_case_continue_isolation_advice_body_england)
             )
         } else {
             showIsolationState(
                 remainingDaysInIsolation = remainingDaysInIsolation,
-                exposureLinksVisible = true,
-                paragraphResources = intArrayOf(
-                    R.string.test_result_positive_continue_self_isolate_explanation_1,
-                    R.string.test_result_positive_continue_self_isolate_explanation_2,
-                    R.string.exposure_faqs_title
-                )
+                exposureLinksVisible = false,
+                paragraphResources = intArrayOf(R.string.test_result_positive_continue_self_isolate_explanation_1)
             )
         }
     }
@@ -346,13 +343,15 @@ class TestResultActivity : BaseActivity() {
         country: PostCodeDistrict?
     ) {
         if (country == ENGLAND) {
-            showIsolationAdviceForEngland(
+            showIsolationState(
                 hasCloseToolbar = false,
-                stateText = R.string.index_case_isolation_advice_information_box_description_england,
-                title = R.string.index_case_continue_isolation_advice_heading_title_england,
+                selfIsolationLabel = R.string.index_case_continue_isolation_advice_heading_title_england,
+                stateText = R.string.state_test_positive_continue_isolation_info_england,
+                remainingDaysInIsolation = remainingDaysInIsolation,
+                exposureLinksVisible = false,
                 onlineServiceLinkText = R.string.index_case_continue_isolation_advice_nhs_onilne_link_button_england,
                 onlineServiceLinkUrl = R.string.url_nhs_111_online,
-                paragraphText = R.string.index_case_continue_isolation_advice_body_england
+                paragraphResources = intArrayOf(R.string.index_case_continue_isolation_advice_body_england)
             )
         } else {
             showIsolationState(

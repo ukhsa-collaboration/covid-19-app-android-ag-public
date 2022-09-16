@@ -39,18 +39,38 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
 
     private val testSubject = LinkTestResultOnsetDateNeededChecker(
         isolationStateMachine,
-        localAuthorityPostCodeProvider
+        localAuthorityPostCodeProvider,
+        clock
     )
 
     // England
     // AC1 - test is LAB_RESULT, positive and does not require confirmation
-    // AC2 - not considered symptomatic
-    // AC3 - must not have a previous positive test result
+    // AC2 - not currently in active index isolation
+    // AC3 - not in active index isolation at time of test
 
     // Wales
     // AC1 - test is positive and does not require confirmation
-    // AC2 - not considered symptomatic
-    // AC3 - must not have a previous positive test result
+    // AC2 - not currently in active index isolation
+    // AC3 - not in active index isolation at time of test
+
+    @Test
+    fun `onset date needed when AC1 true, AC2 true due to no memory of isolation, AC3 true England`() = runBlocking {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
+        // AC1
+        val testResult = receivedTestResult(
+            testResult = POSITIVE,
+            testKit = LAB_RESULT,
+            requiresConfirmatoryTest = false
+        )
+
+        // AC2 + AC3
+        val currentState = isolationHelper.neverInIsolation()
+        givenIsolationState(currentState)
+
+        val actual = testSubject.isInterestedInAskingForSymptomsOnsetDay(testResult)
+
+        assertTrue(actual)
+    }
 
     @Test
     fun `onset date needed when AC1 true, AC2 true due to no current index case, AC3 true England`() = runBlocking {
@@ -113,7 +133,7 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
     }
 
     @Test
-    fun `onset date not needed when AC1 true, AC2 true, AC3 false England`() = runBlocking {
+    fun `onset date needed when AC1 true, AC2 true, AC3 true, but old test result is present England`() = runBlocking {
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
         // AC1
         val testResult = receivedTestResult(
@@ -132,11 +152,34 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
 
         val actual = testSubject.isInterestedInAskingForSymptomsOnsetDay(testResult)
 
+        assertTrue(actual)
+    }
+
+    @Test
+    fun `onset date not needed when AC1 true, AC2 false due to active index isolation with test, AC3 false England`() = runBlocking {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
+        // AC1
+        val testResult = receivedTestResult(
+            testResult = POSITIVE,
+            testKit = LAB_RESULT,
+            requiresConfirmatoryTest = false
+        )
+
+        // AC2 + AC3
+        val currentState = acknowledgedTestResult(
+            result = RelevantVirologyTestResult.POSITIVE,
+            isConfirmed = true,
+            testEndDate = LocalDate.now(clock).minusDays(10)
+        ).asIsolation()
+        givenIsolationState(currentState)
+
+        val actual = testSubject.isInterestedInAskingForSymptomsOnsetDay(testResult)
+
         assertFalse(actual)
     }
 
     @Test
-    fun `onset date not needed when AC1 true, AC2 false, AC3 true England`() = runBlocking {
+    fun `onset date not needed when AC1 true, AC2 false due to active symptoms isolation, AC3 false England`() = runBlocking {
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
         // AC1
         val testResult = receivedTestResult(
@@ -155,7 +198,7 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
     }
 
     @Test
-    fun `onset date not needed when AC1 true, AC2 false, AC3 false England`() = runBlocking {
+    fun `onset date needed when AC1 true, AC2 true but old symptoms and test present, AC3 true `() = runBlocking {
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
         // AC1
         val testResult = receivedTestResult(
@@ -167,6 +210,61 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
         // AC2 + AC3
         val currentState = isolationHelper.selfAssessment(
             expired = true,
+        ).asIsolation().addTestResult(
+            acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = true,
+                testEndDate = LocalDate.now(clock).minusDays(12)
+            )
+        )
+        givenIsolationState(currentState)
+
+        val actual = testSubject.isInterestedInAskingForSymptomsOnsetDay(testResult)
+
+        assertTrue(actual)
+    }
+
+    @Test
+    fun `onset date not needed when AC1 true, AC2 false due to active isolation with symptoms and test, AC3 false England`() = runBlocking {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
+        // AC1
+        val testResult = receivedTestResult(
+            testResult = POSITIVE,
+            testKit = LAB_RESULT,
+            requiresConfirmatoryTest = false
+        )
+
+        // AC2 + AC3
+        val currentState = isolationHelper.selfAssessment(
+            onsetDate = LocalDate.now(clock).minusDays(10),
+        ).asIsolation().addTestResult(
+            acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = true,
+                testEndDate = LocalDate.now(clock).minusDays(10)
+            )
+        )
+        givenIsolationState(currentState)
+
+        val actual = testSubject.isInterestedInAskingForSymptomsOnsetDay(testResult)
+
+        assertFalse(actual)
+    }
+
+    @Test
+    fun `onset date not needed when AC1 true, AC2 true, AC3 false due to new test inside old isolation England`() = runBlocking {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
+        // AC1
+        val testResult = receivedTestResult(
+            testResult = POSITIVE,
+            testKit = LAB_RESULT,
+            requiresConfirmatoryTest = false,
+            testEndDate = LocalDate.now(clock).minusDays(2)
+        )
+
+        // AC2 + AC3
+        val currentState = isolationHelper.selfAssessment(
+            onsetDate = LocalDate.now(clock).minusDays(12),
         ).asIsolation().addTestResult(
             acknowledgedTestResult(
                 result = RelevantVirologyTestResult.POSITIVE,
@@ -220,7 +318,7 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
     }
 
     @Test
-    fun `onset date not needed when AC1 false due to negative test, AC2 true, AC3 false England`() = runBlocking {
+    fun `onset date not needed when AC1 false due to negative test, AC2 true, AC3 true but old test present England`() = runBlocking {
 
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
         // AC1
@@ -263,7 +361,7 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
     }
 
     @Test
-    fun `onset date not needed when AC1 false, AC2 true, AC3 false England`() = runBlocking {
+    fun `onset date not needed when AC1 false due to void test result, AC2 true, AC3 true England`() = runBlocking {
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
         // AC1
         val testResult = receivedTestResult(
@@ -282,7 +380,7 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
     }
 
     @Test
-    fun `onset date not needed when AC1 false, AC2 false, AC3 true England`() = runBlocking {
+    fun `onset date not needed when AC1 false, AC2 false due to active symptoms isolation, AC3 false England`() = runBlocking {
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
         // AC1
         val testResult = receivedTestResult(
@@ -298,6 +396,25 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
         val actual = testSubject.isInterestedInAskingForSymptomsOnsetDay(testResult)
 
         assertFalse(actual)
+    }
+
+    @Test
+    fun `onset date needed when AC1 true, AC2 true due to no memory of isolation, AC3 true Wales`() = runBlocking {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+        // AC1
+        val testResult = receivedTestResult(
+            testResult = POSITIVE,
+            testKit = LAB_RESULT,
+            requiresConfirmatoryTest = false
+        )
+
+        // AC2 + AC3
+        val currentState = isolationHelper.neverInIsolation()
+        givenIsolationState(currentState)
+
+        val actual = testSubject.isInterestedInAskingForSymptomsOnsetDay(testResult)
+
+        assertTrue(actual)
     }
 
     @Test
@@ -399,7 +516,7 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
     }
 
     @Test
-    fun `onset date not needed when AC1 true, AC2 true, AC3 false Wales`() = runBlocking {
+    fun `onset date needed when AC1 true, AC2 true, AC3 true, but old test result is present`() = runBlocking {
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
         // AC1
         val testResult = receivedTestResult(
@@ -418,11 +535,34 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
 
         val actual = testSubject.isInterestedInAskingForSymptomsOnsetDay(testResult)
 
+        assertTrue(actual)
+    }
+
+    @Test
+    fun `onset date not needed when AC1 true, AC2 false due to active index isolation with test, AC3 false Wales`() = runBlocking {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+        // AC1
+        val testResult = receivedTestResult(
+            testResult = POSITIVE,
+            testKit = LAB_RESULT,
+            requiresConfirmatoryTest = false
+        )
+
+        // AC2 + AC3
+        val currentState = acknowledgedTestResult(
+            result = RelevantVirologyTestResult.POSITIVE,
+            isConfirmed = true,
+            testEndDate = LocalDate.now(clock).minusDays(10)
+        ).asIsolation()
+        givenIsolationState(currentState)
+
+        val actual = testSubject.isInterestedInAskingForSymptomsOnsetDay(testResult)
+
         assertFalse(actual)
     }
 
     @Test
-    fun `onset date not needed when AC1 true, AC2 false, AC3 true Wales`() = runBlocking {
+    fun `onset date not needed when AC1 true, AC2 false due to active symptoms isolation, AC3 false Wales`() = runBlocking {
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
         // AC1
         val testResult = receivedTestResult(
@@ -441,7 +581,7 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
     }
 
     @Test
-    fun `onset date not needed when AC1 true, AC2 false, AC3 false Wales`() = runBlocking {
+    fun `onset date needed when AC1 true, AC2 true but old symptoms and test present, AC3 true Wales`() = runBlocking {
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
         // AC1
         val testResult = receivedTestResult(
@@ -464,11 +604,66 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
 
         val actual = testSubject.isInterestedInAskingForSymptomsOnsetDay(testResult)
 
+        assertTrue(actual)
+    }
+
+    @Test
+    fun `onset date not needed when AC1 true, AC2 false due to active isolation with symptoms and test, AC3 false Wales`() = runBlocking {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+        // AC1
+        val testResult = receivedTestResult(
+            testResult = POSITIVE,
+            testKit = LAB_RESULT,
+            requiresConfirmatoryTest = false
+        )
+
+        // AC2 + AC3
+        val currentState = isolationHelper.selfAssessment(
+            onsetDate = LocalDate.now(clock).minusDays(10),
+        ).asIsolation().addTestResult(
+            acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = true,
+                testEndDate = LocalDate.now(clock).minusDays(10)
+            )
+        )
+        givenIsolationState(currentState)
+
+        val actual = testSubject.isInterestedInAskingForSymptomsOnsetDay(testResult)
+
         assertFalse(actual)
     }
 
     @Test
-    fun `onset date not needed when AC1 false due to negative test, AC2 true, AC3 false Wales`() = runBlocking {
+    fun `onset date not needed when AC1 true, AC2 true, AC3 false due to new test inside old isolation Wales`() = runBlocking {
+        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
+        // AC1
+        val testResult = receivedTestResult(
+            testResult = POSITIVE,
+            testKit = LAB_RESULT,
+            requiresConfirmatoryTest = false,
+            testEndDate = LocalDate.now(clock).minusDays(2)
+        )
+
+        // AC2 + AC3
+        val currentState = isolationHelper.selfAssessment(
+            onsetDate = LocalDate.now(clock).minusDays(12),
+        ).asIsolation().addTestResult(
+            acknowledgedTestResult(
+                result = RelevantVirologyTestResult.POSITIVE,
+                isConfirmed = true,
+                testEndDate = LocalDate.now(clock).minusDays(12)
+            )
+        )
+        givenIsolationState(currentState)
+
+        val actual = testSubject.isInterestedInAskingForSymptomsOnsetDay(testResult)
+
+        assertFalse(actual)
+    }
+
+    @Test
+    fun `onset date not needed when AC1 false due to negative test, AC2 true, AC3 true but old test present Wales`() = runBlocking {
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
         // AC1
         val testResult = receivedTestResult(
@@ -529,7 +724,7 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
     }
 
     @Test
-    fun `onset date not needed when AC1 false, AC2 false, AC3 true Wales`() = runBlocking {
+    fun `onset date not needed when AC1 false, AC2 false due to active symptoms isolation, AC3 false Wales`() = runBlocking {
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
         // AC1
         val testResult = receivedTestResult(
@@ -555,6 +750,21 @@ class LinkTestResultOnsetDateNeededCheckerTest : IsolationStateMachineSetupHelpe
         ReceivedTestResult(
             diagnosisKeySubmissionToken = "submissionToken",
             testEndDate = Instant.now(clock),
+            testResult = testResult,
+            testKitType = testKit,
+            diagnosisKeySubmissionSupported = false,
+            requiresConfirmatoryTest = requiresConfirmatoryTest
+        )
+
+    private fun receivedTestResult(
+        testResult: VirologyTestResult,
+        testKit: VirologyTestKitType,
+        requiresConfirmatoryTest: Boolean,
+        testEndDate: LocalDate
+    ) =
+        ReceivedTestResult(
+            diagnosisKeySubmissionToken = "submissionToken",
+            testEndDate = testEndDate.atStartOfDay().toInstant(ZoneOffset.UTC),
             testResult = testResult,
             testKitType = testKit,
             diagnosisKeySubmissionSupported = false,

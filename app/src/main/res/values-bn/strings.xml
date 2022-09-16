@@ -351,7 +351,7 @@
     <string name="notification_channel_recommended_app_update_name_description">এসব নোটিফিকেশন আপনাকে অ্যাপের জন্য সুপারিশকৃত সাম্প্রতিক আপডেটের ব্যাপারে অবহিত করে</string>
     <string name="single_local_authority_description">দারুন খবর! অ্যাপটি আপনার এলাকায় করোনাভাইরাস ঝুঁকির স্তর বিষয়ক তথ্য ও নির্দেশ আরো নিখুঁতভাবে প্রদান করবে।\n\nচিন্তা করবেন না, আপনার গোপনীয়তা এখনো সুরক্ষিত। অ্যাপটি কখনোই আপনার পরিচয় বা অবস্থান ট্র্যাক করবে না।</string>
     <string name="single_local_authority_title">%1$s এর জন্য স্থানীয় কর্তৃপক্ষ হলো %2$s</string>
-    <string name="test_result_positive_continue_self_isolate_explanation_1">স্ব-বিচ্ছিন্ন থাকার দিন সংখ্যা এই অ্যাপ কীভাবে গণনা করে তা বুঝতে নিচে প্রদত্ত প্রায়শই জিজ্ঞাসিত প্রশ্নাবলীর লিংক দেখুন।\n\nআপনার পরীক্ষার ফলাফলে দেখা গিয়েছে যে পরীক্ষা করানোর সময় আপনি ভাইরাসে আক্রান্ত ছিলেন। আরও তথ্যসহ একটি ইমেইল বা টেক্সট আপনাকে পাঠানো হয়েছে।</string>
+    <string name="test_result_positive_continue_self_isolate_explanation_1">আপনার জ্বর না থাকলে এবং আপনি যথেষ্ট সুস্থ বোধ করলে, সেই সময়ের পরে আপনি আপনার স্বাভাবিক কার্যকলাপ করতে পারেন। অন্যদের মধ্যে COVID-19 ছড়ানো এড়ানোর জন্য এই পদক্ষেপ নেওয়া হয়।</string>
     <string name="test_result_positive_continue_self_isolate_explanation_2">চিন্তা করবেন না – বেশির ভাগ মানুষের জন্য উপসর্গগুলি বেশ অনুগ্র হয়। কিন্তু, আপনার উপসর্গগুলি যদি খারাপ হতে থাকে তাহলে আপনার 111 নম্বরে কল করা উচিৎ অথবা nhs.uk –তে যেতে পারেন আরো পরামর্শের জন্য।</string>
     <string name="url_exposure_faqs">https://www.gov.uk/government/collections/nhs-covid-19-app</string>
     <string name="url_local_authority">https://www.gov.uk/find-local-council</string>
@@ -874,7 +874,7 @@
         <item quantity="other">পর্যন্ত অতিরিক্ত যত্ন নিন এবং অন্যদের সুরক্ষিত রাখুন %1$s এ 23:59 । তখন পর্যন্ত %2$s দিন বাকি আছে।</item>
     </plurals>
     <string name="be_careful_until_date_title">অতিরিক্ত যত্ন নিন এবং অন্যদের রক্ষা করুন</string>
-    <string name="about_this_app_software_information_date_of_release_description">08/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
     <string name="back_to_home_screen">হোম স্ক্রিনে ফিরে যান</string>
     <string name="covid_guidance_hub_check_ssp_description">COVID-19 এর পরীক্ষা সম্পর্কে জানুন</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 পরীক্ষার সর্বশেষ নির্দেশনা</string>
@@ -993,8 +993,8 @@
     <string name="expiration_notification_recommendation_wales">আরও পরামর্শের জন্য, অনুগ্রহ করে ভিজিট করুন:</string>
     <string name="expiration_notification_title_wales">সুখবর</string>
     <string name="expiration_temperature_hint_wales">আপনার জ্বর না থাকলে এবং আপনি যথেষ্ট সুস্থ বোধ করলে, আপনি আপনার স্বাভাবিক কার্যকলাপ করতে পারেন</string>
-    <string name="index_case_continue_isolation_advice_body_england">আপনার পরীক্ষার ফলাফলে দেখা যায় যে পরীক্ষার সময় আপনার COVID-19 ছিল। আপনাকে ইমেল, টেক্সট বা ফোনের মাধ্যমে আরও তথ্য পাঠানো হয়েছে।\n\nআপনার সাথে ঘনিষ্ঠ সংস্পর্শে ছিলেন এমন যে কাউকে পরিচয় গোপন রেখে অবহিত করুন যাতে তারা জানেন যে তাদের ঝুঁকি থাকতে পারে। আপনার গোপনীয়তা সুরক্ষিত আছে এবং আপনার ব্যক্তিগত তথ্য আদানপ্রদান করা হবে না।\n\nআপনার বয়স ১৮ বছরের কম হলে, নির্ভরযোগ্য কোনো প্রাপ্তবয়স্ক ব্যক্তিকে এই বার্তা দেখানোর জন্য পরামর্শ দেওয়া হচ্ছে।</string>
-    <string name="index_case_continue_isolation_advice_heading_title_england">আপনার COVID-19 পরীক্ষার ফলাফল পজিটিভ এসেছে</string>
+    <string name="index_case_continue_isolation_advice_body_england">আপনার জ্বর না থাকলে এবং আপনি যথেষ্ট সুস্থ বোধ করলে, সেই সময়ের পরে আপনি আপনার স্বাভাবিক কার্যকলাপ করতে পারেন। অন্যদের মধ্যে COVID-19 ছড়ানো এড়ানোর জন্য এই পদক্ষেপ নেওয়া হয়।</string>
+    <string name="index_case_continue_isolation_advice_heading_title_england">বাসায় থাকার চেষ্টা চালিয়ে যান</string>
     <string name="index_case_continue_isolation_advice_nhs_onilne_link_button_england">NHS 111 online</string>
     <string name="infobox_after_positive_test_wales">আপনার COVID-19 পরীক্ষার ফলাফল পজিটিভ এসেছে</string>
     <string name="negative_test_result_good_news_title_wls">সুখবর</string>
@@ -1059,4 +1059,5 @@
     <string name="covid_guidance_hub_wales_button_eight_title">COVID-19 সংক্রান্ত অনুসন্ধানের জন্য সাহায্য নিন</string>
     <string name="covid_guidance_hub_wales_button_eight_url">https://enquiries.test-and-trace.nhs.uk</string>
     <string name="covid_guidance_hub_wales_button_six_new_label_accessibility_text">নতুন অধ্যায়</string>
+    <string name="state_test_positive_continue_isolation_info_england">আপনার COVID-19 পরীক্ষার ফলাফল পজিটিভ এসেছে</string>
 </resources>

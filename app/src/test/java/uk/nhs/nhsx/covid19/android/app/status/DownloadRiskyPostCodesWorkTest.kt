@@ -24,6 +24,8 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.PolicyData
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicator
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskIndicatorWrapper
 import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyPostCodeDistributionResponse
+import uk.nhs.nhsx.covid19.android.app.remote.data.ExternalUrlData
+import uk.nhs.nhsx.covid19.android.app.remote.data.ExternalUrlsWrapper
 import kotlin.test.assertEquals
 
 class DownloadRiskyPostCodesWorkTest {
@@ -56,7 +58,8 @@ class DownloadRiskyPostCodesWorkTest {
         ),
         linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
         linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
-        policyData = null
+        policyData = null,
+        externalUrls = null
     )
 
     private val mediumRiskyPostCodeIndicator = RiskIndicator(
@@ -71,7 +74,8 @@ class DownloadRiskyPostCodesWorkTest {
         ),
         linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
         linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
-        policyData = null
+        policyData = null,
+        externalUrls = null
     )
 
     private val mediumRiskyPostCodeIndicatorWithPolicyData = mediumRiskyPostCodeIndicator.copy(
@@ -96,7 +100,16 @@ class DownloadRiskyPostCodesWorkTest {
         ),
         linkTitle = TranslatableString(mapOf("en" to "Restrictions in your area")),
         linkUrl = TranslatableString(mapOf("en" to "https://a.b.c")),
-        policyData = null
+        policyData = null,
+        externalUrls = ExternalUrlsWrapper(
+            title = TranslatableString(mapOf("en" to "Helpful Links")),
+            urls = listOf(
+                ExternalUrlData(
+                    title = TranslatableString(mapOf("en" to "NHS link")),
+                    url = TranslatableString(mapOf("en" to "https://www.nhs.uk"))
+                )
+            )
+        )
     )
 
     private val riskLevels = mapOf(
