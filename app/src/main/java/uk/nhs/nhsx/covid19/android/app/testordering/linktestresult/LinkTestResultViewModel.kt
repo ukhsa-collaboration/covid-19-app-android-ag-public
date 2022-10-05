@@ -69,7 +69,7 @@ class LinkTestResultViewModel @Inject constructor(
         updateViewState(viewStateLiveData.value!!.copy(showValidationProgress = false, errorState = ErrorState(error)))
     }
 
-    private suspend fun handleTestResultResponse(testResultResponse: VirologyCtaExchangeResponse) {
+    private fun handleTestResultResponse(testResultResponse: VirologyCtaExchangeResponse) {
         val testResult = with(testResultResponse) {
             ReceivedTestResult(
                 diagnosisKeySubmissionToken = diagnosisKeySubmissionToken,

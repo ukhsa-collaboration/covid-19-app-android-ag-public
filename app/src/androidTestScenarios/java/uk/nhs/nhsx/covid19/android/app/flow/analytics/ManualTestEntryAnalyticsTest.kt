@@ -125,11 +125,14 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterPositiveAssistedLFDTestAndGoIntoIsolationEngland() {
+    fun manuallyEnterPositiveAssistedLFDTest_noSymptoms_thenGoIntoIsolationEngland() {
         givenLocalAuthorityIsInEngland()
         manuallyEnterPositiveTestAndGoIntoIsolation(
             RAPID_RESULT,
-            symptomsAndOnsetFlowConfiguration = null,
+            symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
+                didHaveSymptoms = false,
+                didRememberOnsetSymptomsDate = false
+            ),
             requiresConfirmatoryTest = false,
             expectedScreenState = PositiveWillBeInIsolation(),
             country = ENGLAND,
@@ -191,11 +194,14 @@ class ManualTestEntryAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun manuallyEnterPositiveUnassistedLFDTestAndGoIntoIsolationEngland() {
+    fun manuallyEnterPositiveUnassistedLFDTest_noSymptoms_thenGoIntoIsolation_England() {
         givenLocalAuthorityIsInEngland()
         manuallyEnterPositiveTestAndGoIntoIsolation(
             RAPID_SELF_REPORTED,
-            symptomsAndOnsetFlowConfiguration = null,
+            symptomsAndOnsetFlowConfiguration = SymptomsAndOnsetFlowConfiguration(
+                didHaveSymptoms = false,
+                didRememberOnsetSymptomsDate = false
+            ),
             requiresConfirmatoryTest = false,
             expectedScreenState = PositiveWillBeInIsolation(),
             country = ENGLAND,

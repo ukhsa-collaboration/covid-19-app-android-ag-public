@@ -197,21 +197,27 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
     }
 
     @Test
-    fun userEntersCtaTokenForAssistedLfdPositiveTestResult_navigateToTestResultScreen() {
+    fun userEntersCtaTokenForAssistedLfdPositiveTestResult_noSymptoms_navigateToTestResultScreen() {
         enterLinkTestResultFromStatusActivity()
         linkTestResultRobot.checkActivityIsDisplayed()
         linkTestResultRobot.enterCtaToken(POSITIVE_LFD_TOKEN)
         linkTestResultRobot.clickContinue()
 
+        linkTestResultSymptomsRobot.checkActivityIsDisplayed()
+        linkTestResultSymptomsRobot.clickNo()
+
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
     }
 
     @Test
-    fun userEntersCtaTokenForUnassistedLfdPositiveTestResult_navigateToTestResultScreen() {
+    fun userEntersCtaTokenForUnassistedLfdPositiveTestResult_noSymptoms_navigateToTestResultScreen() {
         enterLinkTestResultFromStatusActivity()
         linkTestResultRobot.checkActivityIsDisplayed()
         linkTestResultRobot.enterCtaToken(POSITIVE_RAPID_SELF_REPORTED_TOKEN)
         linkTestResultRobot.clickContinue()
+
+        linkTestResultSymptomsRobot.checkActivityIsDisplayed()
+        linkTestResultSymptomsRobot.clickNo()
 
         waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
     }

@@ -84,7 +84,7 @@
     <string name="nhs_111_online_service_wales">NHS 111 online</string>
     <string name="exposure_faqs_title">If you are outside of England and Wales, you need to follow the guidance for the country you are in.</string>
     <string name="post_code_title">Enter the first part of your postcode (postcode district)</string>
-    <string name="post_code_rationale">The postcode district helps with learning about the spread of coronavirus in different areas. This makes sure we can give the best possible public health advice for your area.\n\nDon’t worry. Your postcode district won’t be used to track your location.</string>
+    <string name="post_code_rationale">The postcode district helps with learning about the spread of COVID-19 in different areas. This makes sure we can give the best possible public health advice for your area.\n\nDon’t worry. Your postcode district will not be used to track your location.</string>
     <string name="post_code_invalid_title">Invalid postcode district code</string>
     <string name="valid_post_code_is_required">Please enter your postcode district code. This is the first part of a postcode. For example: E2, L36, PO30.</string>
     <string name="enable_bluetooth_title">For this app to work, you must have Bluetooth on</string>
@@ -146,7 +146,7 @@
     <string name="notification_channel_isolation_hub_reminder_name">Help with self-isolation</string>
     <string name="notification_channel_isolation_hub_reminder_description">These notifications inform about available resources when self isolating</string>
     <string name="notification_title_share_keys_reminder">A reminder to notify others</string>
-    <string name="notification_text_share_keys_reminder">Let others know they may be at risk of coronavirus, while protecting your privacy.</string>
+    <string name="notification_text_share_keys_reminder">Let others know they may be at risk of COVID-19, while protecting your privacy.</string>
     <string name="notification_title_state_expiration">Our guidance to you has changed</string>
     <string name="notification_text_state_expiration">Tap here for more information.</string>
     <string name="notification_title_state_exposure">Close contact notification. You have been in close contact with someone who has COVID-19. Tap here for advice.</string>
@@ -321,7 +321,7 @@
     <string name="test_result_plod_description">Refer to your test result email or text message for guidance on what to do</string>
     <string name="test_result_plod_description_wls">Refer to your test result email or text message for guidance on what to do</string>
     <string name="submit_keys_information_title">Help notify others</string>
-    <string name="submit_keys_information_text">Anonymously notify others that they were near someone who tested positive for coronavirus.</string>
+    <string name="submit_keys_information_text">Anonymously notify others that they were near someone who tested positive for COVID-19.</string>
     <string name="submit_keys_information_privacy_notice">No one will know the notification came from you and your personal data will not be shared.</string>
     <string name="submit_keys_information_description_title">How to share this result</string>
     <string name="submit_keys_information_description_text">Proceed to share this result below.\n\nWhen prompted, select ‘Share’ or ‘Share your device’s random IDs’.</string>
@@ -516,7 +516,7 @@
     <string name="updated_privacy_control_text">Thank you for using the NHS COVID-19 app. \n\nWe have made changes to the app to align with new policy. \n\nThose who are fully vaccinated or under 18 are no longer advised to self-isolate if they have been in contact with someone who has tested positive for COVID-19, but they are advised to get tested.\n\nIf you are already self-isolating as a contact and are fully vaccinated or under 18, you do not need to continue to self-isolate. \n\nIf you have symptoms or have tested positive, you should complete your self-isolation period.\n\nKeep the app on your device to stay up to date with the latest advice and help stop the spread of COVID-19.\n\nThe Terms of Use and Privacy Notice are updated to reflect these changes.</string>
     <string name="test_result_positive_continue_self_isolate_explanation">You can continue with your normal activities after that time if you don‘t have a high temperature and if you feel well enough. This is to avoid passing COVID-19 on to others.</string>
     <string name="local_authority_title">Your local authority</string>
-    <string name="single_local_authority_description">Great news! The app is going to be more accurate at giving information and guidance for the level of coronavirus risk in your area.\n\nDon‘t worry, your privacy is still protected. The app will never track your identity or location.</string>
+    <string name="single_local_authority_description">Great news! The app is going to be more accurate at giving information and guidance for the level of COVID-19 risk in your area.\n\nDon‘t worry, your privacy is still protected. The app will never track your identity or location.</string>
     <string name="confirm_and_start">Confirm</string>
     <string name="single_local_authority_title">The local authority for %1$s is %2$s</string>
     <string name="multiple_local_authorities_title">Select your local authority</string>
@@ -581,7 +581,7 @@
     <string name="what_is_random_id_title">How does it work?</string>
     <string name="what_is_random_id_text">You will be asked to share “random IDs.” This is a randomly generated code which can be shared with other phones that have Exposure Notifications switched on.</string>
     <string name="how_does_it_help_title">How does it help?</string>
-    <string name="how_does_it_help_text">It lets other app users know they were near someone who tested positive for coronavirus.</string>
+    <string name="how_does_it_help_text">It lets other app users know they were near someone who tested positive for COVID-19.</string>
     <string name="share_keys_privacy_banner">Nobody will know the notification is linked to you.</string>
     <string name="share_keys_success_title">Thank you for helping to stop the spread of COVID-19.</string>
     <string name="getting_tested_online_service">Getting tested</string>
@@ -589,7 +589,7 @@
     <string name="url_nhs_get_tested">https://www.nhs.uk/conditions/coronavirus-covid-19/testing/get-tested-for-coronavirus/</string>
     <string name="url_nhs_get_tested_wls">https://gov.wales/test-trace-protect-coronavirus</string>
     <string name="share_keys_reminder_title">A reminder to notify others</string>
-    <string name="share_keys_reminder_information_text">Notify others who may be at risk of coronavirus (COVID-19)</string>
+    <string name="share_keys_reminder_information_text">Notify others who may be at risk of COVID-19</string>
     <string name="share_keys_reminder_privacy_banner">Nobody will know the notification is linked to you.</string>
     <string name="share_keys_reminder_explanation_title">Please notify others</string>
     <string name="share_keys_reminder_explanation_text">You may have been in contact with more people than you realise. The app can alert people who you have been near, but do not know personally, to let them know they may be at risk. By sharing your result, you are helping keep your community safe.</string>
@@ -867,10 +867,10 @@
     <string name="risky_contact_isolation_advice_medically_exempt_reduce_risk_with_vaccination">As more people are vaccinated, the risk to those wo are medically exempt is lower.</string>
     <string name="risky_contact_isolation_advice_medically_exempt_advice">It is still important to follow national guidance, including reducing contact with others, especially the elderly and vulnerable.</string>
     <string name="risky_contact_isolation_advice_medically_exempt_group">For fairness and equality, if you are unable to get the vaccine for medical reasons you do not need to self-isolate.</string>
-    <string name="exposure_notification_title">The app has detected that you have been near someone who tested positive for coronavirus (COVID-19)</string>
+    <string name="exposure_notification_title">The app has detected that you have been near someone who tested positive for COVID-19</string>
     <string name="exposure_notification_warning">Advice may differ depending on your age, vaccination status, or instructions from contact tracers</string>
-    <string name="contact_case_exposure_info_screen_title_england">The app has detected that you have been near someone who tested positive for coronavirus (COVID-19)</string>
-    <string name="contact_case_exposure_info_screen_title_wales">The app has detected that you have been near someone who tested positive for coronavirus (COVID-19)</string>
+    <string name="contact_case_exposure_info_screen_title_england">The app has detected that you have been near someone who tested positive for COVID-19</string>
+    <string name="contact_case_exposure_info_screen_title_wales">The app has detected that you have been near someone who tested positive for COVID-19</string>
     <string name="contact_case_exposure_info_screen_information_england">If you are under 18, you are advised to show this message to a trusted adult</string>
     <string name="contact_case_exposure_info_screen_information_wales">If you are under 18, you are advised to show this message to a trusted adult</string>
     <string name="exposure_notification_testing_information">If you have symptoms, select “Check symptoms” on the home screen and get a test.</string>

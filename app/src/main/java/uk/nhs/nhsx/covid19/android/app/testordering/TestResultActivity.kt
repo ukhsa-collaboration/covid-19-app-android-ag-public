@@ -444,14 +444,16 @@ class TestResultActivity : BaseActivity() {
 
     private fun showSelfIsolateScreenOnPositive(remainingDaysInIsolation: Int, country: PostCodeDistrict?) {
         if (country != null && country == PostCodeDistrict.ENGLAND) {
-            showIsolationAdviceForEngland()
+            showIsolationAdviceForEngland(
+                stateColor = R.color.error_red
+            )
         } else {
             showIsolationState(
                 iconResource = R.drawable.ic_isolation_book_test,
                 remainingDaysInIsolation = remainingDaysInIsolation,
                 selfIsolationLabel = R.string.try_to_stay_at_home_for_after_positive_test_wales,
                 stateText = R.string.infobox_after_positive_test_wales,
-                stateColor = R.color.amber,
+                stateColor = R.color.error_red,
                 exposureLinksVisible = false,
                 paragraphResources = intArrayOf(R.string.test_result_negative_then_positive_continue_explanation)
             )

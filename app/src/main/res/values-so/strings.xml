@@ -173,7 +173,7 @@
     <string name="permission_title">Raad-raacista shakhsiga</string>
     <string name="post_code_example">Waxaad u baahan tahay nambar boostada Ingiriis ama Welsh ah si aad ugu isticmaasho barnaamijkan.\n\nTusaalooyin: Haddii nambarkaaga boostada u yahay CE1B 2PQ, fadlan gali \'CE1B\'. Hadday tahay CR0 3RL, fadlan gali \'CR0\'. Hadday tahay L4 0RE, fadlan gali \'L4\'.</string>
     <string name="post_code_invalid_title">Koodhka boostada degmada khaldan</string>
-    <string name="post_code_rationale">Koodhka boostada wuxuu ka caawiyaa barashada ku faafidda coronavirus meelo kala duwan. Tani waxay hubinaysaa inaan ku siin karno talada ugu wanaagsan ee caafimaadka bulshada deegaankaaga.\n\nHa welwelin. Koodhka boostada degmadaada looma isticmaali doono si loola socdo goobtaada.</string>
+    <string name="post_code_rationale">Koodhka boostada wuxuu ka caawiyaa barashada ku faafidda coronavirus meelo kala duwan. Tani waxay hubinaysaa inaan ku siin karno talada ugu wanaagsan ee caafimaadka bulshada deegaankaaga.\n\nHa welwelin. Koodhkaaga boostada looma adeegsan doono si loola socdo goobta aad joogto.</string>
     <string name="post_code_rationale_title">Maxaynu ugu baahan nahay koodhka boosta degmadaada?</string>
     <string name="post_code_title">Geli qaybta hore ee koodhka boostada (koodhka boostada degmada)</string>
     <string name="postal_district">Boostada degmada</string>

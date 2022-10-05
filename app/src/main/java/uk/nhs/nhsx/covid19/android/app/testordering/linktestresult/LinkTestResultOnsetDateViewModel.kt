@@ -10,6 +10,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.CannotRememberDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.ExplicitDate
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
+import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.SymptomsDate
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
@@ -24,12 +25,9 @@ import javax.inject.Inject
 class LinkTestResultOnsetDateViewModel @Inject constructor(
     private val unacknowledgedTestResultsProvider: UnacknowledgedTestResultsProvider,
     private val analyticsEventProcessor: AnalyticsEventProcessor,
+    private val isolationStateMachine: IsolationStateMachine,
     private val clock: Clock
 ) : ViewModel() {
-
-    companion object {
-        private const val MAX_DAYS_FOR_ONSET_DATE = 5L
-    }
 
     @VisibleForTesting
     internal val viewState = MutableLiveData<ViewState>()
@@ -47,7 +45,9 @@ class LinkTestResultOnsetDateViewModel @Inject constructor(
         this.testResult = testResult
 
         val lastPossibleOnsetDate = testResult.testEndDate.toLocalDate(clock.zone)
-        val firstPossibleOnsetDate = lastPossibleOnsetDate.minusDays(MAX_DAYS_FOR_ONSET_DATE)
+        val firstPossibleOnsetDate = lastPossibleOnsetDate.minusDays(
+            isolationStateMachine.readLogicalState().isolationConfiguration.indexCaseSinceSelfDiagnosisOnset.toLong() - 1
+        )
 
         if (viewState.value == null) {
             viewState.postValue(

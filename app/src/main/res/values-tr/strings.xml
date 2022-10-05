@@ -144,7 +144,7 @@
     <string name="privacy_notice">Gizlilik bildirimi</string>
 
     <string name="nhs_111_online_service">NHS 111 online</string>
-    <string name="post_code_rationale">Posta kodu bölgesi, farklı bölgelerde koronavirüsün yayılması hakkında bilgi edinmemize yardımcı olur. Bu, bulunduğunuz bölge için mümkün olan en iyi halk sağlığı tavsiyelerini size iletmemizi mümkün kılar.\n\nEndişelenmeyin. Posta kodu bölgeniz, konumunuzu takip etmek için kullanılmayacaktır.</string>
+    <string name="post_code_rationale">Posta kodu bölgesi, farklı bölgelerde koronavirüsün yayılması hakkında bilgi edinmemize yardımcı olur. Bu, bulunduğunuz bölge için mümkün olan en iyi halk sağlığı tavsiyelerini size iletmemizi mümkün kılar.\n\nEndişelenmenize gerek yok. Posta kodu bölgeniz, konumunuzu takip etmek için kullanılmayacaktır.</string>
     <string name="enable_bluetooth_rationale">Bu uygulama, bu uygulamanın yüklü olduğu başka bir telefonun yakınında olduğunu bilmek için Bluetooth kullanır. Bluetooth’u kapattıysanız, bu uygulama çalışmayacaktır.\n\nBu uygulama ‘Bluetooth Düşük Enerji’ kullanmaktadır - bir pil tasarrufu teknolojisi.\n\nLütfen ayarlara gidin ve Bluetooth’u açın.</string>
     <string name="enable_bluetooth_error_hint">Lütfen cihaz ayarlarınızda Bluetooth özelliğini etkinleştirin.</string>
     <string name="go_to_your_settings">Ayarlarınıza gidin</string>

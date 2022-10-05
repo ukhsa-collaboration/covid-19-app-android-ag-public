@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import io.mockk.called
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
@@ -16,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.Explici
 import uk.nhs.nhsx.covid19.android.app.questionnaire.review.SelectedDate.NotStated
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
+import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.SymptomsDate
 import uk.nhs.nhsx.covid19.android.app.testordering.UnacknowledgedTestResultsProvider
@@ -36,6 +38,7 @@ class LinkTestResultOnsetDateViewModelTest {
 
     private val unacknowledgedTestResultsProvider = mockk<UnacknowledgedTestResultsProvider>(relaxed = true)
     private val analyticsEventProcessor = mockk<AnalyticsEventProcessor>(relaxed = true)
+    private val isolationStateMachine = mockk<IsolationStateMachine>(relaxed = true)
     private val fixedClock = Clock.fixed(Instant.parse("2020-07-18T10:00:00Z"), ZoneOffset.UTC)
 
     private val testEndDate = Instant.parse("2020-07-27T01:00:00.00Z")
@@ -47,11 +50,15 @@ class LinkTestResultOnsetDateViewModelTest {
         diagnosisKeySubmissionSupported = false,
         requiresConfirmatoryTest = false
     )
+    private val indexCaseSinceSelfDiagnosisOnsetEngland = 6
+    private val indexCaseSinceSelfDiagnosisOnsetWales = 5
     private val symptomsOnsetWindowDays = LocalDate.parse("2020-07-22")..LocalDate.parse("2020-07-27")
+    private val symptomsOnsetWindowDaysWales = LocalDate.parse("2020-07-23")..LocalDate.parse("2020-07-27")
 
     private val testSubject = LinkTestResultOnsetDateViewModel(
         unacknowledgedTestResultsProvider,
         analyticsEventProcessor,
+        isolationStateMachine,
         fixedClock
     )
 
@@ -64,11 +71,13 @@ class LinkTestResultOnsetDateViewModelTest {
         testSubject.viewState().observeForever(viewStateObserver)
         testSubject.datePickerContainerClicked().observeForever(datePickerContainerClickedObserver)
         testSubject.continueEvent().observeForever(continueEventObserver)
-        testSubject.onCreate(testResult)
     }
 
     @Test
     fun `create and calculate onsetWindowDays`() = runBlocking {
+        every { isolationStateMachine.readLogicalState().isolationConfiguration.indexCaseSinceSelfDiagnosisOnset } returns indexCaseSinceSelfDiagnosisOnsetEngland
+        testSubject.onCreate(testResult)
+
         val expectedViewState = ViewState(
             NotStated,
             false,
@@ -79,7 +88,23 @@ class LinkTestResultOnsetDateViewModelTest {
     }
 
     @Test
+    fun `create and calculate onsetWindowDays wales`() = runBlocking {
+        every { isolationStateMachine.readLogicalState().isolationConfiguration.indexCaseSinceSelfDiagnosisOnset } returns indexCaseSinceSelfDiagnosisOnsetWales
+        testSubject.onCreate(testResult)
+
+        val expectedViewState = ViewState(
+            NotStated,
+            false,
+            symptomsOnsetWindowDaysWales
+        )
+
+        verify { viewStateObserver.onChanged(expectedViewState) }
+    }
+
+    @Test
     fun `select date`() = runBlocking {
+        testSubject.onCreate(testResult)
+
         val initialState = testSubject.viewState.value
 
         val selectedDate = testEndDate.minus(1, ChronoUnit.DAYS)
@@ -98,6 +123,8 @@ class LinkTestResultOnsetDateViewModelTest {
 
     @Test
     fun `select cannot remember date`() = runBlocking {
+        testSubject.onCreate(testResult)
+
         val initialState = testSubject.viewState.value
 
         testSubject.cannotRememberDateChecked()
@@ -109,6 +136,8 @@ class LinkTestResultOnsetDateViewModelTest {
 
     @Test
     fun `unselect cannot remember date`() = runBlocking {
+        testSubject.onCreate(testResult)
+
         val initialState = testSubject.viewState.value
 
         testSubject.cannotRememberDateUnchecked()
@@ -120,6 +149,8 @@ class LinkTestResultOnsetDateViewModelTest {
 
     @Test
     fun `user clicks continue without stating a date`() = runBlocking {
+        testSubject.onCreate(testResult)
+
         val initialState = testSubject.viewState.value
 
         testSubject.onButtonContinueClicked()
@@ -133,6 +164,8 @@ class LinkTestResultOnsetDateViewModelTest {
 
     @Test
     fun `user clicks continue with setting an explicit date`() = runBlocking {
+        testSubject.onCreate(testResult)
+
         val initialState = testSubject.viewState.value
 
         val onset = testResult.testEndDate.minus(1, ChronoUnit.DAYS)
@@ -158,6 +191,8 @@ class LinkTestResultOnsetDateViewModelTest {
 
     @Test
     fun `user clicks continue with cannot remember date`() = runBlocking {
+        testSubject.onCreate(testResult)
+
         val initialState = testSubject.viewState.value
 
         testSubject.cannotRememberDateChecked()
@@ -180,6 +215,8 @@ class LinkTestResultOnsetDateViewModelTest {
 
     @Test
     fun `on click of date picker container emit test end date to parameterize data picker`() = runBlocking {
+        testSubject.onCreate(testResult)
+
         testSubject.onDatePickerContainerClicked()
 
         verify { datePickerContainerClickedObserver.onChanged(testEndDate.toEpochMilli()) }

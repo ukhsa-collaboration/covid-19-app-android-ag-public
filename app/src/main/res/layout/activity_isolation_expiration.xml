@@ -39,7 +39,7 @@
                 android:textAlignment="center"
                 android:textSize="56sp" />
 
-            <TextView
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
                 android:id="@+id/expirationDescription"
                 style="@style/TitleIsolation"
                 android:layout_width="match_parent"

@@ -351,7 +351,7 @@ class TestResultActivityStateTest : EspressoTest() {
             hasCloseToolbar = false,
             iconDrawableRes = R.drawable.ic_isolation_book_test,
             isolationRequestInfoStringResource = R.string.infobox_after_positive_test_wales,
-            isolationRequestInfoColorResource = R.color.amber,
+            isolationRequestInfoColorResource = R.color.error_red,
             title1 = R.string.try_to_stay_at_home_for_after_positive_test_wales,
             title3Visible = false,
             actionButtonStringResource = R.string.continue_button,
