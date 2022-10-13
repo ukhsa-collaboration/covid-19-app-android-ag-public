@@ -319,7 +319,7 @@
     <string name="authentication_where_can_i_find_code">أين يمكنني العثور على هذا الرمز؟</string>
     <string name="link_test_result_error_no_connection">لا توجد خدمة الإنترنت. يرجى توصيل الهاتف بالشبكة الخاصة بك أو شبكة الواي فاي والمحاولة مرة أخرى.</string>
     <string name="link_test_result_error_unknown">حدث خطأ ما. يرجى المحاولة مرة أخرى.</string>
-    <string name="logo_nhs_england_description">خدمة الاختبار والتتبع من هيئة NHS</string>
+    <string name="logo_nhs_england_description">تطبيق NHS Covid 19</string>
     <string name="logo_nhs_generic_description">مكافحة فيروس كورونا \"COVID-19\" من هيئة NHS</string>
     <string name="logo_nhs_wales_description">خدمة الاختبار والتتبع والحماية من هيئة NHS في ويلز</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
@@ -914,7 +914,7 @@
         <item quantity="other">توخى المزيد من الحرص وأحمي الأخرين حتى %1$s الساعة 23:59. يتبقى %2$s أيام حتى ذلك الحين.</item>
     </plurals>
     <string name="be_careful_until_date_title">توخى المزيد من الحذر وأعمل على حماية الأخرين</string>
-    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">10/2022</string>
     <string name="back_to_home_screen">الرجوع إلى الشاشة الرئيسية</string>
     <string name="covid_guidance_hub_check_ssp_description">تعرف علي المعلومات المتعلقة باختبار COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">أحدث الإرشادات المتعلقة باختبار COVID-19</string>

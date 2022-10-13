@@ -299,7 +299,7 @@
     <string name="authentication_where_can_i_find_code">在哪里可以找到此代码？</string>
     <string name="link_test_result_error_no_connection">没有网络。请连接到您的网络或WiFi，然后重试。</string>
     <string name="link_test_result_error_unknown">出现故障。请再试一遍。</string>
-    <string name="logo_nhs_england_description">NHS 测试和追踪</string>
+    <string name="logo_nhs_england_description">NHS Covid 19 应用</string>
     <string name="logo_nhs_generic_description">NHS Covid 19</string>
     <string name="logo_nhs_wales_description">NHS威尔士测试追踪保护</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
@@ -864,7 +864,7 @@
         <item quantity="other">加倍小心和保护他人 直至%1$s时23:59。还剩%2$s天。</item>
     </plurals>
     <string name="be_careful_until_date_title">加倍注意，保护他人</string>
-    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">10/2022</string>
     <string name="back_to_home_screen">返回主屏幕</string>
     <string name="covid_guidance_hub_check_ssp_description">了解 COVID-19 检测</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 检测最新指南</string>

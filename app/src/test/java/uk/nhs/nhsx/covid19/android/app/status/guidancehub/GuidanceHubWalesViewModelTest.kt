@@ -2,36 +2,26 @@ package uk.nhs.nhsx.covid19.android.app.status.guidancehub
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.R
-import uk.nhs.nhsx.covid19.android.app.status.NewFunctionalityLabelProvider
 import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubWalesViewModel.NavigationTarget
-import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubWalesViewModel.NewLabelViewState
-import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubWalesViewModel.NewLabelViewState.Hidden
-import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubWalesViewModel.NewLabelViewState.Visible
 
 class GuidanceHubWalesViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private val navigationTargetObserver = mockk<Observer<NavigationTarget>>(relaxUnitFun = true)
-    private val newLabelObserver = mockk<Observer<NewLabelViewState>>(relaxUnitFun = true)
-    private val newFunctionalityLabelProvider = mockk<NewFunctionalityLabelProvider>(relaxed = true)
 
     private lateinit var viewModel: GuidanceHubWalesViewModel
 
     @Before
     fun setUp() {
-        viewModel = GuidanceHubWalesViewModel(newFunctionalityLabelProvider)
+        viewModel = GuidanceHubWalesViewModel()
         viewModel.navigationTarget().observeForever(navigationTargetObserver)
-        viewModel.newLabelViewState().observeForever(newLabelObserver)
-
-        coEvery { newFunctionalityLabelProvider.hasInteractedWithLongCovidWalesNewLabel } returns false
     }
 
     @Test
@@ -100,25 +90,5 @@ class GuidanceHubWalesViewModelTest {
 
         viewModel.itemEightClicked()
         verify { navigationTargetObserver.onChanged(expectedNavigationTarget) }
-    }
-
-    @Test
-    fun `when new label item not interacted with, click should emit interaction event`() {
-        viewModel.onCreate()
-
-        verify { newLabelObserver.onChanged(Visible) }
-
-        viewModel.itemSixClicked()
-
-        verify { newLabelObserver.onChanged(Hidden) }
-    }
-
-    @Test
-    fun `when new label interacted with should hide`() {
-        coEvery { newFunctionalityLabelProvider.hasInteractedWithLongCovidWalesNewLabel } returns true
-
-        viewModel.onCreate()
-
-        verify { newLabelObserver.onChanged(Hidden) }
     }
 }

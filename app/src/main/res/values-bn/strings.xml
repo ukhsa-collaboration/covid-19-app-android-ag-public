@@ -305,7 +305,7 @@
     <string name="authentication_where_can_i_find_code">আমি এই কোডটি কোথায় পাব?</string>
     <string name="link_test_result_error_no_connection">ইন্টারনেট নেই। অনুগ্রহ করে আপনার নেটওয়ার্ক বা ওয়াইফাই-এর সাথে সংযোগ করুন এবং আবার চেষ্টা করুন।</string>
     <string name="link_test_result_error_unknown">কিছু ভুল হয়েছে। অনুগ্রহপূর্বক আবার চেষ্টা করুন।</string>
-    <string name="logo_nhs_england_description">NHS টেস্ট এ্যান্ড ট্রেস</string>
+    <string name="logo_nhs_england_description">NHS Covid 19 অ্যাপ</string>
     <string name="logo_nhs_generic_description">NHS কোভিড 19</string>
     <string name="logo_nhs_wales_description">NHS ওয়েল্‌স টেস্ট ট্রেস প্রোটেক্ট</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
@@ -874,7 +874,7 @@
         <item quantity="other">পর্যন্ত অতিরিক্ত যত্ন নিন এবং অন্যদের সুরক্ষিত রাখুন %1$s এ 23:59 । তখন পর্যন্ত %2$s দিন বাকি আছে।</item>
     </plurals>
     <string name="be_careful_until_date_title">অতিরিক্ত যত্ন নিন এবং অন্যদের রক্ষা করুন</string>
-    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">10/2022</string>
     <string name="back_to_home_screen">হোম স্ক্রিনে ফিরে যান</string>
     <string name="covid_guidance_hub_check_ssp_description">COVID-19 এর পরীক্ষা সম্পর্কে জানুন</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 পরীক্ষার সর্বশেষ নির্দেশনা</string>

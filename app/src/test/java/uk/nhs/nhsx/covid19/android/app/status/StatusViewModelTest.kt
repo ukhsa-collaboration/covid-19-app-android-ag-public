@@ -126,7 +126,6 @@ class StatusViewModelTest {
     private val areSystemLevelAnimationsEnabled = mockk<AreSystemLevelAnimationsEnabled>(relaxUnitFun = true)
     private val localAuthorityPostCodeProvider: LocalAuthorityPostCodeProvider = mockk<LocalAuthorityPostCodeProvider>()
     private val shouldShowBluetoothSplashScreen = mockk<ShouldShowBluetoothSplashScreen>()
-    private val newFunctionalityLabelProvider = mockk<NewFunctionalityLabelProvider>()
 
     private val fixedClock = Clock.fixed(Instant.parse("2020-05-22T10:00:00Z"), ZoneOffset.UTC)
     private val isolationHelper = IsolationLogicalHelper(fixedClock)
@@ -234,8 +233,6 @@ class StatusViewModelTest {
         coEvery { exposureNotificationManager.isEnabled() } returns false
         coEvery { getLocalMessageFromStorage() } returns null
         every { bluetoothAvailabilityStateProvider.getState(any()) } returns DISABLED
-        every { newFunctionalityLabelProvider.hasInteractedWithLongCovidEnglandNewLabel } returns true
-        every { newFunctionalityLabelProvider.hasInteractedWithLongCovidWalesNewLabel } returns true
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
         mockkObject(RuntimeBehavior)
         every { RuntimeBehavior.isFeatureEnabled(LOCAL_COVID_STATS) } returns true
@@ -743,25 +740,8 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `when local authority provides England show new label when not interacted with`() {
+    fun `when local authority provides England view state should not show new label`() {
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
-        every { newFunctionalityLabelProvider.hasInteractedWithLongCovidEnglandNewLabel } returns false
-
-        testSubject.updateViewState()
-
-        verify {
-            viewStateObserver.onChanged(
-                defaultViewState.copy(
-                    showGuidanceHubNewLabel = true
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `when local authority provides England hide new label when interacted with`() {
-        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns ENGLAND
-        every { newFunctionalityLabelProvider.hasInteractedWithLongCovidEnglandNewLabel } returns true
 
         testSubject.updateViewState()
 
@@ -775,9 +755,8 @@ class StatusViewModelTest {
     }
 
     @Test
-    fun `when local authority provides Wales show new label when not interacted with`() {
+    fun `when local authority provides Wales view state should not show new label`() {
         coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
-        every { newFunctionalityLabelProvider.hasInteractedWithLongCovidWalesNewLabel } returns false
 
         testSubject.updateViewState()
 
@@ -785,27 +764,6 @@ class StatusViewModelTest {
             viewStateObserver.onChanged(
                 defaultViewState.copy(
                     country = WALES,
-                    showIsolationHubButton = false,
-                    showCovidGuidanceHubButton = true,
-                    showGuidanceHubNewLabel = true
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `when local authority provides Wales hide new label when interacted with`() {
-        coEvery { localAuthorityPostCodeProvider.requirePostCodeDistrict() } returns WALES
-        every { newFunctionalityLabelProvider.hasInteractedWithLongCovidWalesNewLabel } returns true
-
-        testSubject.updateViewState()
-
-        verify {
-            viewStateObserver.onChanged(
-                defaultViewState.copy(
-                    country = WALES,
-                    showIsolationHubButton = false,
-                    showCovidGuidanceHubButton = true,
                     showGuidanceHubNewLabel = false
                 )
             )
@@ -940,8 +898,7 @@ class StatusViewModelTest {
             exposureNotificationPermissionHelperFactory,
             shouldShowBluetoothSplashScreen,
             statusActivityAction,
-            localAuthorityPostCodeProvider,
-            newFunctionalityLabelProvider
+            localAuthorityPostCodeProvider
         )
 
         testSubject.viewState.observeForever(viewStateObserver)

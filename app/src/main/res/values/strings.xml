@@ -210,7 +210,7 @@
     <string name="ill_do_it_later">Back to home screen</string>
     <string name="questionnaire_no_symptom_selected">To continue you need to either select your symptoms or select ”I have different symptoms”</string>
     <string name="title_no_coronavirus_symptoms">You do not have any of the main symptoms</string>
-    <string name="message_no_coronavirus_symptoms">Find out more about the coronavirus testing options available to you:</string>
+    <string name="message_no_coronavirus_symptoms">Find out more about the COVID-19 testing options available to you:</string>
     <string name="questionnaire_input_date_error">You need to either enter a date or select ‘I do not remember the date’</string>
     <string name="questionnaire_review_symptoms_title">Review your answers</string>
     <string name="questionnaire_confirm">Submit</string>
@@ -483,7 +483,7 @@
     <string name="test_result_negative_then_positive_continue_explanation">You can continue with your normal activities after that time if you don‘t have a high temperature and if you feel well enough. This is to avoid passing COVID-19 on to others.</string>
 
     <string name="logo_nhs_generic_description">NHS Covid 19</string>
-    <string name="logo_nhs_england_description">NHS Test and Trace</string>
+    <string name="logo_nhs_england_description">NHS Covid 19 app</string>
     <string name="logo_nhs_wales_description">NHS Wales Test Trace Protect</string>
     <string name="qr_code_help_about_qr_code_image_content_description">This is an example of an official NHS QR code poster for hospitality venues in England</string>
     <string name="notification_text_updating_database">Loading...</string>
@@ -1005,7 +1005,7 @@
     <string name="contact_case_start_isolation_primary_button_title_wales">Get a free rapid lateral flow kit</string>
     <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-tested-coronavirus-covid-19</string>
     <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">You are advised to take a free rapid lateral flow test as soon as possible.</string>
-    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">10/2022</string>
     <string name="exposure_notification_message">Exposure notifications are off during this period</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">Limit close contact with anyone in your household who has COVID-19</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">Take a PCR test if you have symptoms of COVID-19</string>

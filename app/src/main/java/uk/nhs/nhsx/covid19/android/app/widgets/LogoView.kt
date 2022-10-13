@@ -95,7 +95,7 @@ class LogoView @JvmOverloads constructor(
 
 enum class LogoWithDescription(@DrawableRes val logoImage: Int, @StringRes val description: Int?) {
     COVID_19(R.drawable.ic_nhs_covid_logo, null),
-    ENGLAND_TEST_TRACE(R.drawable.nhs_logo_on_transparent, R.string.logo_nhs_england_description),
+    ENGLAND_TEST_TRACE(R.drawable.ic_nhs_covid_logo, R.string.logo_nhs_england_description),
     WALES_TEST_TRACE(R.drawable.wales_test_trace_logo, R.string.logo_nhs_wales_description);
 
     companion object {

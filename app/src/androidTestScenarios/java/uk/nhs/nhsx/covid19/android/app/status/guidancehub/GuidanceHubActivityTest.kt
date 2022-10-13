@@ -134,20 +134,4 @@ class GuidanceHubActivityTest(override val configuration: TestConfiguration) : E
             waitFor { browserRobot.checkActivityIsDisplayed() }
         }
     }
-
-    @Test
-    fun clickItemWithNewLabelForEngland_shouldRemoveNewLabelOnNavigateBack() {
-        startTestActivity<GuidanceHubActivity>()
-
-        waitFor { guidanceHubRobot.checkNewLabelIsDisplayed(true) }
-
-        runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
-            guidanceHubRobot.clickItemSeven()
-
-            waitFor { browserRobot.checkActivityIsDisplayed() }
-            testAppContext.device.pressBack()
-        }
-
-        waitFor { guidanceHubRobot.checkNewLabelIsDisplayed(false) }
-    }
 }

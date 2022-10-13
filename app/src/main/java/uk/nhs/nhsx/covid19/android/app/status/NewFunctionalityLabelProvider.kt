@@ -34,7 +34,9 @@ class NewFunctionalityLabelProvider @Inject constructor(sharedPreferences: Share
     companion object {
         @Deprecated("Only used in version 4.29")
         private const val VALUE_KEY_REPORT_SYMPTOMS = "REPORT_SYMPTOMS_NEW_LABEL_ENABLED"
+        @Deprecated("Only used in versions 4.34 to 4.37")
         private const val VALUE_KEY_GUIDANCE_HUB_ENGLAND_LONG_COVID = "GUIDANCE_HUB_ENGLAND_LONG_COVID_NEW_LABEL_ENABLED"
+        @Deprecated("Only used in versions 4.34 to 4.37")
         private const val VALUE_KEY_GUIDANCE_HUB_WALES_LONG_COVID = "GUIDANCE_HUB_WALES_LONG_COVID_NEW_LABEL_ENABLED"
     }
 }

@@ -10,7 +10,6 @@ import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCRE
 import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES
 import com.jeroenmols.featureflag.framework.FeatureFlag.TESTING_FOR_COVID19_HOME_SCREEN_BUTTON
 import com.jeroenmols.featureflag.framework.FeatureFlag.VENUE_CHECK_IN_BUTTON
-import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_EXTERNAL_BROWSER
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -28,10 +27,7 @@ import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityActio
 import uk.nhs.nhsx.covid19.android.app.status.StatusActivity.StatusActivityAction.NavigateToLocalMessage
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.retry.RetryFlakyTest
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BrowserRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ContactTracingHubRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.GuidanceHubRobot
-import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.GuidanceHubWalesRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalMessageRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.MoreAboutAppRobot
@@ -58,9 +54,6 @@ class StatusActivityTest(override val configuration: TestConfiguration) : Espres
     private val isolationHubRobot = IsolationHubRobot()
     private val testingHubRobot = TestingHubRobot()
     private val localMessageRobot = LocalMessageRobot()
-    private val guidanceHubRobot = GuidanceHubRobot()
-    private val guidanceHubWalesRobot = GuidanceHubWalesRobot()
-    private val browserRobot = BrowserRobot()
     private val isolationHelper = IsolationHelper(testAppContext.clock)
 
     @Test
@@ -772,65 +765,17 @@ class StatusActivityTest(override val configuration: TestConfiguration) : Espres
         }
 
     @Test
-    fun whenUserHasNotInteractedWithGuidanceHubEnglandNewLabel_shouldBeVisible() {
+    fun newLabelOnGuidanceHubButtonForEngland_shouldBeDisabled() {
         givenLocalAuthorityIsInEngland()
         startTestActivity<StatusActivity>()
-
-        waitFor { statusRobot.checkNewLabelIsDisplayed(true) }
-    }
-
-    @Test
-    fun whenUserHasNotInteractedWithGuidanceHubWalesNewLabel_shouldBeVisible() {
-        givenLocalAuthorityIsInWales()
-        startTestActivity<StatusActivity>()
-
-        waitFor { statusRobot.checkNewLabelIsDisplayed(true) }
-    }
-
-    @Test
-    fun whenUserHasInteractedWithGuidanceHubEnglandNewLabel_shouldBeHidden() {
-        givenLocalAuthorityIsInEngland()
-        startTestActivity<StatusActivity>()
-
-        waitFor { statusRobot.checkNewLabelIsDisplayed(true) }
-
-        statusRobot.clickCovidGuidanceHub()
-
-        waitFor { guidanceHubRobot.checkNewLabelIsDisplayed(true) }
-
-        runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
-            guidanceHubRobot.clickItemSeven()
-            browserRobot.checkActivityIsDisplayed()
-            testAppContext.device.pressBack()
-        }
-
-        waitFor { guidanceHubRobot.checkNewLabelIsDisplayed(false) }
-
-        testAppContext.device.pressBack()
 
         waitFor { statusRobot.checkNewLabelIsDisplayed(false) }
     }
 
     @Test
-    fun whenUserHasInteractedWithGuidanceHubWalesNewLabel_shouldBeHidden() {
+    fun newLabelOnGuidanceHubButtonForWales_shouldBeDisabled() {
         givenLocalAuthorityIsInWales()
         startTestActivity<StatusActivity>()
-
-        waitFor { statusRobot.checkNewLabelIsDisplayed(true) }
-
-        statusRobot.clickCovidGuidanceHub()
-
-        waitFor { guidanceHubWalesRobot.checkNewLabelIsDisplayed(true) }
-
-        runWithFeatureEnabled(USE_WEB_VIEW_FOR_EXTERNAL_BROWSER) {
-            guidanceHubWalesRobot.clickItemSix()
-            browserRobot.checkActivityIsDisplayed()
-            testAppContext.device.pressBack()
-        }
-
-        waitFor { guidanceHubWalesRobot.checkNewLabelIsDisplayed(false) }
-
-        testAppContext.device.pressBack()
 
         waitFor { statusRobot.checkNewLabelIsDisplayed(false) }
     }

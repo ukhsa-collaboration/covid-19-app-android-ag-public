@@ -303,7 +303,7 @@
     <string name="authentication_where_can_i_find_code">مجھے یہ کوڈ کہاں ملے گا؟</string>
     <string name="link_test_result_error_no_connection">انٹرنیٹ نہیں ہے۔ برائے کرم اپنے نیٹ ورک یا وائی فائی سے کنیکٹ کریں اور دوبارہ کوشش کریں۔</string>
     <string name="link_test_result_error_unknown">کچھ غلط ہو گیا ہے۔ برائے کرم دوبارہ کوشش کریں۔</string>
-    <string name="logo_nhs_england_description">NHS ٹیسٹ اینڈ ٹریس</string>
+    <string name="logo_nhs_england_description">NHS Covid 19 ایپ</string>
     <string name="logo_nhs_generic_description">NHS Covid 19</string>
     <string name="logo_nhs_wales_description">NHS ویلز ٹیسٹ ٹریس پروٹیکٹ</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
@@ -874,7 +874,7 @@
         <item quantity="other">تک اضافی نگہداشت کریں اور دوسروں کی حفاظت کریں تک %1$s  بجے 23:59۔ اس وقت میں ابھی %2$s دن باقی ہے۔</item>
     </plurals>
     <string name="be_careful_until_date_title">اضافی دھیان رکھیں اور دوسروں کو بچائیں</string>
-    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">10/2022</string>
     <string name="back_to_home_screen">ہوم اسکرین پر واپس جائیں</string>
     <string name="covid_guidance_hub_check_ssp_description">COVID-19 کی جانچ کے بارے میں جانکاری حاصل کریں</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 کی جانچ سے متعلق تازہ ترین صلاح</string>

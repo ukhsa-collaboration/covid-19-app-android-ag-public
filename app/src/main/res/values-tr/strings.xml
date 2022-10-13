@@ -304,7 +304,7 @@
     <string name="authentication_where_can_i_find_code">Bu kodu nereden bulabilirim?</string>
     <string name="link_test_result_error_no_connection">İnternet yok. Lütfen şebekenize ya da WiFi’ya bağlanın ve bir daha deneyin.</string>
     <string name="link_test_result_error_unknown">Bir şeyler ters gitti. Lütfen bir daha deneyin.</string>
-    <string name="logo_nhs_england_description">NHS Test ve Takip</string>
+    <string name="logo_nhs_england_description">NHS Covid 19 uygulaması</string>
     <string name="logo_nhs_generic_description">NHS Covid 19</string>
     <string name="logo_nhs_wales_description">NHS Galler Test Takip Koru</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
@@ -875,7 +875,7 @@
         <item quantity="other">%1$s günü, saat 23:59\'tarihine kadar ekstra dikkatli olun ve başkalarını koruyun. Kalan gün sayısı %2$s.</item>
     </plurals>
     <string name="be_careful_until_date_title">Ekstra dikkatli olun ve başkalarını koruyun</string>
-    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">10/2022</string>
     <string name="back_to_home_screen">Ana ekrana geri dön</string>
     <string name="covid_guidance_hub_check_ssp_description">COVID-19 testi yaptırmakla ilgili bilgi edinin</string>
     <string name="covid_guidance_hub_check_ssp_title">En son COVID-19 testi yönergesi</string>

@@ -2,12 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.testhelpers.robots
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.not
 import uk.nhs.nhsx.covid19.android.app.R.id
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 
@@ -52,16 +47,5 @@ class GuidanceHubWalesRobot : HasActivity {
     fun clickItemEight() {
         onView(withId(id.itemEight))
             .perform(ViewActions.scrollTo(), ViewActions.click())
-    }
-
-    fun checkNewLabelIsDisplayed(isDisplayed: Boolean) {
-        onView(withId(id.itemSix)).perform(ViewActions.scrollTo())
-        onView(
-            Matchers.allOf(
-                withId(id.navigationItemNewLabel),
-                isDescendantOfA(withId(id.itemSix))
-            )
-        )
-            .check(matches(if (isDisplayed) ViewMatchers.isDisplayed() else not(ViewMatchers.isDisplayed())))
     }
 }

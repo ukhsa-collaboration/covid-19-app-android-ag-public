@@ -303,7 +303,7 @@
     <string name="authentication_where_can_i_find_code">ਮੈਨੂੰ ਇਹ ਕੋਡ ਕਿੱਥੋਂ ਮਿਲ ਸਕਦਾ ਹੈ?</string>
     <string name="link_test_result_error_no_connection">ਕੋਈ ਇੰਟਰਨੈੱਟ ਨਹੀਂ। ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੇ ਨੈੱਟਵਰਕ ਜਾਂ ਵਾਈਫਾਈ ਨਾਲ ਕਨੇਕਟ ਕਰੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</string>
     <string name="link_test_result_error_unknown">ਕੁਝ ਗ਼ਲਤ ਹੋਇਆ ਸੀ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</string>
-    <string name="logo_nhs_england_description">NHS ਟੈਸਟ ਅਤੇ ਟ੍ਰੇਸ</string>
+    <string name="logo_nhs_england_description">NHS Covid 19 ਐਪ</string>
     <string name="logo_nhs_generic_description">NHS ਕੋਵਿਡ 19</string>
     <string name="logo_nhs_wales_description">NHS ਵੇਲਜ਼ ਟੈਸਟ ਟਰੇਸ ਪ੍ਰੋਟੈਕਟ</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
@@ -814,7 +814,7 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">ਆਪਣੇ ਪਰਿਵਾਰ ਵਿੱਚ ਉਸ ਕਿਸੇ ਵੀ ਵਿਅਕਤੀ ਨਾਲ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਨੂੰ ਸੀਮਿਤ ਕਰੋ ਜਿਸ ਨੂੰ COVID-19 ਹੈ</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">ਭੀੜ-ਭੜੱਕੇ ਵਾਲੀਆਂ, ਬੰਦ ਜਾਂ ਮਾੜੀ ਹਵਾਦਾਰੀ ਵਾਲੀਆਂ ਥਾਵਾਂ \'ਤੇ ਚਿਹਰੇ ਦੀ ਕਵਰਿੰਗ ਪਹਿਨੋ</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">ਜੇਕਰ ਤੁਹਾਡੇ ਘਰ ਵਿੱਚ ਕਿਸੇ ਨੂੰ COVID-19 ਹੈ ਤਾਂ ਜੇ ਹੋ ਸਕੇ ਤਾਂ ਘਰੋਂ ਕੰਮ ਕਰੋ</string>
-    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">10/2022</string>
     <string name="contact_case_exposure_info_screen_continue_button_england">ਜਾਰੀ ਰੱਖੋ</string>
     <string name="contact_case_exposure_info_screen_continue_button_wales">ਜਾਰੀ ਰੱਖੋ</string>
     <string name="contact_case_exposure_info_screen_exposure_date_england">%s ਨੂੰ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਹੋਇਆ</string>

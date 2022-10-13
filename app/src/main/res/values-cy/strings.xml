@@ -319,7 +319,7 @@
     <string name="authentication_where_can_i_find_code">Ble alla i ddod o hyd i’m cod?</string>
     <string name="link_test_result_error_no_connection">Dim rhyngrwyd. Cysylltwch â\'ch rhwydwaith neu WiFi a rhoi cynnig arall arni.</string>
     <string name="link_test_result_error_unknown">Aeth rhywbeth o\'i le. Rhowch gynnig arall arni.</string>
-    <string name="logo_nhs_england_description">Profi ac Olrhain y GIG</string>
+    <string name="logo_nhs_england_description">Ap Covid 19 y GIG</string>
     <string name="logo_nhs_generic_description">COVID-19 y GIG</string>
     <string name="logo_nhs_wales_description">Profi Olrhain Diogelu GIG Cymru</string>
     <string name="notification_channel_background_work_description">Mae\'r hysbysiadau hyn yn rhoi gwybod am weithgareddau\'r ap yn y cefndir.</string>
@@ -914,7 +914,7 @@
         <item quantity="other">Byddwch yn ofalus iawn a diogelu eraill tan  %1$s am 23:59. Mae yna %2$s dd/diwrnod tan hynny.</item>
     </plurals>
     <string name="be_careful_until_date_title">Byddwch yn ofalus iawn a diogelu eraill</string>
-    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">10/2022</string>
     <string name="back_to_home_screen">Yn ôl i’r sgrîn gartref</string>
     <string name="covid_guidance_hub_check_ssp_description">Dysgu am brofion ar gyfer COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">Canllawiau diweddaraf profion COVID-19</string>

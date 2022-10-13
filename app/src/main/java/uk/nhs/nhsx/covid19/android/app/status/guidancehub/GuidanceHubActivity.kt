@@ -8,8 +8,6 @@ import uk.nhs.nhsx.covid19.android.app.common.BaseActivity
 import uk.nhs.nhsx.covid19.android.app.common.ViewModelFactory
 import uk.nhs.nhsx.covid19.android.app.databinding.ActivityGuidanceHubBinding
 import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubViewModel.NavigationTarget.ExternalLink
-import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubViewModel.NewLabelViewState.Hidden
-import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubViewModel.NewLabelViewState.Visible
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.openInExternalBrowserForResult
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setNavigateUpToolbar
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setOnSingleClickListener
@@ -37,8 +35,6 @@ class GuidanceHubActivity : BaseActivity() {
 
         setupOnClickListeners()
         setupObservers()
-
-        viewModel.onCreate()
     }
 
     private fun setupObservers() {
@@ -49,20 +45,6 @@ class GuidanceHubActivity : BaseActivity() {
                 }
             }
             openInExternalBrowserForResult(url)
-        }
-
-        viewModel.newLabelViewState().observe(this) { state ->
-            when (state) {
-                is Hidden -> {
-                    binding.itemSeven.newLabelAccessibilityText = null
-                    binding.itemSeven.shouldDisplayNewLabel = false
-                }
-                is Visible -> {
-                    binding.itemSeven.newLabelAccessibilityText =
-                        getString(R.string.covid_guidance_hub_england_button_seven_new_label_accessibility_text)
-                    binding.itemSeven.shouldDisplayNewLabel = true
-                }
-            }
         }
     }
 

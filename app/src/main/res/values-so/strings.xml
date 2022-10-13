@@ -109,7 +109,7 @@
     <string name="link_test_result_text" />
     <string name="link_test_result_title">Gali natiijada baaritaankaaga adigoo isticmaalaya koodhka iimayl ama farriin qoraal lagugu soo diray</string>
     <string name="loading">Soo degayaa…</string>
-    <string name="logo_nhs_england_description">NHS Test and Trace</string>
+    <string name="logo_nhs_england_description">Abka NHS Covid 19</string>
     <string name="logo_nhs_generic_description">NHS Covid 19</string>
     <string name="logo_nhs_wales_description">NHS Wales Test Trace Protect</string>
     <string name="message_no_coronavirus_symptoms">Wax badan ka ogow fursadaha baaritaanka coronavirus ee aad adigu heli karto:</string>
@@ -875,7 +875,7 @@
         <item quantity="other">Samey taxadar dheeraad ah oo ilaali dadka kale ilaa %1$s saacada 23:59. Waxaa jiro %2$s maalmood la aado illaa kadib.</item>
     </plurals>
     <string name="be_careful_until_date_title">Samey taxadar dheeraad oo ilaali dadka kale</string>
-    <string name="about_this_app_software_information_date_of_release_description">09/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">10/2022</string>
     <string name="back_to_home_screen">Ku laabo shaashadda soo-dhoweynta</string>
     <string name="covid_guidance_hub_check_ssp_description">Ogow waxa ku saabsan baaritaanka COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">Hagidii ugu dambeysay ee COVID-19</string>
