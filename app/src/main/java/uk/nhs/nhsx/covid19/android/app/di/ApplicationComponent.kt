@@ -91,6 +91,20 @@ import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubWalesActivi
 import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubActivity
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.GetLocalMessageFromStorage
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessageActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.ReportedTestActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelectTestDateActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportThankYouActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportAppWillNotNotifyOtherUsersActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportAdviceActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportNegativeVoidTestResultActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportCheckAnswersActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportShareKeysInformationActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportSubmitTestResultAndKeysProgressActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportSymptomsActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportSymptomsOnsetActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.TestKitTypeActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.TestOriginActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.TestTypeActivity
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.BaseTestResultViewModel
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
@@ -194,6 +208,20 @@ interface ApplicationComponent {
     fun inject(checkYourAnswersActivity: CheckYourAnswersActivity)
     fun inject(symptomCheckerAdviceActivity: SymptomCheckerAdviceActivity)
     fun inject(yourSymptomsActivity: YourSymptomsActivity)
+    fun inject(testTypeActivity: TestTypeActivity)
+    fun inject(selfReportShareKeysInformationActivity: SelfReportShareKeysInformationActivity)
+    fun inject(testKitTypeActivity: TestKitTypeActivity)
+    fun inject(testOriginActivity: TestOriginActivity)
+    fun inject(selectTestDateActivity: SelectTestDateActivity)
+    fun inject(selfReportSymptomsActivity: SelfReportSymptomsActivity)
+    fun inject(selfReportSymptomsOnsetActivity: SelfReportSymptomsOnsetActivity)
+    fun inject(selfReportNegativeVoidTestResultActivity: SelfReportNegativeVoidTestResultActivity)
+    fun inject(reportedTestActivity: ReportedTestActivity)
+    fun inject(selfReportCheckAnswersActivity: SelfReportCheckAnswersActivity)
+    fun inject(selfReportThankYouActivity: SelfReportThankYouActivity)
+    fun inject(selfReportAppWillNotNotifyOtherUsersActivity: SelfReportAppWillNotNotifyOtherUsersActivity)
+    fun inject(selfReportSubmitTestResultAndKeysProgressActivity: SelfReportSubmitTestResultAndKeysProgressActivity)
+    fun inject(selfReportAdviceActivity: SelfReportAdviceActivity)
 
     fun inject(testResultViewModel: BaseTestResultViewModel)
 

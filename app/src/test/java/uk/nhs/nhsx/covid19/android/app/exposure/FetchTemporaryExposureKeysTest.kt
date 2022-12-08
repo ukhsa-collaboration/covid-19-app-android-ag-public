@@ -6,6 +6,7 @@ import com.google.android.gms.common.api.Status
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.FetchTemporaryExposureKeys.TemporaryExposureKeysFetchResult.Failure
@@ -130,4 +131,66 @@ class FetchTemporaryExposureKeysTest {
         acknowledgedDate = Instant.parse("2014-12-26T12:00:00Z"),
         notificationSentDate = null
     )
+
+    @Test
+    fun `keySharingInfo is null applyTransmissionRiskLevels is not called and keys are returned`() = runBlocking {
+        val exposureKeys = listOf<NHSTemporaryExposureKey>()
+
+        coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } returns exposureKeys
+
+        val result = testSubject(null)
+
+        verify(exactly = 0) { transmissionRiskLevelApplier.applyTransmissionRiskLevels(any(), any()) }
+
+        val expected = Success(exposureKeys)
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `keySharingInfo is null fetch fails because of resolution required api exception returns resolution required`() =
+        runBlocking {
+            val expectedStatus = Status(ConnectionResult.RESOLUTION_REQUIRED)
+            val exception = ApiException(expectedStatus)
+
+            coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } throws exception
+
+            val result = testSubject(null)
+
+            assertEquals(ResolutionRequired(expectedStatus), result)
+        }
+
+    @Test
+    fun `keySharingInfo is null fetch fails because of non-resolution-required api exception returns failure`() =
+        runBlocking {
+            val expectedStatus = Status(ConnectionResult.DEVELOPER_ERROR)
+            val exception = ApiException(expectedStatus)
+
+            coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } throws exception
+
+            val result = testSubject(null)
+
+            assertEquals(Failure(exception), result)
+        }
+
+    @Test
+    fun `keySharingInfo is null fetch fails because of api exception returns failure`() = runBlocking {
+        val exception = ApiException(Status(10))
+
+        coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } throws exception
+
+        val result = testSubject(null)
+
+        assertEquals(Failure(exception), result)
+    }
+
+    @Test
+    fun `keySharingInfo is null fetch fails because of generic exception returns failure`() = runBlocking {
+        val exception = Exception("test")
+
+        coEvery { exposureNotificationApi.temporaryExposureKeyHistory() } throws exception
+
+        val result = testSubject(null)
+
+        assertEquals(Failure(exception), result)
+    }
 }

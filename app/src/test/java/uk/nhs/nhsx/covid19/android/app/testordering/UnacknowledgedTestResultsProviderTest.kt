@@ -35,7 +35,17 @@ class UnacknowledgedTestResultsProviderTest :
             direction = JSON_TO_OBJECT
         ),
         ProviderTestExpectation(
+            json = SINGLE_LAB_RESULT_TEST_RESULT_VERSION_4_FORMAT_JSON,
+            objectValue = listOf(SINGLE_RECEIVED_LAB_RESULT_TEST_RESULT),
+            direction = JSON_TO_OBJECT
+        ),
+        ProviderTestExpectation(
             json = MULTIPLE_TEST_RESULTS_JSON,
+            objectValue = multipleTestResults,
+            direction = JSON_TO_OBJECT
+        ),
+        ProviderTestExpectation(
+            json = MULTIPLE_TEST_RESULTS_VERSION_4_FORMAT_JSON,
             objectValue = multipleTestResults,
             direction = JSON_TO_OBJECT
         )
@@ -98,8 +108,45 @@ class UnacknowledgedTestResultsProviderTest :
     }
 
     @Test
+    fun `set explicit symptoms onset date on json stored from before update, should update test and save in new format`() {
+        sharedPreferencesReturns(SINGLE_LAB_RESULT_TEST_RESULT_VERSION_4_FORMAT_JSON)
+
+        testSubject.setSymptomsOnsetDate(
+            SINGLE_RECEIVED_LAB_RESULT_TEST_RESULT,
+            SymptomsDate(
+                explicitDate = LocalDate.now(fixedClock)
+            )
+        )
+
+        assertSharedPreferenceSetsValue(SINGLE_LAB_RESULT_TEST_RESULT_WITH_EXPLICIT_ONSET_DATE_JSON)
+    }
+
+    @Test
+    fun `set cannot remember symptoms onset date on json stored from before update, should update test and save in new format`() {
+        sharedPreferencesReturns(SINGLE_LAB_RESULT_TEST_RESULT_VERSION_4_FORMAT_JSON)
+
+        testSubject.setSymptomsOnsetDate(
+            SINGLE_RECEIVED_LAB_RESULT_TEST_RESULT,
+            SymptomsDate(
+                explicitDate = null
+            )
+        )
+
+        assertSharedPreferenceSetsValue(SINGLE_LAB_RESULT_TEST_RESULT_WITH_CANNOT_REMEMBER_ONSET_DATE_JSON)
+    }
+
+    @Test
     fun `remove test result`() {
         sharedPreferencesReturns(SINGLE_LAB_RESULT_TEST_RESULT_JSON)
+
+        testSubject.remove(SINGLE_RECEIVED_LAB_RESULT_TEST_RESULT)
+
+        assertSharedPreferenceSetsValue(EMPTY_JSON)
+    }
+
+    @Test
+    fun `remove test result stored in old format`() {
+        sharedPreferencesReturns(SINGLE_LAB_RESULT_TEST_RESULT_VERSION_4_FORMAT_JSON)
 
         testSubject.remove(SINGLE_RECEIVED_LAB_RESULT_TEST_RESULT)
 
@@ -121,7 +168,7 @@ class UnacknowledgedTestResultsProviderTest :
 
         testSubject.clearBefore(LocalDate.of(1971, 1, 2))
 
-        assertSharedPreferenceSetsValue("""[{"diagnosisKeySubmissionToken":"token3","testEndDate":"1972-01-01T00:00:00Z","testResult":"NEGATIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false}]""")
+        assertSharedPreferenceSetsValue("""[{"diagnosisKeySubmissionToken":"token3","testEndDate":"1972-01-01T00:00:00Z","testResult":"NEGATIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false,"isSelfReporting":false}]""")
     }
 
     @Test
@@ -133,25 +180,57 @@ class UnacknowledgedTestResultsProviderTest :
         assertSharedPreferenceSetsValue(EMPTY_JSON)
     }
 
+    @Test
+    fun `tests saved in old format, clear no test results`() {
+        sharedPreferencesReturns(MULTIPLE_TEST_RESULTS_VERSION_4_FORMAT_JSON)
+
+        testSubject.clearBefore(LocalDate.of(1970, 1, 1))
+
+        assertSharedPreferenceSetsValue(MULTIPLE_TEST_RESULTS_JSON.replace("\n", ""))
+    }
+
+    @Test
+    fun `tests saved in old format, clear some test results`() {
+        sharedPreferencesReturns(MULTIPLE_TEST_RESULTS_VERSION_4_FORMAT_JSON)
+
+        testSubject.clearBefore(LocalDate.of(1971, 1, 2))
+
+        assertSharedPreferenceSetsValue("""[{"diagnosisKeySubmissionToken":"token3","testEndDate":"1972-01-01T00:00:00Z","testResult":"NEGATIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false,"isSelfReporting":false}]""")
+    }
+
+    @Test
+    fun `tests saved in old format, clear all test results`() {
+        sharedPreferencesReturns(MULTIPLE_TEST_RESULTS_VERSION_4_FORMAT_JSON)
+
+        testSubject.clearBefore(LocalDate.of(1972, 1, 2))
+
+        assertSharedPreferenceSetsValue(EMPTY_JSON)
+    }
+
     companion object {
         val SINGLE_LAB_RESULT_TEST_RESULT_JSON =
+            """
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false,"isSelfReporting":false}]
+            """.trimIndent()
+
+        val SINGLE_LAB_RESULT_TEST_RESULT_VERSION_4_FORMAT_JSON =
             """
             [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false}]
             """.trimIndent()
 
         val SINGLE_LAB_RESULT_TEST_RESULT_WITH_EXPLICIT_ONSET_DATE_JSON =
             """
-            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false,"symptomsOnsetDate":{"explicitDate":"2020-10-07"}}]
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false,"symptomsOnsetDate":{"explicitDate":"2020-10-07"},"isSelfReporting":false}]
             """.trimIndent()
 
         val SINGLE_LAB_RESULT_TEST_RESULT_WITH_CANNOT_REMEMBER_ONSET_DATE_JSON =
             """
-            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false,"symptomsOnsetDate":{}}]
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false,"symptomsOnsetDate":{},"isSelfReporting":false}]
             """.trimIndent()
 
         val SINGLE_RAPID_RESULT_TEST_RESULT_JSON =
             """
-            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true}]
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_RESULT","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true,"isSelfReporting":false}]
             """.trimIndent()
 
         val SINGLE_TEST_RESULT_WITHOUT_REQUIRES_CONFIRMATORY_TEST_JSON =
@@ -161,15 +240,24 @@ class UnacknowledgedTestResultsProviderTest :
 
         val SINGLE_RAPID_SELF_REPORTED_TEST_RESULT_JSON =
             """
-            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_SELF_REPORTED","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true}]
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_SELF_REPORTED","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true,"isSelfReporting":false}]
             """.trimIndent()
 
         val SINGLE_RAPID_RESULT_UNCONFIRMED_TEST_JSON =
             """
-            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true,"confirmatoryDayLimit":0}]
+            [{"diagnosisKeySubmissionToken":"token","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true,"confirmatoryDayLimit":0,"isSelfReporting":false}]
             """.trimIndent()
 
         val MULTIPLE_TEST_RESULTS_JSON =
+            """
+            [
+            {"diagnosisKeySubmissionToken":"token1","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_SELF_REPORTED","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true,"isSelfReporting":false},
+            {"diagnosisKeySubmissionToken":"token2","testEndDate":"1971-01-01T00:00:00Z","testResult":"VOID","testKitType":"RAPID_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true,"isSelfReporting":false},
+            {"diagnosisKeySubmissionToken":"token3","testEndDate":"1972-01-01T00:00:00Z","testResult":"NEGATIVE","testKitType":"LAB_RESULT","diagnosisKeySubmissionSupported":true,"requiresConfirmatoryTest":false,"shouldOfferFollowUpTest":false,"isSelfReporting":false}
+            ]
+            """.trimIndent()
+
+        val MULTIPLE_TEST_RESULTS_VERSION_4_FORMAT_JSON =
             """
             [
             {"diagnosisKeySubmissionToken":"token1","testEndDate":"1970-01-01T00:00:00Z","testResult":"POSITIVE","testKitType":"RAPID_SELF_REPORTED","diagnosisKeySubmissionSupported":false,"requiresConfirmatoryTest":true,"shouldOfferFollowUpTest":true},
@@ -198,7 +286,8 @@ class UnacknowledgedTestResultsProviderTest :
             LAB_RESULT,
             diagnosisKeySubmissionSupported = false,
             requiresConfirmatoryTest = false,
-            shouldOfferFollowUpTest = false
+            shouldOfferFollowUpTest = false,
+            isSelfReporting = false
         )
 
         val SINGLE_RECEIVED_RAPID_RESULT_TEST_RESULT = ReceivedTestResult(
@@ -208,7 +297,8 @@ class UnacknowledgedTestResultsProviderTest :
             RAPID_RESULT,
             diagnosisKeySubmissionSupported = false,
             requiresConfirmatoryTest = true,
-            shouldOfferFollowUpTest = true
+            shouldOfferFollowUpTest = true,
+            isSelfReporting = false
         )
 
         val SINGLE_RECEIVED_RAPID_SELF_REPORTED_TEST_RESULT = ReceivedTestResult(
@@ -218,7 +308,8 @@ class UnacknowledgedTestResultsProviderTest :
             RAPID_SELF_REPORTED,
             diagnosisKeySubmissionSupported = false,
             requiresConfirmatoryTest = true,
-            shouldOfferFollowUpTest = true
+            shouldOfferFollowUpTest = true,
+            isSelfReporting = false
         )
 
         val SINGLE_RAPID_RESULT_UNCONFIRMED_POSITIVE_TEST_RESULT = ReceivedTestResult(
@@ -229,7 +320,8 @@ class UnacknowledgedTestResultsProviderTest :
             diagnosisKeySubmissionSupported = true,
             requiresConfirmatoryTest = true,
             shouldOfferFollowUpTest = true,
-            confirmatoryDayLimit = 0
+            confirmatoryDayLimit = 0,
+            isSelfReporting = false
         )
         private val singleTestResultWithoutRequiresConfirmatoryTest = listOf(
             ReceivedTestResult(
@@ -238,7 +330,8 @@ class UnacknowledgedTestResultsProviderTest :
                 POSITIVE,
                 RAPID_RESULT,
                 diagnosisKeySubmissionSupported = false,
-                requiresConfirmatoryTest = false
+                requiresConfirmatoryTest = false,
+                isSelfReporting = false
             )
         )
         private val multipleTestResults = listOf(
@@ -249,7 +342,8 @@ class UnacknowledgedTestResultsProviderTest :
                 RAPID_SELF_REPORTED,
                 diagnosisKeySubmissionSupported = false,
                 requiresConfirmatoryTest = true,
-                shouldOfferFollowUpTest = true
+                shouldOfferFollowUpTest = true,
+                isSelfReporting = false
             ),
             ReceivedTestResult(
                 "token2",
@@ -258,7 +352,8 @@ class UnacknowledgedTestResultsProviderTest :
                 RAPID_RESULT,
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = true,
-                shouldOfferFollowUpTest = true
+                shouldOfferFollowUpTest = true,
+                isSelfReporting = false
             ),
             ReceivedTestResult(
                 "token3",
@@ -267,7 +362,8 @@ class UnacknowledgedTestResultsProviderTest :
                 LAB_RESULT,
                 diagnosisKeySubmissionSupported = true,
                 requiresConfirmatoryTest = false,
-                shouldOfferFollowUpTest = false
+                shouldOfferFollowUpTest = false,
+                isSelfReporting = false
             )
         )
     }

@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.flow
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_REPORTING
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -16,6 +17,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRo
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 
 class TestResultShareInformationTests : EspressoTest() {
 
@@ -32,7 +34,7 @@ class TestResultShareInformationTests : EspressoTest() {
     }
 
     @Test
-    fun linkTestResult_shareKeys() {
+    fun linkTestResult_shareKeys() = runWithFeature(SELF_REPORTING, enabled = false) {
         val resolutionIntent = createExposureNotificationResolutionPendingIntent(testAppContext.app, successful = true)
         testAppContext.getExposureNotificationApi().temporaryExposureKeyHistoryResult =
             ResolutionRequired(resolutionIntent, Success())
@@ -71,7 +73,7 @@ class TestResultShareInformationTests : EspressoTest() {
     }
 
     @Test
-    fun linkTestResult_doNotShareKeys() {
+    fun linkTestResult_doNotShareKeys() = runWithFeature(SELF_REPORTING, enabled = false) {
         runBlocking {
             val resolutionIntent = createExposureNotificationResolutionPendingIntent(testAppContext.app, successful = false)
             testAppContext.getExposureNotificationApi().temporaryExposureKeyHistoryResult =

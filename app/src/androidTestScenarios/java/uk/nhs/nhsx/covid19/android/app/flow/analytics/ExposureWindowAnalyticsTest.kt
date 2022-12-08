@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
 import com.google.android.gms.nearby.exposurenotification.ScanInstance
 import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_WALES_CONTACT_CASE_FLOW
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_REPORTING
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
@@ -19,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.Infectiousness.HIGH
 import uk.nhs.nhsx.covid19.android.app.remote.data.SupportedCountry.WALES
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import kotlin.test.assertEquals
 
@@ -51,7 +53,7 @@ class ExposureWindowAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun submitsExposureWindowData_whenUserReceivesPositiveTest() {
+    fun submitsExposureWindowData_whenUserReceivesPositiveTest() = runWithFeature(SELF_REPORTING, enabled = false) {
         runWithFeatureEnabled(OLD_WALES_CONTACT_CASE_FLOW) {
             runBlocking {
                 givenLocalAuthorityIsInWales()

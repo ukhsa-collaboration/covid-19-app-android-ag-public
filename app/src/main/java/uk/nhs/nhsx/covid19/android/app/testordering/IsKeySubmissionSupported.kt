@@ -12,17 +12,21 @@ class IsKeySubmissionSupported @Inject constructor(
     private val testResultIsolationHandler: TestResultIsolationHandler,
     private val clock: Clock
 ) {
-    operator fun invoke(testResult: ReceivedTestResult): Boolean =
+    operator fun invoke(testResult: ReceivedTestResult, isSelfReportJourney: Boolean = false): Boolean =
         testResult.isPositive() &&
-                testResult.diagnosisKeySubmissionSupported && !shouldPreventKeySubmission(testResult)
+                testResult.diagnosisKeySubmissionSupported && !shouldPreventKeySubmission(testResult, isSelfReportJourney)
 
-    private fun shouldPreventKeySubmission(testResult: ReceivedTestResult): Boolean {
+    private fun shouldPreventKeySubmission(testResult: ReceivedTestResult, isSelfReportJourney: Boolean): Boolean {
         val currentState = isolationStateMachine.readState()
         val transition = testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
             currentState,
             testResult,
             testAcknowledgedDate = Instant.now(clock)
         )
-        return transition is DoNotTransition && transition.preventKeySubmission
+        return if (!isSelfReportJourney) {
+            transition is DoNotTransition && transition.preventKeySubmission
+        } else {
+            transition is DoNotTransition && (transition.preventKeySubmission || transition.keySharingInfo == null)
+        }
     }
 }

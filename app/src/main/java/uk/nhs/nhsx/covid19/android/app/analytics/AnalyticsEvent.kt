@@ -59,4 +59,9 @@ sealed class AnalyticsEvent {
     object CompletedV2SymptomsQuestionnaire : AnalyticsEvent()
     object CompletedV2SymptomsQuestionnaireAndStayAtHome : AnalyticsEvent()
     object CompletedV3SymptomsQuestionnaireAndHasSymptoms : AnalyticsEvent()
+    object SelfReportedVoidSelfLFDTestResultEnteredManually : AnalyticsEvent()
+    object SelfReportedNegativeSelfLFDTestResultEnteredManually : AnalyticsEvent()
+    object IsPositiveSelfLFDFree : AnalyticsEvent()
+    object SelfReportedPositiveSelfLFDOnGov : AnalyticsEvent()
+    object CompletedSelfReportingTestFlow : AnalyticsEvent()
 }

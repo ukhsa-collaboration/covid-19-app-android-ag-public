@@ -90,6 +90,17 @@ class TestResultIsolationHandlerTest {
         shouldOfferFollowUpTest = false
     )
 
+    private val positiveSelfReported = ReceivedTestResult(
+        diagnosisKeySubmissionToken = "token",
+        testEndDate = testEndDate,
+        testResult = POSITIVE,
+        testKitType = LAB_RESULT,
+        diagnosisKeySubmissionSupported = true,
+        requiresConfirmatoryTest = false,
+        shouldOfferFollowUpTest = false,
+        isSelfReporting = true
+    )
+
     private val negativeTestResultConfirmed = ReceivedTestResult(
         diagnosisKeySubmissionToken = "token",
         testEndDate = testEndDate,
@@ -3450,6 +3461,96 @@ class TestResultIsolationHandlerTest {
     }
 
     //endregion
+    //endregion
+
+    //region -- keySharingInfo set with correct isSelfReporting and testKitType
+    @Test
+    fun `receiving positive test from selfReporting keySharingInfo set to isSelfReporting and testKitType `() {
+        val state = neverIsolating()
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            positiveSelfReported,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedState = isolationPositiveTest(
+            positiveSelfReported.toAcknowledgedTestResult()
+        )
+
+        val expectedKeySharingInfo = KeySharingInfo(
+            diagnosisKeySubmissionToken = positiveSelfReported.diagnosisKeySubmissionToken!!,
+            acknowledgedDate = Instant.now(fixedClock),
+            isSelfReporting = true,
+            testKitType = LAB_RESULT
+        )
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
+    }
+
+    @Test
+    fun `receiving positive test not from selfReporting keySharingInfo is not set to isSelfReporting and testKitType set to default `() {
+        val state = neverIsolating()
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            positiveTestResultIndicativeWithKeySharingSupported,
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedState = isolationPositiveTest(
+            positiveTestResultIndicativeWithKeySharingSupported.toAcknowledgedTestResult()
+        )
+
+        val expectedKeySharingInfo = KeySharingInfo(
+            diagnosisKeySubmissionToken = positiveTestResultIndicativeWithKeySharingSupported.diagnosisKeySubmissionToken!!,
+            acknowledgedDate = Instant.now(fixedClock),
+            isSelfReporting = false,
+            testKitType = LAB_RESULT
+        )
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
+    }
+
+    @Test
+    fun `receiving positive test from selfReporting keySharingInfo is set to isSelfReporting and testKitType set to RAPID `() {
+        val state = neverIsolating()
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            positiveTestResultIndicativeWithKeySharingSupported.copy(isSelfReporting = true),
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedState = isolationPositiveTest(
+            positiveTestResultIndicativeWithKeySharingSupported.copy(isSelfReporting = true).toAcknowledgedTestResult()
+        )
+
+        val expectedKeySharingInfo = KeySharingInfo(
+            diagnosisKeySubmissionToken = positiveTestResultIndicativeWithKeySharingSupported.diagnosisKeySubmissionToken!!,
+            acknowledgedDate = Instant.now(fixedClock),
+            isSelfReporting = true,
+            testKitType = RAPID_RESULT
+        )
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
+    }
+
+    @Test
+    fun `receiving positive test from selfReporting keySharingInfo set to isSelfReporting and testKitType is unexpectedly null should set to default`() {
+        val state = neverIsolating()
+        val result = testSubject.computeTransitionWithTestResultAcknowledgment(
+            state,
+            positiveSelfReported.copy(testKitType = null),
+            testAcknowledgedDate = Instant.now(fixedClock)
+        )
+
+        val expectedState = isolationPositiveTest(
+            positiveSelfReported.copy(testKitType = null).toAcknowledgedTestResult()
+        )
+
+        val expectedKeySharingInfo = KeySharingInfo(
+            diagnosisKeySubmissionToken = positiveSelfReported.diagnosisKeySubmissionToken!!,
+            acknowledgedDate = Instant.now(fixedClock),
+            isSelfReporting = true,
+            testKitType = LAB_RESULT
+        )
+        assertEquals(Transition(expectedState.toIsolationInfo(), expectedKeySharingInfo), result)
+    }
     //endregion
 
     private fun positiveTestResult(confirmed: Boolean): ReceivedTestResult =

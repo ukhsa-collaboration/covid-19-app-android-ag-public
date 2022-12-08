@@ -152,4 +152,12 @@
         <attr name="text" format="string"/>
         <attr name="drawable" format="reference"/>
     </declare-styleable>
+    <declare-styleable name="TripleVerticalRadioGroup">
+        <attr name="tripleVerticalOption1Text" format="string" />
+        <attr name="tripleVerticalOption2Text" format="string" />
+        <attr name="tripleVerticalOption3Text" format="string" />
+        <attr name="tripleVerticalOption1ContentDescription" format="string" />
+        <attr name="tripleVerticalOption2ContentDescription" format="string" />
+        <attr name="tripleVerticalOption3ContentDescription" format="string" />
+    </declare-styleable>
 </resources>

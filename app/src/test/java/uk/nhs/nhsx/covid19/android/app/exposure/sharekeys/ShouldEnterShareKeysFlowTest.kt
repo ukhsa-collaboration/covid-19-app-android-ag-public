@@ -6,6 +6,7 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CanShareKeys.CanShareKeysResult.KeySharingPossible
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CanShareKeys.CanShareKeysResult.NoKeySharingPossible
+import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFlowResult.Initial
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShouldEnterShareKeysFlowResult.None
 import java.time.Clock
 import java.time.Instant
@@ -57,31 +58,54 @@ class ShouldEnterShareKeysFlowTest {
     }
 
     @Test
-    fun `when key sharing is possible and user has not declined sharing keys and acknowledgedDate is more than 24 hours ago returns Initial`() {
+    fun `when not self reported, key sharing is possible and user has not declined sharing keys and acknowledgedDate is more than 24 hours ago returns Initial`() {
         every { canShareKeys() } returns KeySharingPossible(
             keySharingInfo(acknowledgedHoursAgo = 25, hasDeclinedSharingKeys = false)
         )
 
         val result = testSubject.invoke()
 
-        assertEquals(ShouldEnterShareKeysFlowResult.Initial, result)
+        assertEquals(Initial, result)
     }
 
     @Test
-    fun `when key sharing is possible and user has not declined sharing keys and acknowledgedDate is less than 24 hours ago returns Initial`() {
+    fun `when not self reported, key sharing is possible and user has not declined sharing keys and acknowledgedDate is less than 24 hours ago returns Initial`() {
         every { canShareKeys() } returns KeySharingPossible(
             keySharingInfo(acknowledgedHoursAgo = 23, hasDeclinedSharingKeys = false)
         )
 
         val result = testSubject.invoke()
 
-        assertEquals(ShouldEnterShareKeysFlowResult.Initial, result)
+        assertEquals(Initial, result)
     }
 
-    private fun keySharingInfo(acknowledgedHoursAgo: Long = 23, hasDeclinedSharingKeys: Boolean = true) =
+    @Test
+    fun `when self reported, key sharing is possible and user has not declined sharing keys and acknowledgedDate is more than 24 hours ago returns None`() {
+        every { canShareKeys() } returns KeySharingPossible(
+            keySharingInfo(acknowledgedHoursAgo = 25, hasDeclinedSharingKeys = false, isSelfReporting = true)
+        )
+
+        val result = testSubject.invoke()
+
+        assertEquals(None, result)
+    }
+
+    @Test
+    fun `when self reported, key sharing is possible and user has not declined sharing keys and acknowledgedDate is less than 24 hours ago returns None`() {
+        every { canShareKeys() } returns KeySharingPossible(
+            keySharingInfo(acknowledgedHoursAgo = 23, hasDeclinedSharingKeys = false, isSelfReporting = true)
+        )
+
+        val result = testSubject.invoke()
+
+        assertEquals(None, result)
+    }
+
+    private fun keySharingInfo(acknowledgedHoursAgo: Long = 23, hasDeclinedSharingKeys: Boolean = true, isSelfReporting: Boolean = false) =
         KeySharingInfo(
             diagnosisKeySubmissionToken = "token",
             acknowledgedDate = Instant.now(fixedClock).minus(acknowledgedHoursAgo, HOURS),
-            hasDeclinedSharingKeys = hasDeclinedSharingKeys
+            hasDeclinedSharingKeys = hasDeclinedSharingKeys,
+            isSelfReporting = isSelfReporting
         )
 }

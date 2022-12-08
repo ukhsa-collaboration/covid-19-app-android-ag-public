@@ -19,7 +19,7 @@ class FetchKeysFlow @AssistedInject constructor(
     exposureNotificationPermissionHelperFactory: ExposureNotificationPermissionHelper.Factory,
     fetchKeysHelperFactory: FetchKeysHelper.Factory,
     @Assisted private val coroutineScope: CoroutineScope,
-    @Assisted private val keySharingInfo: KeySharingInfo
+    @Assisted private val keySharingInfo: KeySharingInfo?
 ) {
 
     private var exposureNotificationWasInitiallyDisabled = false
@@ -51,7 +51,7 @@ class FetchKeysFlow @AssistedInject constructor(
     private val fetchKeysHelper =
         fetchKeysHelperFactory.create(
             object : FetchKeysHelper.Callback {
-                override fun onSuccess(temporaryExposureKeys: List<NHSTemporaryExposureKey>, diagnosisKeySubmissionToken: String) {
+                override fun onSuccess(temporaryExposureKeys: List<NHSTemporaryExposureKey>, diagnosisKeySubmissionToken: String?) {
                     disableExposureNotificationsAgainIfWasInitiallyDisabled()
                     hasAlreadyFetchedKeys = true
                     callback.onFetchKeysSuccess(temporaryExposureKeys, diagnosisKeySubmissionToken)
@@ -118,7 +118,7 @@ class FetchKeysFlow @AssistedInject constructor(
     interface Callback {
         fun onFetchKeysSuccess(
             temporaryExposureKeys: List<NHSTemporaryExposureKey>,
-            diagnosisKeySubmissionToken: String
+            diagnosisKeySubmissionToken: String?
         )
 
         fun onFetchKeysPermissionDenied()
@@ -129,6 +129,6 @@ class FetchKeysFlow @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(callback: Callback, coroutineScope: CoroutineScope, keySharingInfo: KeySharingInfo): FetchKeysFlow
+        fun create(callback: Callback, coroutineScope: CoroutineScope, keySharingInfo: KeySharingInfo?): FetchKeysFlow
     }
 }

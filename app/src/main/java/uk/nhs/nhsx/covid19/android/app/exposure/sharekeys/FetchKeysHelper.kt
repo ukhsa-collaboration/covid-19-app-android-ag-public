@@ -17,7 +17,7 @@ class FetchKeysHelper @AssistedInject constructor(
     @Assisted private val callback: Callback,
     private val fetchTemporaryExposureKeys: FetchTemporaryExposureKeys,
     @Assisted private val coroutineScope: CoroutineScope,
-    @Assisted private val keySharingInfo: KeySharingInfo,
+    @Assisted private val keySharingInfo: KeySharingInfo?,
 ) {
 
     fun fetchKeys() {
@@ -27,7 +27,7 @@ class FetchKeysHelper @AssistedInject constructor(
             when (result) {
                 is Success -> callback.onSuccess(
                     result.temporaryExposureKeys,
-                    keySharingInfo.diagnosisKeySubmissionToken
+                    keySharingInfo?.diagnosisKeySubmissionToken
                 )
                 is Failure -> callback.onError(result.throwable)
                 is ResolutionRequired -> {
@@ -51,7 +51,7 @@ class FetchKeysHelper @AssistedInject constructor(
     }
 
     interface Callback {
-        fun onSuccess(temporaryExposureKeys: List<NHSTemporaryExposureKey>, diagnosisKeySubmissionToken: String)
+        fun onSuccess(temporaryExposureKeys: List<NHSTemporaryExposureKey>, diagnosisKeySubmissionToken: String?)
         fun onError(throwable: Throwable)
         fun onPermissionRequired(permissionRequest: (Activity) -> Unit)
         fun onPermissionDenied()

@@ -134,6 +134,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.RiskyVenueMessageType.BOOK_TE
 import uk.nhs.nhsx.covid19.android.app.remote.data.ExternalUrlData
 import uk.nhs.nhsx.covid19.android.app.remote.data.ExternalUrlsWrapper
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.RAPID_SELF_REPORTED
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.scenariodialog.MockApiDialogFragment
 import uk.nhs.nhsx.covid19.android.app.scenariodialog.MyDataDialogFragment
@@ -154,6 +155,20 @@ import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingHu
 import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubActivity
 import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubActivity
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessageActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.ChosenDate
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.ReportedTestActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelectTestDateActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportThankYouActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportAdviceActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportNegativeVoidTestResultActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportCheckAnswersActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportShareKeysInformationActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportSymptomsActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportSymptomsOnsetActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.SelfReportTestQuestions
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.TestKitTypeActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.TestOriginActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.TestTypeActivity
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.ReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.testordering.SubmitKeysProgressActivity
@@ -737,18 +752,18 @@ class DebugActivity : AppCompatActivity() {
         }
 
         val riskIndicatorPolicyData = PolicyData(
-                heading = TranslatableString(mapOf("en" to "Coronavirus cases are very high in your area")),
-                content = TranslatableString(mapOf("en" to "Local Authority content high")),
-                footer = TranslatableString(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
-                policies = listOf(
-                    Policy(
-                        policyIcon = MEETING_PEOPLE,
-                        policyHeading = TranslatableString(mapOf("en" to "Meeting people")),
-                        policyContent = TranslatableString(mapOf("en" to "Rule of six indoors and outdoors, in all settings."))
-                    )
-                ),
-                localAuthorityRiskTitle = TranslatableString(mapOf("en" to "Local Authority is in local COVID alert level: high"))
-            )
+            heading = TranslatableString(mapOf("en" to "Coronavirus cases are very high in your area")),
+            content = TranslatableString(mapOf("en" to "Local Authority content high")),
+            footer = TranslatableString(mapOf("en" to "Find out what rules apply in your area to help reduce the spread of coronavirus.")),
+            policies = listOf(
+                Policy(
+                    policyIcon = MEETING_PEOPLE,
+                    policyHeading = TranslatableString(mapOf("en" to "Meeting people")),
+                    policyContent = TranslatableString(mapOf("en" to "Rule of six indoors and outdoors, in all settings."))
+                )
+            ),
+            localAuthorityRiskTitle = TranslatableString(mapOf("en" to "Local Authority is in local COVID alert level: high"))
+        )
 
         addScreenButton("Risk level from local authority") {
             RiskLevelActivity.start(
@@ -998,6 +1013,233 @@ class DebugActivity : AppCompatActivity() {
 
         addScreenButton("Symptoms Checker Advice - Try to stay at home") {
             openSymptomsCheckerAdviceScreen(TRY_TO_STAY_AT_HOME)
+        }
+
+        addScreenButton("Test Type Activity") {
+            startActivity<TestTypeActivity>()
+        }
+
+        addScreenButton("Self Report share keys information") {
+            startActivity<SelfReportShareKeysInformationActivity> {
+                putExtra(
+                    SelfReportShareKeysInformationActivity.SELF_REPORT_QUESTIONS_DATA_KEY, SelfReportTestQuestions(
+                        POSITIVE,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    )
+                )
+            }
+        }
+
+        addScreenButton("Test Kit Type Activity") {
+            startActivity<TestKitTypeActivity> {
+                putExtra(
+                    TestKitTypeActivity.SELF_REPORT_QUESTIONS_DATA_KEY, SelfReportTestQuestions(
+                        POSITIVE,
+                        temporaryExposureKeys = listOf(
+                            NHSTemporaryExposureKey(
+                                key = "key",
+                                rollingPeriod = 144,
+                                rollingStartNumber = 2
+                            )
+                        ),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    )
+                )
+            }
+        }
+        addScreenButton("Test Origin Activity") {
+            startActivity<TestOriginActivity> {
+                putExtra(
+                    TestOriginActivity.SELF_REPORT_QUESTIONS_DATA_KEY, SelfReportTestQuestions(
+                        POSITIVE,
+                        temporaryExposureKeys = listOf(
+                            NHSTemporaryExposureKey(
+                                key = "key",
+                                rollingPeriod = 144,
+                                rollingStartNumber = 2
+                            )
+                        ),
+                        RAPID_SELF_REPORTED,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    )
+                )
+            }
+        }
+
+        addScreenButton("Select Test date Activity") {
+            startActivity<SelectTestDateActivity> {
+                putExtra(
+                    SelectTestDateActivity.SELF_REPORT_QUESTIONS_DATA_KEY, SelfReportTestQuestions(
+                        POSITIVE,
+                        temporaryExposureKeys = listOf(
+                            NHSTemporaryExposureKey(
+                                key = "key",
+                                rollingPeriod = 144,
+                                rollingStartNumber = 2
+                            )
+                        ),
+                        RAPID_SELF_REPORTED,
+                        false,
+                        null,
+                        null,
+                        null,
+                        null
+                    )
+                )
+            }
+        }
+
+        addScreenButton("Self Report Had Symptoms?") {
+            startActivity<SelfReportSymptomsActivity> {
+                putExtra(
+                    SelfReportSymptomsActivity.SELF_REPORT_QUESTIONS_DATA_KEY, SelfReportTestQuestions(
+                        POSITIVE,
+                        temporaryExposureKeys = listOf(
+                            NHSTemporaryExposureKey(
+                                key = "key",
+                                rollingPeriod = 144,
+                                rollingStartNumber = 2
+                            )
+                        ),
+                        RAPID_SELF_REPORTED,
+                        false,
+                        ChosenDate(true, LocalDate.now()),
+                        null,
+                        null,
+                        null
+                    )
+                )
+            }
+        }
+
+        addScreenButton("Self Report Symptoms Onset Date") {
+            startActivity<SelfReportSymptomsOnsetActivity> {
+                putExtra(
+                    SelfReportSymptomsOnsetActivity.SELF_REPORT_QUESTIONS_DATA_KEY, SelfReportTestQuestions(
+                        POSITIVE,
+                        temporaryExposureKeys = listOf(
+                            NHSTemporaryExposureKey(
+                                key = "key",
+                                rollingPeriod = 144,
+                                rollingStartNumber = 2
+                            )
+                        ),
+                        RAPID_SELF_REPORTED,
+                        false,
+                        ChosenDate(true, LocalDate.now()),
+                        true,
+                        null,
+                        null
+                    )
+                )
+            }
+        }
+
+        addScreenButton("Self report negative or void result (Negative result)") {
+            startActivity<SelfReportNegativeVoidTestResultActivity> {
+                putExtra(SelfReportNegativeVoidTestResultActivity.TEST_RESULT, true)
+            }
+        }
+
+        addScreenButton("Self report negative or void result (Void result)") {
+            startActivity<SelfReportNegativeVoidTestResultActivity> {
+                putExtra(SelfReportNegativeVoidTestResultActivity.TEST_RESULT, false)
+            }
+        }
+
+        addScreenButton("Have you reported your test?") {
+            startActivity<ReportedTestActivity> {
+                putExtra(
+                    ReportedTestActivity.SELF_REPORT_QUESTIONS_DATA_KEY, SelfReportTestQuestions(
+                        POSITIVE,
+                        temporaryExposureKeys = listOf(
+                            NHSTemporaryExposureKey(
+                                key = "key",
+                                rollingPeriod = 144,
+                                rollingStartNumber = 2
+                            )
+                        ),
+                        RAPID_SELF_REPORTED,
+                        true,
+                        ChosenDate(true, LocalDate.now()),
+                        false,
+                        null,
+                        null
+                    )
+                )
+            }
+        }
+
+        addScreenButton("Self Report Check Answers") {
+            startActivity<SelfReportCheckAnswersActivity> {
+                putExtra(
+                    SelfReportCheckAnswersActivity.SELF_REPORT_QUESTIONS_DATA_KEY, SelfReportTestQuestions(
+                        POSITIVE,
+                        temporaryExposureKeys = listOf(
+                            NHSTemporaryExposureKey(
+                                key = "key",
+                                rollingPeriod = 144,
+                                rollingStartNumber = 2
+                            )
+                        ),
+                        RAPID_SELF_REPORTED,
+                        false,
+                        ChosenDate(true, LocalDate.now()),
+                        false,
+                        null,
+                        null
+                    )
+                )
+            }
+        }
+
+        addScreenButton("Anonymously notify / Thank you (A)") {
+            startActivity<SelfReportThankYouActivity> {
+                putExtra(SelfReportThankYouActivity.SHARING_SUCCESSFUL, true)
+                putExtra(SelfReportThankYouActivity.HAS_REPORTED, true)
+            }
+        }
+
+        addScreenButton("Anonymously notify / Thank you (B)") {
+            startActivity<SelfReportThankYouActivity> {
+                putExtra(SelfReportThankYouActivity.SHARING_SUCCESSFUL, true)
+                putExtra(SelfReportThankYouActivity.HAS_REPORTED, false)
+            }
+        }
+
+        addScreenButton("Anonymously notify / Thank you (C)") {
+            startActivity<SelfReportThankYouActivity> {
+                putExtra(SelfReportThankYouActivity.SHARING_SUCCESSFUL, false)
+                putExtra(SelfReportThankYouActivity.HAS_REPORTED, true)
+            }
+        }
+
+        addScreenButton("Anonymously notify / Thank you (D)") {
+            startActivity<SelfReportThankYouActivity> {
+                putExtra(SelfReportThankYouActivity.SHARING_SUCCESSFUL, false)
+                putExtra(SelfReportThankYouActivity.HAS_REPORTED, false)
+            }
+        }
+
+        addScreenButton("Self Report advice screen") {
+            startActivity<SelfReportAdviceActivity> {
+                putExtra(SelfReportAdviceActivity.REPORTED_TEST_DATA_KEY, false)
+            }
         }
     }
 

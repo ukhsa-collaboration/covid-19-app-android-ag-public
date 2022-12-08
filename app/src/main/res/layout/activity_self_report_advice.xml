@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/selfReportAdviceContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/vertical_margin_extra_large"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingBottom="@dimen/vertical_margin">
+
+            <ImageView
+                android:id="@+id/selfReportAdviceImage"
+                style="@style/GoneInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@null"
+                tools:src="@drawable/ic_isolation_continue"
+                />
+
+            <include
+                android:id="@+id/nowReportContainer"
+                layout="@layout/view_self_report_now_report_test_on_gov"
+                android:visibility="gone"
+                tools:visibility="gone" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                android:id="@+id/selfReportAdviceMainTitle"
+                style="@style/TitleIsolation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:textAlignment="center"
+                tools:text="Try to stay at home and away from others for 5 days"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.StateInfoView
+                android:id="@+id/selfReportAdviceNoIsolationInfoBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="32dp"
+                android:background="@color/surface_background"
+                app:stateColor="@color/amber"
+                app:stateText="@string/self_report_advice_information_label"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/selfReportIsolateIconBulletSection"
+                layout="@layout/view_self_report_advice_icon_bullet_section"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                android:id="@+id/covidLinkTextView"
+                style="@style/LinkText.WithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:text="@string/self_report_advice_read_more_url_label"
+                app:linkUrl="@string/self_report_advice_read_more_url_link" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/primaryActionButton"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_medium"
+                android:drawableTint="?colorOnPrimary"
+                android:text="@string/self_report_advice_back_to_home_button"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/primaryLinkActionButton"
+                style="@style/PrimaryButton.WithIcon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_medium"
+                android:text="@string/self_report_advice_primary_link_button_label"
+                android:paddingVertical="8dp"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/secondaryActionButton"
+                style="@style/TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/self_report_advice_back_to_home_button"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

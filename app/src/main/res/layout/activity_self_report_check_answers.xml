@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/selfReportCheckAnswersContainer"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/primaryToolbar"
+        layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        android:id="@+id/selfReportCheckAnswersScrollViewContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingVertical="@dimen/vertical_margin">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/vertical_margin"
+                android:text="@string/self_report_check_answers_header" />
+
+            <include
+                android:id="@+id/selfReportCheckAnswersTestKitType"
+                layout="@layout/view_check_answer_element" />
+
+            <include
+                android:id="@+id/selfReportCheckAnswersTestOrigin"
+                layout="@layout/view_check_answer_element"
+                tools:visibility="visible"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/selfReportCheckAnswersTestDate"
+                layout="@layout/view_check_answer_element" />
+
+            <include
+                android:id="@+id/selfReportCheckAnswersSymptoms"
+                layout="@layout/view_check_answer_element"
+                tools:visibility="visible"
+                android:visibility="gone"/>
+
+            <include
+                android:id="@+id/selfReportCheckAnswersSymptomsOnset"
+                layout="@layout/view_check_answer_element"
+                tools:visibility="visible"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/selfReportCheckAnswersReportedTest"
+                layout="@layout/view_check_answer_element"
+                tools:visibility="visible"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/selfReportCheckAnswersContinueButton"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced"
+                android:layout_marginVertical="@dimen/vertical_margin"
+                android:text="@string/self_report_check_answers_primary_button" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

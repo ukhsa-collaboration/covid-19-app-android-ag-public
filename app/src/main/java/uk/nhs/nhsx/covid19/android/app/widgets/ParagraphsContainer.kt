@@ -28,6 +28,15 @@ class BulletedParagraphsContainer @JvmOverloads constructor(
     override val paragraphLayoutRes: Int get() = R.layout.view_paragraph_bulleted
 }
 
+class PrimaryGreyBulletedParagraphsContainer @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) : BaseParagraphsContainer(context, attrs, defStyleAttr, defStyleRes) {
+    override val paragraphLayoutRes: Int get() = R.layout.view_paragraph_bulleted_primary_grey_bold
+}
+
 class NumberedParagraphsContainer @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

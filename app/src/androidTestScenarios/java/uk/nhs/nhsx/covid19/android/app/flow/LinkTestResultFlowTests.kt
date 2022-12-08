@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.flow
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_REPORTING
 import org.junit.After
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict
@@ -19,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysInformationRo
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ShareKeysResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 import uk.nhs.nhsx.covid19.android.app.util.IsolationChecker
 import uk.nhs.nhsx.covid19.android.app.util.toLocalDate
 import java.time.Instant
@@ -43,7 +45,7 @@ class LinkTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startIndexCase_linkPositiveTestResult_shouldContinueIsolation() {
+    fun startIndexCase_linkPositiveTestResult_shouldContinueIsolation() = runWithFeature(SELF_REPORTING, enabled = false) {
         testAppContext.setLocalAuthority(TestApplicationContext.WELSH_LOCAL_AUTHORITY)
 
         testAppContext.setState(
@@ -84,136 +86,142 @@ class LinkTestResultFlowTests : EspressoTest() {
     }
 
     @Test
-    fun startContactCase_linkJustExpiredPositiveTestResult_shouldEndIsolation() {
-        testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
-        val contactInstant = Instant.now(testAppContext.clock).minus(2, ChronoUnit.DAYS)
-        testAppContext.virologyTestingApi.testEndDate = contactInstant.minus(10, ChronoUnit.DAYS)
+    fun startContactCase_linkJustExpiredPositiveTestResult_shouldEndIsolation() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
+            val contactInstant = Instant.now(testAppContext.clock).minus(2, ChronoUnit.DAYS)
+            testAppContext.virologyTestingApi.testEndDate = contactInstant.minus(10, ChronoUnit.DAYS)
 
-        val contactDate = contactInstant.toLocalDate(testAppContext.clock.zone)
-        testAppContext.setState(
-            isolationHelper.contact(
-                exposureDate = contactDate,
-                notificationDate = contactDate,
-            ).asIsolation()
-        )
+            val contactDate = contactInstant.toLocalDate(testAppContext.clock.zone)
+            testAppContext.setState(
+                isolationHelper.contact(
+                    exposureDate = contactDate,
+                    notificationDate = contactDate,
+                ).asIsolation()
+            )
 
-        startTestActivity<StatusActivity>()
+            startTestActivity<StatusActivity>()
 
-        statusRobot.checkActivityIsDisplayed()
+            statusRobot.checkActivityIsDisplayed()
 
-        isolationChecker.assertActiveContactNoIndex()
+            isolationChecker.assertActiveContactNoIndex()
 
-        statusRobot.clickLinkTestResult()
+            statusRobot.clickLinkTestResult()
 
-        linkTestResultRobot.checkActivityIsDisplayed()
+            linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken(MockVirologyTestingApi.POSITIVE_PCR_TOKEN)
+            linkTestResultRobot.enterCtaToken(MockVirologyTestingApi.POSITIVE_PCR_TOKEN)
 
-        linkTestResultRobot.clickContinue()
+            linkTestResultRobot.clickContinue()
 
-        linkTestResultSymptomsRobot.clickNo()
+            linkTestResultSymptomsRobot.clickNo()
 
-        waitFor {
-            testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation(ENGLAND)
+            waitFor {
+                testResultRobot.checkActivityDisplaysPositiveWontBeInIsolation(ENGLAND)
+            }
+
+            testResultRobot.clickGoodNewsActionButton()
+
+            shareKeysInformationRobot.checkActivityIsDisplayed()
+
+            shareKeysInformationRobot.clickContinueButton()
+
+            waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
+
+            shareKeysResultRobot.clickActionButton()
+
+            waitFor { statusRobot.checkActivityIsDisplayed() }
+
+            isolationChecker.assertExpiredIndexNoContact()
         }
 
-        testResultRobot.clickGoodNewsActionButton()
-
-        shareKeysInformationRobot.checkActivityIsDisplayed()
-
-        shareKeysInformationRobot.clickContinueButton()
-
-        waitFor { shareKeysResultRobot.checkActivityIsDisplayed() }
-
-        shareKeysResultRobot.clickActionButton()
-
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-
-        isolationChecker.assertExpiredIndexNoContact()
-    }
-
     @Test
-    fun startContactCase_linkTooOldPositiveTestResult_shouldContinueIsolation() {
-        testAppContext.setLocalAuthority(TestApplicationContext.WELSH_LOCAL_AUTHORITY)
+    fun startContactCase_linkTooOldPositiveTestResult_shouldContinueIsolation() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            testAppContext.setLocalAuthority(TestApplicationContext.WELSH_LOCAL_AUTHORITY)
 
-        val contactInstant = Instant.now(testAppContext.clock).minus(2, ChronoUnit.DAYS)
-        testAppContext.virologyTestingApi.testEndDate = contactInstant.minus(11, ChronoUnit.DAYS)
+            val contactInstant = Instant.now(testAppContext.clock).minus(2, ChronoUnit.DAYS)
+            testAppContext.virologyTestingApi.testEndDate = contactInstant.minus(11, ChronoUnit.DAYS)
 
-        val contactDate = contactInstant.toLocalDate(testAppContext.clock.zone)
-        testAppContext.setState(
-            isolationHelper.contact(
-                exposureDate = contactDate,
-                notificationDate = contactDate
-            ).asIsolation()
-        )
-        val contactExpiryDate = contactDate.plusDays(DurationDays().england.contactCase.toLong())
+            val contactDate = contactInstant.toLocalDate(testAppContext.clock.zone)
+            testAppContext.setState(
+                isolationHelper.contact(
+                    exposureDate = contactDate,
+                    notificationDate = contactDate
+                ).asIsolation()
+            )
+            val contactExpiryDate = contactDate.plusDays(DurationDays().england.contactCase.toLong())
 
-        startTestActivity<StatusActivity>()
+            startTestActivity<StatusActivity>()
 
-        statusRobot.checkActivityIsDisplayed()
+            statusRobot.checkActivityIsDisplayed()
 
-        isolationChecker.assertActiveContactNoIndex()
+            isolationChecker.assertActiveContactNoIndex()
 
-        statusRobot.clickLinkTestResult()
+            statusRobot.clickLinkTestResult()
 
-        linkTestResultRobot.checkActivityIsDisplayed()
+            linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken(MockVirologyTestingApi.POSITIVE_PCR_TOKEN)
+            linkTestResultRobot.enterCtaToken(MockVirologyTestingApi.POSITIVE_PCR_TOKEN)
 
-        linkTestResultRobot.clickContinue()
+            linkTestResultRobot.clickContinue()
 
-        linkTestResultSymptomsRobot.clickNo()
+            linkTestResultSymptomsRobot.clickNo()
 
-        val remainingDaysInIsolation = ChronoUnit.DAYS.between(
-            LocalDate.now(testAppContext.clock),
-            contactExpiryDate
-        ).toInt()
-        waitFor {
-            testResultRobot.checkActivityDisplaysPositiveContinueIsolation(remainingDaysInIsolation)
+            val remainingDaysInIsolation = ChronoUnit.DAYS.between(
+                LocalDate.now(testAppContext.clock),
+                contactExpiryDate
+            ).toInt()
+            waitFor {
+                testResultRobot.checkActivityDisplaysPositiveContinueIsolation(remainingDaysInIsolation)
+            }
+
+            testResultRobot.clickIsolationActionButton()
+
+            waitFor { statusRobot.checkActivityIsDisplayed() }
+
+            isolationChecker.assertActiveContactNoIndex()
         }
 
-        testResultRobot.clickIsolationActionButton()
-
-        waitFor { statusRobot.checkActivityIsDisplayed() }
-
-        isolationChecker.assertActiveContactNoIndex()
-    }
+    @Test
+    fun startDefault_linkPositivePCRTestResult_noSymptoms_shouldIsolate() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
+            startDefaultLinkPositiveTestResultNoSymptomsShouldIsolate(
+                MockVirologyTestingApi.POSITIVE_PCR_TOKEN,
+                ENGLAND
+            )
+        }
 
     @Test
-    fun startDefault_linkPositivePCRTestResult_noSymptoms_shouldIsolate() {
-        testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
-        startDefaultLinkPositiveTestResultNoSymptomsShouldIsolate(
-            MockVirologyTestingApi.POSITIVE_PCR_TOKEN,
-            ENGLAND
-        )
-    }
+    fun startDefault_linkPositiveLFDTestResult_noSymptoms_shouldIsolate_wales() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            testAppContext.setLocalAuthority(TestApplicationContext.WELSH_LOCAL_AUTHORITY)
+            startDefaultLinkPositiveTestResultNoSymptomsShouldIsolate(
+                MockVirologyTestingApi.POSITIVE_LFD_TOKEN,
+                WALES
+            )
+        }
 
     @Test
-    fun startDefault_linkPositiveLFDTestResult_noSymptoms_shouldIsolate_wales() {
-        testAppContext.setLocalAuthority(TestApplicationContext.WELSH_LOCAL_AUTHORITY)
-        startDefaultLinkPositiveTestResultNoSymptomsShouldIsolate(
-            MockVirologyTestingApi.POSITIVE_LFD_TOKEN,
-            WALES
-        )
-    }
+    fun startDefault_linkPositivePCRTestResult_confirmSymptoms_selectSymptomsDate_shouldIsolate() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
+            startDefaultLinkPositiveTestResultConfirmSymptomsSelectSymptomsDateShouldIsolate(
+                MockVirologyTestingApi.POSITIVE_PCR_TOKEN,
+                ENGLAND
+            )
+        }
 
     @Test
-    fun startDefault_linkPositivePCRTestResult_confirmSymptoms_selectSymptomsDate_shouldIsolate() {
-        testAppContext.setLocalAuthority(TestApplicationContext.ENGLISH_LOCAL_AUTHORITY)
-        startDefaultLinkPositiveTestResultConfirmSymptomsSelectSymptomsDateShouldIsolate(
-            MockVirologyTestingApi.POSITIVE_PCR_TOKEN,
-            ENGLAND
-        )
-    }
-
-    @Test
-    fun startDefault_linkPositiveLFDTestResult_confirmSymptoms_selectSymptomsDate_shouldIsolate_wales() {
-        testAppContext.setLocalAuthority(TestApplicationContext.WELSH_LOCAL_AUTHORITY)
-        startDefaultLinkPositiveTestResultConfirmSymptomsSelectSymptomsDateShouldIsolate(
-            MockVirologyTestingApi.POSITIVE_LFD_TOKEN,
-            WALES
-        )
-    }
+    fun startDefault_linkPositiveLFDTestResult_confirmSymptoms_selectSymptomsDate_shouldIsolate_wales() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            testAppContext.setLocalAuthority(TestApplicationContext.WELSH_LOCAL_AUTHORITY)
+            startDefaultLinkPositiveTestResultConfirmSymptomsSelectSymptomsDateShouldIsolate(
+                MockVirologyTestingApi.POSITIVE_LFD_TOKEN,
+                WALES
+            )
+        }
 
     private fun startDefaultLinkPositiveTestResultConfirmSymptomsSelectSymptomsDateShouldIsolate(
         testType: String,

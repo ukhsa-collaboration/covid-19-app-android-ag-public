@@ -99,6 +99,12 @@ enum class FeatureFlag(
         "COVID-19 Guidance Home Screen button Wales",
         "Show COVID-19 Guidance Home Screen button for Wales",
         defaultValue = true
+    ),
+    SELF_REPORTING(
+        "feature.SelfReporting",
+        "Self Reporting",
+        "Enable self reporting test journey",
+        defaultValue = true
     )
 }
 

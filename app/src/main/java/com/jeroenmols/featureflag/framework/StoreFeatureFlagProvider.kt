@@ -9,6 +9,7 @@ import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_WALES_CONTACT_CASE_F
 import com.jeroenmols.featureflag.framework.FeatureFlag.REMOTE_SERVICE_EXCEPTION_CRASH_ANALYTICS
 import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND
 import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_REPORTING
 import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
 import com.jeroenmols.featureflag.framework.FeatureFlag.TESTING_FOR_COVID19_HOME_SCREEN_BUTTON
 import com.jeroenmols.featureflag.framework.FeatureFlag.VENUE_CHECK_IN_BUTTON
@@ -33,6 +34,7 @@ class StoreFeatureFlagProvider : FeatureFlagProvider {
                 SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES -> false
                 COVID19_GUIDANCE_HOME_SCREEN_BUTTON_ENGLAND -> true
                 COVID19_GUIDANCE_HOME_SCREEN_BUTTON_WALES -> true
+                SELF_REPORTING -> true
             }
         } else {
             // TestSettings should never be shipped to users

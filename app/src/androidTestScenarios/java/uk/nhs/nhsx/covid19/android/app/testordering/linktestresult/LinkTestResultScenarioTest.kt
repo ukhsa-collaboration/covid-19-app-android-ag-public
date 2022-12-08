@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.testordering.linktestresult
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_REPORTING
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,6 +33,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultSymptoms
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.UnknownTestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.DAYS
 
@@ -57,39 +59,41 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
         description = "The user enters a CTA token and receives a positive test result",
         kind = FLOW
     ) {
-        enterLinkTestResultFromStatusActivity()
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterLinkTestResultFromStatusActivity()
 
-        linkTestResultRobot.checkActivityIsDisplayed()
+            linkTestResultRobot.checkActivityIsDisplayed()
 
-        step(
-            stepName = "Start",
-            stepDescription = "User is presented a screen where they can enter a CTA token"
-        )
+            step(
+                stepName = "Start",
+                stepDescription = "User is presented a screen where they can enter a CTA token"
+            )
 
-        linkTestResultRobot.enterCtaToken(POSITIVE_PCR_TOKEN)
+            linkTestResultRobot.enterCtaToken(POSITIVE_PCR_TOKEN)
 
-        step(
-            stepName = "Enter token",
-            stepDescription = "User enters a valid token and taps 'Continue'"
-        )
+            step(
+                stepName = "Enter token",
+                stepDescription = "User enters a valid token and taps 'Continue'"
+            )
 
-        linkTestResultRobot.clickContinue()
+            linkTestResultRobot.clickContinue()
 
-        waitFor { linkTestResultSymptomsRobot.checkActivityIsDisplayed() }
+            waitFor { linkTestResultSymptomsRobot.checkActivityIsDisplayed() }
 
-        step(
-            stepName = "Symptoms",
-            stepDescription = "User is presented a screen where they can confirm symptoms"
-        )
+            step(
+                stepName = "Symptoms",
+                stepDescription = "User is presented a screen where they can confirm symptoms"
+            )
 
-        waitFor { linkTestResultSymptomsRobot.clickNo() }
+            waitFor { linkTestResultSymptomsRobot.clickNo() }
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
+            waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
 
-        step(
-            stepName = "Positive test result",
-            stepDescription = "User is informed that their test result is positive"
-        )
+            step(
+                stepName = "Positive test result",
+                stepDescription = "User is informed that their test result is positive"
+            )
+        }
     }
 
     @Test
@@ -100,25 +104,27 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
         description = "The user enters a CTA token and receives a negative test result",
         kind = FLOW
     ) {
-        enterLinkTestResultFromStatusActivity()
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterLinkTestResultFromStatusActivity()
 
-        waitFor { linkTestResultRobot.checkActivityIsDisplayed() }
+            waitFor { linkTestResultRobot.checkActivityIsDisplayed() }
 
-        linkTestResultRobot.enterCtaToken(NEGATIVE_PCR_TOKEN)
+            linkTestResultRobot.enterCtaToken(NEGATIVE_PCR_TOKEN)
 
-        step(
-            stepName = "Enter token",
-            stepDescription = "User enters a valid token and taps 'Continue'"
-        )
+            step(
+                stepName = "Enter token",
+                stepDescription = "User enters a valid token and taps 'Continue'"
+            )
 
-        linkTestResultRobot.clickContinue()
+            linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(ENGLAND) }
+            waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(ENGLAND) }
 
-        step(
-            stepName = "Negative test result",
-            stepDescription = "User is informed that their test result is negative"
-        )
+            step(
+                stepName = "Negative test result",
+                stepDescription = "User is informed that their test result is negative"
+            )
+        }
     }
 
     @Test
@@ -129,25 +135,27 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
         description = "The user enters a CTA token and receives a void test result",
         kind = FLOW
     ) {
-        enterLinkTestResultFromStatusActivity()
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterLinkTestResultFromStatusActivity()
 
-        linkTestResultRobot.checkActivityIsDisplayed()
+            linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken(VOID_PCR_TOKEN)
+            linkTestResultRobot.enterCtaToken(VOID_PCR_TOKEN)
 
-        step(
-            stepName = "Enter token",
-            stepDescription = "User enters a valid token and taps 'Continue'"
-        )
+            step(
+                stepName = "Enter token",
+                stepDescription = "User enters a valid token and taps 'Continue'"
+            )
 
-        linkTestResultRobot.clickContinue()
+            linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation(ENGLAND) }
+            waitFor { testResultRobot.checkActivityDisplaysVoidNotInIsolation(ENGLAND) }
 
-        step(
-            stepName = "Void test result",
-            stepDescription = "User is informed that their test result is void"
-        )
+            step(
+                stepName = "Void test result",
+                stepDescription = "User is informed that their test result is void"
+            )
+        }
     }
 
     @Test
@@ -158,92 +166,99 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
         description = "The user enters a CTA token and receives a plod test result",
         kind = FLOW
     ) {
-        enterLinkTestResultFromStatusActivity()
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterLinkTestResultFromStatusActivity()
 
-        linkTestResultRobot.checkActivityIsDisplayed()
+            linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken(PLOD_PCR_TOKEN)
+            linkTestResultRobot.enterCtaToken(PLOD_PCR_TOKEN)
 
-        step(
-            stepName = "Enter token",
-            stepDescription = "User enters a valid token and taps 'Continue'"
-        )
+            step(
+                stepName = "Enter token",
+                stepDescription = "User enters a valid token and taps 'Continue'"
+            )
 
-        linkTestResultRobot.clickContinue()
+            linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysPlodScreen(ENGLAND) }
+            waitFor { testResultRobot.checkActivityDisplaysPlodScreen(ENGLAND) }
 
-        step(
-            stepName = "Plod test result",
-            stepDescription = "User is informed that their test result is plod"
-        )
+            step(
+                stepName = "Plod test result",
+                stepDescription = "User is informed that their test result is plod"
+            )
+        }
     }
 
     @Test
-    fun userIsContactCaseOnly_entersCtaTokenForPcrPositiveTestResult_noSymptoms_navigateToTestResultScreen() {
-        testAppContext.setState(contactCaseOnlyIsolation)
+    fun userIsContactCaseOnly_entersCtaTokenForPcrPositiveTestResult_noSymptoms_navigateToTestResultScreen() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            testAppContext.setState(contactCaseOnlyIsolation)
 
-        enterLinkTestResultFromStatusActivity()
+            enterLinkTestResultFromStatusActivity()
 
-        linkTestResultRobot.checkActivityIsDisplayed()
+            linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken(POSITIVE_PCR_TOKEN)
+            linkTestResultRobot.enterCtaToken(POSITIVE_PCR_TOKEN)
 
-        linkTestResultRobot.clickContinue()
+            linkTestResultRobot.clickContinue()
 
-        linkTestResultSymptomsRobot.clickNo()
+            linkTestResultSymptomsRobot.clickNo()
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
-    }
-
-    @Test
-    fun userEntersCtaTokenForAssistedLfdPositiveTestResult_noSymptoms_navigateToTestResultScreen() {
-        enterLinkTestResultFromStatusActivity()
-        linkTestResultRobot.checkActivityIsDisplayed()
-        linkTestResultRobot.enterCtaToken(POSITIVE_LFD_TOKEN)
-        linkTestResultRobot.clickContinue()
-
-        linkTestResultSymptomsRobot.checkActivityIsDisplayed()
-        linkTestResultSymptomsRobot.clickNo()
-
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
-    }
+            waitFor { testResultRobot.checkActivityDisplaysPositiveContinueIsolation(ENGLAND) }
+        }
 
     @Test
-    fun userEntersCtaTokenForUnassistedLfdPositiveTestResult_noSymptoms_navigateToTestResultScreen() {
-        enterLinkTestResultFromStatusActivity()
-        linkTestResultRobot.checkActivityIsDisplayed()
-        linkTestResultRobot.enterCtaToken(POSITIVE_RAPID_SELF_REPORTED_TOKEN)
-        linkTestResultRobot.clickContinue()
+    fun userEntersCtaTokenForAssistedLfdPositiveTestResult_noSymptoms_navigateToTestResultScreen() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterLinkTestResultFromStatusActivity()
+            linkTestResultRobot.checkActivityIsDisplayed()
+            linkTestResultRobot.enterCtaToken(POSITIVE_LFD_TOKEN)
+            linkTestResultRobot.clickContinue()
 
-        linkTestResultSymptomsRobot.checkActivityIsDisplayed()
-        linkTestResultSymptomsRobot.clickNo()
+            linkTestResultSymptomsRobot.checkActivityIsDisplayed()
+            linkTestResultSymptomsRobot.clickNo()
 
-        waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
-    }
-
-    @Test
-    fun userEntersCtaTokenForUnknownTestResult_navigatesToUnknownTestResultScreen() {
-        enterLinkTestResultFromStatusActivity()
-        linkTestResultRobot.checkActivityIsDisplayed()
-        linkTestResultRobot.enterCtaToken(UNKNOWN_RESULT_TOKEN)
-        linkTestResultRobot.clickContinue()
-
-        waitFor { unknownTestResultRobot.checkActivityIsDisplayed() }
-    }
+            waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
+        }
 
     @Test
-    fun userEntersCtaTokenForLfdNegativeTestResult_showErrorMessage() {
-        enterLinkTestResultFromStatusActivity()
-        linkTestResultRobot.checkActivityIsDisplayed()
-        linkTestResultRobot.enterCtaToken(NEGATIVE_LFD_TOKEN)
-        linkTestResultRobot.clickContinue()
+    fun userEntersCtaTokenForUnassistedLfdPositiveTestResult_noSymptoms_navigateToTestResultScreen() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterLinkTestResultFromStatusActivity()
+            linkTestResultRobot.checkActivityIsDisplayed()
+            linkTestResultRobot.enterCtaToken(POSITIVE_RAPID_SELF_REPORTED_TOKEN)
+            linkTestResultRobot.clickContinue()
 
-        linkTestResultRobot.checkValidationErrorUnexpectedIsDisplayed()
-    }
+            linkTestResultSymptomsRobot.checkActivityIsDisplayed()
+            linkTestResultSymptomsRobot.clickNo()
+
+            waitFor { testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(ENGLAND) }
+        }
 
     @Test
-    fun userEntersCtaTokenForLfdVoidTestResult_showErrorMessage() {
+    fun userEntersCtaTokenForUnknownTestResult_navigatesToUnknownTestResultScreen() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterLinkTestResultFromStatusActivity()
+            linkTestResultRobot.checkActivityIsDisplayed()
+            linkTestResultRobot.enterCtaToken(UNKNOWN_RESULT_TOKEN)
+            linkTestResultRobot.clickContinue()
+
+            waitFor { unknownTestResultRobot.checkActivityIsDisplayed() }
+        }
+
+    @Test
+    fun userEntersCtaTokenForLfdNegativeTestResult_showErrorMessage() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterLinkTestResultFromStatusActivity()
+            linkTestResultRobot.checkActivityIsDisplayed()
+            linkTestResultRobot.enterCtaToken(NEGATIVE_LFD_TOKEN)
+            linkTestResultRobot.clickContinue()
+
+            linkTestResultRobot.checkValidationErrorUnexpectedIsDisplayed()
+        }
+
+    @Test
+    fun userEntersCtaTokenForLfdVoidTestResult_showErrorMessage() = runWithFeature(SELF_REPORTING, enabled = false) {
         enterLinkTestResultFromStatusActivity()
         linkTestResultRobot.checkActivityIsDisplayed()
         linkTestResultRobot.enterCtaToken(VOID_LFD_TOKEN)
@@ -253,7 +268,7 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
     }
 
     @Test
-    fun userEntersTooShortCtaToken_showErrorMessage() {
+    fun userEntersTooShortCtaToken_showErrorMessage() = runWithFeature(SELF_REPORTING, enabled = false) {
         enterLinkTestResultFromStatusActivity()
 
         linkTestResultRobot.checkActivityIsDisplayed()
@@ -273,25 +288,28 @@ class LinkTestResultScenarioTest(override val configuration: TestConfiguration) 
         description = "An error message is shown after the user enters an invalid CTA token",
         kind = SCREEN
     ) {
-        enterLinkTestResultFromStatusActivity()
+        runWithFeature(SELF_REPORTING, enabled = false) {
 
-        linkTestResultRobot.checkActivityIsDisplayed()
+            enterLinkTestResultFromStatusActivity()
 
-        linkTestResultRobot.enterCtaToken("aaaa-1337")
+            linkTestResultRobot.checkActivityIsDisplayed()
 
-        step(
-            stepName = "Enter token",
-            stepDescription = "User enters an invalid token and taps 'Continue'"
-        )
+            linkTestResultRobot.enterCtaToken("aaaa-1337")
 
-        linkTestResultRobot.clickContinue()
+            step(
+                stepName = "Enter token",
+                stepDescription = "User enters an invalid token and taps 'Continue'"
+            )
 
-        linkTestResultRobot.checkValidationErrorInvalidTokenIsDisplayed()
+            linkTestResultRobot.clickContinue()
 
-        step(
-            stepName = "Invalid code",
-            stepDescription = "An error message is displayed to the user"
-        )
+            linkTestResultRobot.checkValidationErrorInvalidTokenIsDisplayed()
+
+            step(
+                stepName = "Invalid code",
+                stepDescription = "An error message is displayed to the user"
+            )
+        }
     }
 
     @Test

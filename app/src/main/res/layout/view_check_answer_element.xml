@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/checkAnswersElementContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:gravity="center_vertical"
+    android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/checkAnswerQuestionSubtitle"
+            style="@style/Title3"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/vertical_margin"
+            android:layout_marginBottom="8dp"
+            tools:text="Question" />
+
+        <uk.nhs.nhsx.covid19.android.app.widgets.PrimaryGreyBulletedParagraphsContainer
+            android:id="@+id/checkAnswerQuestionBulletedParagraph"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:paddingBetweenItems="0dp"
+            android:visibility="gone"
+            android:layout_marginStart="8dp"
+            android:layout_marginVertical="@dimen/vertical_margin"/>
+
+        <TextView
+            android:id="@+id/checkAnswerQuestionAnswer"
+            style="@style/Body1"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="16dp"
+            tools:text="Your answer" />
+
+        <uk.nhs.nhsx.covid19.android.app.widgets.UnderlinedTextView
+            android:id="@+id/checkAnswerQuestionChangeButton"
+            style="@style/LinkText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/check_answers_change_button" />
+
+        <View
+            style="@style/HorizontalDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="@dimen/margin_horizontal_reduced_relative" />
+
+</LinearLayout>

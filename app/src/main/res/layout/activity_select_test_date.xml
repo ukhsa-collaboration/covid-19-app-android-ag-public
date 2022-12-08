@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/selectTestDateContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/primaryToolbar"
+        layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        android:id="@+id/selfReportTestDateScrollViewContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal_reduced"
+            android:paddingVertical="@dimen/vertical_margin">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ErrorView
+                android:id="@+id/selfReportTestDateErrorView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:error_description="@string/self_report_test_date_error_description"
+                app:error_title="@string/error_title"
+                tools:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:orientation="horizontal"
+                android:paddingEnd="4dp">
+
+                <View
+                    android:id="@+id/selfReportTestDateErrorIndicator"
+                    android:layout_width="4dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/error_red"
+                    android:visibility="invisible"
+                    tools:visibility="visible" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                        style="@style/Title1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
+                        android:text="@string/self_report_test_date_header" />
+
+                    <TextView
+                        android:id="@+id/selfReportTestDateErrorText"
+                        style="@style/ErrorTextBold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/vertical_margin"
+                        android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
+                        android:text="@string/self_report_test_date_error_description"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingVertical="8dp"
+                        android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative">
+
+                        <LinearLayout
+                            android:id="@+id/selfReportTestDateSelectDateContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginTop="16dp"
+                            android:background="@drawable/black_border_background"
+                            android:foreground="?selectableItemBackground"
+                            android:gravity="center_vertical"
+                            android:minWidth="48dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/textSelectDate"
+                                style="@style/Title3"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="17dp"
+                                android:layout_weight="1"
+                                android:text="@string/self_report_test_date_date_picker_box_label" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginEnd="16dp"
+                                android:contentDescription="@null"
+                                android:src="@drawable/ic_select_date" />
+                        </LinearLayout>
+
+                        <CheckBox
+                            android:id="@+id/selfReportTestDateSelectCheckboxNoDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="-6dp"
+                            android:layout_marginTop="8dp"
+                            android:minWidth="48dp"
+                            android:minHeight="48dp"
+                            android:text="@string/self_report_test_date_no_date"
+                            android:textSize="16sp"
+                            android:textStyle="normal" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/selfReportTestDateContinueButton"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced"
+                android:layout_marginVertical="@dimen/vertical_margin"
+                android:text="@string/continue_button" />
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

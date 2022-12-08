@@ -3,6 +3,8 @@ package uk.nhs.nhsx.covid19.android.app.exposure.sharekeys
 import android.content.SharedPreferences
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.util.Provider
 import uk.nhs.nhsx.covid19.android.app.util.storage
 import java.time.Clock
@@ -43,7 +45,9 @@ data class KeySharingInfo(
     val diagnosisKeySubmissionToken: String,
     val acknowledgedDate: Instant,
     val notificationSentDate: Instant? = null,
-    val hasDeclinedSharingKeys: Boolean = false
+    val hasDeclinedSharingKeys: Boolean = false,
+    val isSelfReporting: Boolean = false,
+    val testKitType: VirologyTestKitType = LAB_RESULT
 ) {
     fun wasAcknowledgedMoreThan24HoursAgo(clock: Clock): Boolean {
         val exactly24HoursAgo = Instant.now(clock).minus(24, ChronoUnit.HOURS)

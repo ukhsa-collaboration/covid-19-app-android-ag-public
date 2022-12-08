@@ -8,6 +8,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.AskedToShareExpo
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CanceledCheckIn
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedQuestionnaireAndStartedIsolation
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedSelfReportingTestFlow
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedV2SymptomsQuestionnaire
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedV2SymptomsQuestionnaireAndStayAtHome
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.CompletedV3SymptomsQuestionnaireAndHasSymptoms
@@ -22,6 +23,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidHaveSymptomsB
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidRememberOnsetSymptomsDateBeforeReceivedTestResult
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.DidSendLocalInfoNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.ExposureWindowsMatched
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.IsPositiveSelfLFDFree
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedIsolationPaymentsApplication
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.LaunchedTestOrdering
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.NegativeLabResultAfterPositiveLFDOutsideTimeLimit
@@ -48,6 +50,9 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedIsolatio
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedLfdTestOrderingM2Journey
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedTakeTestLaterM2Journey
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelectedTakeTestM2Journey
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelfReportedPositiveSelfLFDOnGov
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelfReportedNegativeSelfLFDTestResultEnteredManually
+import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SelfReportedVoidSelfLFDTestResultEnteredManually
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.StartedIsolation
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.SuccessfullySharedExposureKeys
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.TotalAlarmManagerBackgroundTasks
@@ -60,6 +65,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ACKNO
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.ASKED_TO_SHARE_EXPOSURE_KEYS_IN_THE_INITIAL_FLOW
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.CANCELED_CHECK_IN
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_QUESTIONNAIRE_AND_STARTED_ISOLATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_SELF_REPORTING_TEST_FLOW
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.COMPLETED_V3_SYMPTOMS_QUESTIONNAIRE_AND_HAS_SYMPTOMS
@@ -73,6 +79,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_A
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_HAVE_SYMPTOMS_BEFORE_RECEIVED_TEST_RESULT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_REMEMBER_ONSET_SYMPTOMS_DATE_BEFORE_RECEIVED_TEST_RESULT
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.DID_SEND_LOCAL_INFO_NOTIFICATION
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.IS_POSITIVE_SELF_LFD_FREE
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_ISOLATION_PAYMENTS_APPLICATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.LAUNCHED_TEST_ORDERING
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.NEGATIVE_LAB_RESULT_AFTER_POSITIVE_LFD_OUTSIDE_TIME_LIMIT
@@ -98,6 +105,9 @@ import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELEC
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_LFD_TEST_ORDERING_M2_JOURNEY
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_TAKE_TEST_LATER_M2_JOURNEY
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELECTED_TAKE_TEST_M2_JOURNEY
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELF_REPORTED_POSITIVE_SELF_LFD_ON_GOV
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELF_REPORTED_NEGATIVE_SELF_LFD_TEST_RESULT_ENTERED_MANUALLY
+import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SELF_REPORTED_VOID_SELF_LFD_TEST_RESULT_ENTERED_MANUALLY
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.STARTED_ISOLATION
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.SUCCESSFULLY_SHARED_EXPOSURE_KEYS
 import uk.nhs.nhsx.covid19.android.app.analytics.RegularAnalyticsEventType.TOTAL_ALARM_MANAGER_BACKGROUND_TASKS
@@ -224,6 +234,11 @@ class AnalyticsEventProcessor @Inject constructor(
         CompletedV2SymptomsQuestionnaire -> Event(COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE)
         CompletedV2SymptomsQuestionnaireAndStayAtHome -> Event(COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME)
         CompletedV3SymptomsQuestionnaireAndHasSymptoms -> Event(COMPLETED_V3_SYMPTOMS_QUESTIONNAIRE_AND_HAS_SYMPTOMS)
+        SelfReportedVoidSelfLFDTestResultEnteredManually -> Event(SELF_REPORTED_VOID_SELF_LFD_TEST_RESULT_ENTERED_MANUALLY)
+        SelfReportedNegativeSelfLFDTestResultEnteredManually -> Event(SELF_REPORTED_NEGATIVE_SELF_LFD_TEST_RESULT_ENTERED_MANUALLY)
+        IsPositiveSelfLFDFree -> Event(IS_POSITIVE_SELF_LFD_FREE)
+        SelfReportedPositiveSelfLFDOnGov -> Event(SELF_REPORTED_POSITIVE_SELF_LFD_ON_GOV)
+        CompletedSelfReportingTestFlow -> Event(COMPLETED_SELF_REPORTING_TEST_FLOW)
     }
 
     private fun updateNetworkStats() = AnalyticsLogItem.UpdateNetworkStats(

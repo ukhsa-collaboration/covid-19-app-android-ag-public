@@ -25,6 +25,10 @@ class AcknowledgeTestResult @Inject constructor(
         }
     }
 
+    operator fun invoke(testResult: ReceivedTestResult) {
+        acknowledge(testResult)
+    }
+
     private fun acknowledge(testResult: ReceivedTestResult) {
         submitEpidemiologyData(testResult)
         isolationStateMachine.processEvent(OnTestResultAcknowledge(testResult))

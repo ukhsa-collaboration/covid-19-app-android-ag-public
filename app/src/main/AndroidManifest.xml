@@ -267,6 +267,62 @@
             android:name=".questionnaire.review.PositiveSymptomsNoIsolationActivity"
             android:label="@string/empty_accessibility_announcement" />
 
+        <activity
+            android:name=".status.selfreporttest.TestTypeActivity"
+            android:label="@string/self_report_test_type_title" />
+
+        <activity
+            android:name=".status.selfreporttest.SelfReportShareKeysInformationActivity"
+            android:label="@string/self_report_submit_keys_information_title"/>
+
+        <activity
+            android:name=".status.selfreporttest.TestKitTypeActivity"
+            android:label="@string/self_report_test_kit_type_title"/>
+
+        <activity
+            android:name=".status.selfreporttest.TestOriginActivity"
+            android:label="@string/self_report_test_origin_title"/>
+
+        <activity
+            android:name=".status.selfreporttest.SelectTestDateActivity"
+            android:label="@string/self_report_test_date_title"/>
+
+        <activity
+            android:name=".status.selfreporttest.SelfReportSymptomsActivity"
+            android:label="@string/self_report_symptoms_title"/>
+
+        <activity
+            android:name=".status.selfreporttest.SelfReportSymptomsOnsetActivity"
+            android:label="@string/self_report_symptoms_date_title"/>
+
+        <activity
+            android:name=".status.selfreporttest.SelfReportNegativeVoidTestResultActivity"
+            android:label="@string/self_report_negative_or_void_test_result_title"/>
+
+        <activity
+            android:name=".status.selfreporttest.ReportedTestActivity"
+            android:label="@string/self_report_reported_test_title"/>
+
+        <activity
+            android:name=".status.selfreporttest.SelfReportCheckAnswersActivity"
+            android:label="@string/self_report_check_answers_title"/>
+
+        <activity
+            android:name=".status.selfreporttest.SelfReportThankYouActivity"
+            android:label="@string/self_report_thank_you_title"/>
+            
+        <activity
+            android:name=".status.selfreporttest.SelfReportAppWillNotNotifyOtherUsersActivity"
+            android:label="@string/self_report_app_will_not_notify_other_users_title"/>
+            
+        <activity
+            android:name=".status.selfreporttest.SelfReportSubmitTestResultAndKeysProgressActivity"
+            android:label="@string/loading"/>
+
+        <activity
+            android:name=".status.selfreporttest.SelfReportAdviceActivity"
+            android:label="@string/self_report_advice_title"/>
+
         <!-- Receivers -->
         <receiver
             android:name=".exposure.encounter.ExposureNotificationBroadcastReceiver"

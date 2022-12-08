@@ -5,6 +5,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.ShareKeysBaseActivity.Companion.REQUEST_CODE_SUBMIT_KEYS
@@ -69,12 +70,18 @@ abstract class ShareKeysBaseViewModel constructor(
 
     override fun onFetchKeysSuccess(
         temporaryExposureKeys: List<NHSTemporaryExposureKey>,
-        diagnosisKeySubmissionToken: String
+        diagnosisKeySubmissionToken: String?
     ) {
-        trackConsentedToShareKeys()
-        navigationLiveData.postValue(
-            SubmitKeysProgressActivity(temporaryExposureKeys, diagnosisKeySubmissionToken)
-        )
+        if (diagnosisKeySubmissionToken != null) {
+            trackConsentedToShareKeys()
+            navigationLiveData.postValue(
+                SubmitKeysProgressActivity(temporaryExposureKeys, diagnosisKeySubmissionToken)
+            )
+        } else {
+            Timber.e("Unexpected null value for diagnosisKeySubmissionToken returned by onFetchKeysSuccess")
+            keySharingInfoProvider.reset()
+            navigationLiveData.postValue(Finish)
+        }
     }
 
     override fun onFetchKeysUnexpectedError() {

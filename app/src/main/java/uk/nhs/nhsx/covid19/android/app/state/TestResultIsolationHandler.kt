@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.state
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.CalculateKeySubmissionDateRange
 import uk.nhs.nhsx.covid19.android.app.exposure.sharekeys.KeySharingInfo
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.PLOD
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
@@ -418,7 +419,9 @@ class TestResultIsolationHandler @Inject constructor(
                 return KeySharingInfo(
                     diagnosisKeySubmissionToken = testResult.diagnosisKeySubmissionToken,
                     acknowledgedDate = testAcknowledgedDate,
-                    notificationSentDate = null
+                    notificationSentDate = null,
+                    isSelfReporting = testResult.isSelfReporting,
+                    testKitType = if (!testResult.isSelfReporting) LAB_RESULT else testResult.testKitType ?: LAB_RESULT
                 )
             }
         }

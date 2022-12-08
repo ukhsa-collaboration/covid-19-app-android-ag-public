@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp">
+
+    <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:rawText="@string/self_report_advice_bulleted_list_header_label"
+        android:layout_marginTop="@dimen/vertical_margin"/>
+
+    <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
+        android:id="@+id/selfReportAdviceCloseContact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vertical_margin_medium"
+        app:drawable="@drawable/ic_social_distancing"
+        app:text="@string/self_report_advice_icon_bullet_1_label" />
+
+    <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
+        android:id="@+id/selfReportAdviceWashHands"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vertical_margin_medium"
+        app:drawable="@drawable/ic_wash_hands"
+        app:text="@string/self_report_advice_icon_bullet_2_label" />
+
+    <uk.nhs.nhsx.covid19.android.app.widgets.IconTextView
+        android:id="@+id/selfReportAdviceFaceCovering"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vertical_margin_medium"
+        app:drawable="@drawable/ic_mask"
+        app:text="@string/self_report_advice_icon_bullet_3_label" />
+
+
+</LinearLayout>

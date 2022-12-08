@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.flow
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_REPORTING
 import com.jeroenmols.featureflag.framework.FeatureFlag.TESTING_FOR_COVID19_HOME_SCREEN_BUTTON
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import com.jeroenmols.featureflag.framework.TestSetting.USE_WEB_VIEW_FOR_INTERNAL_BROWSER
@@ -30,6 +31,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LinkTestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestingHubRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 import uk.nhs.nhsx.covid19.android.app.testhelpers.setup.LocalAuthoritySetupHelper
 import uk.nhs.nhsx.covid19.android.app.testordering.AcknowledgedTestResult
@@ -67,88 +69,94 @@ class FlowTests : EspressoTest(), LocalAuthoritySetupHelper {
     }
 
     @Test
-    fun whenSelfIsolationForWalesIsEnabled_startDefault_selfDiagnose_hasNegativeLFDTest_notInIsolation_forWales() {
-        val walesConfiguration = IsolationConfiguration(
-            contactCase = 11,
-            indexCaseSinceSelfDiagnosisOnset = 6,
-            indexCaseSinceSelfDiagnosisUnknownOnset = 6,
-            maxIsolation = 16,
-            indexCaseSinceTestResultEndDate = 6,
-            pendingTasksRetentionPeriod = 14,
-            testResultPollingTokenRetentionPeriod = 28
-        )
-        val isolationHelper = IsolationHelper(testAppContext.clock, walesConfiguration)
+    fun whenSelfIsolationForWalesIsEnabled_startDefault_selfDiagnose_hasNegativeLFDTest_notInIsolation_forWales() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            val walesConfiguration = IsolationConfiguration(
+                contactCase = 11,
+                indexCaseSinceSelfDiagnosisOnset = 6,
+                indexCaseSinceSelfDiagnosisUnknownOnset = 6,
+                maxIsolation = 16,
+                indexCaseSinceTestResultEndDate = 6,
+                pendingTasksRetentionPeriod = 14,
+                testResultPollingTokenRetentionPeriod = 28
+            )
+            val isolationHelper = IsolationHelper(testAppContext.clock, walesConfiguration)
 
-        givenLocalAuthorityIsInWales()
-        startTestActivity<StatusActivity>()
+            givenLocalAuthorityIsInWales()
+            startTestActivity<StatusActivity>()
 
-        statusRobot.checkActivityIsDisplayed()
+            statusRobot.checkActivityIsDisplayed()
 
-        assertEquals(isolationHelper.neverInIsolation(), testAppContext.getCurrentState())
+            assertEquals(isolationHelper.neverInIsolation(), testAppContext.getCurrentState())
 
-        selfDiagnosis.selfDiagnosePositiveAndPressBack()
+            selfDiagnosis.selfDiagnosePositiveAndPressBack()
 
-        waitFor { statusRobot.checkIsolationViewIsDisplayed() }
+            waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
-        statusRobot.checkIsolationViewHasCorrectContentDescriptionForWales((testAppContext.getCurrentLogicalState() as PossiblyIsolating).expiryDate.minusDays(1))
+            statusRobot.checkIsolationViewHasCorrectContentDescriptionForWales(
+                (testAppContext.getCurrentLogicalState() as PossiblyIsolating).expiryDate.minusDays(
+                    1
+                )
+            )
 
-        statusRobot.clickLinkTestResult()
+            statusRobot.clickLinkTestResult()
 
-        linkTestResultRobot.checkActivityIsDisplayed()
+            linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken(MANUAL_CONFIGURATION_TOKEN)
+            linkTestResultRobot.enterCtaToken(MANUAL_CONFIGURATION_TOKEN)
 
-        linkTestResultRobot.clickContinue()
+            linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
+            waitFor { testResultRobot.checkActivityDisplaysNegativeWontBeInIsolation() }
 
-        testResultRobot.clickGoodNewsActionButton()
+            testResultRobot.clickGoodNewsActionButton()
 
-        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
-            !testAppContext.getCurrentLogicalState().isActiveIsolation(testAppContext.clock)
+            await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
+                !testAppContext.getCurrentLogicalState().isActiveIsolation(testAppContext.clock)
+            }
         }
-    }
 
     @Test
-    fun whenSelfIsolationForWalesIsDisabled_startDefault_selfDiagnose_hasNegativeLFDTest_notInIsolation_forWales() {
-        val walesConfiguration = IsolationConfiguration(
-            contactCase = 11,
-            indexCaseSinceSelfDiagnosisOnset = 6,
-            indexCaseSinceSelfDiagnosisUnknownOnset = 6,
-            maxIsolation = 16,
-            indexCaseSinceTestResultEndDate = 6,
-            pendingTasksRetentionPeriod = 14,
-            testResultPollingTokenRetentionPeriod = 28
-        )
-        val isolationHelper = IsolationHelper(testAppContext.clock, walesConfiguration)
+    fun whenSelfIsolationForWalesIsDisabled_startDefault_selfDiagnose_hasNegativeLFDTest_notInIsolation_forWales() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            val walesConfiguration = IsolationConfiguration(
+                contactCase = 11,
+                indexCaseSinceSelfDiagnosisOnset = 6,
+                indexCaseSinceSelfDiagnosisUnknownOnset = 6,
+                maxIsolation = 16,
+                indexCaseSinceTestResultEndDate = 6,
+                pendingTasksRetentionPeriod = 14,
+                testResultPollingTokenRetentionPeriod = 28
+            )
+            val isolationHelper = IsolationHelper(testAppContext.clock, walesConfiguration)
 
-        givenLocalAuthorityIsInWales()
-        startTestActivity<StatusActivity>()
+            givenLocalAuthorityIsInWales()
+            startTestActivity<StatusActivity>()
 
-        statusRobot.checkActivityIsDisplayed()
+            statusRobot.checkActivityIsDisplayed()
 
-        assertEquals(isolationHelper.neverInIsolation(), testAppContext.getCurrentState())
+            assertEquals(isolationHelper.neverInIsolation(), testAppContext.getCurrentState())
 
-        selfDiagnosis.selfDiagnosePositiveAndPressBackIsolationDisabled()
+            selfDiagnosis.selfDiagnosePositiveAndPressBackIsolationDisabled()
 
-        waitFor { statusRobot.checkIsolationViewIsNotDisplayed() }
+            waitFor { statusRobot.checkIsolationViewIsNotDisplayed() }
 
-        statusRobot.clickLinkTestResult()
+            statusRobot.clickLinkTestResult()
 
-        linkTestResultRobot.checkActivityIsDisplayed()
+            linkTestResultRobot.checkActivityIsDisplayed()
 
-        linkTestResultRobot.enterCtaToken(MANUAL_CONFIGURATION_TOKEN)
+            linkTestResultRobot.enterCtaToken(MANUAL_CONFIGURATION_TOKEN)
 
-        linkTestResultRobot.clickContinue()
+            linkTestResultRobot.clickContinue()
 
-        waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(WALES) }
+            waitFor { testResultRobot.checkActivityDisplaysNegativeAlreadyNotInIsolation(WALES) }
 
-        testResultRobot.clickGoodNewsActionButton()
+            testResultRobot.clickGoodNewsActionButton()
 
-        await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
-            !testAppContext.getCurrentLogicalState().isActiveIsolation(testAppContext.clock)
+            await.atMost(AWAIT_AT_MOST_SECONDS, SECONDS) until {
+                !testAppContext.getCurrentLogicalState().isActiveIsolation(testAppContext.clock)
+            }
         }
-    }
 
     @Test
     fun startIndexCase_receivePositiveTestResult_inIndexIsolation() =
@@ -264,7 +272,7 @@ class FlowTests : EspressoTest(), LocalAuthoritySetupHelper {
     }
 
     @Test
-    fun startIndexCase_linkNegativeTestResult() {
+    fun startIndexCase_linkNegativeTestResult() = runWithFeature(SELF_REPORTING, enabled = false) {
         testAppContext.setState(isolationHelper.selfAssessment().asIsolation())
 
         startTestActivity<StatusActivity>()

@@ -105,6 +105,49 @@ class AcknowledgeTestResultTest {
         }
     }
 
+    @Test
+    fun `invoke with test result parameter - acknowledge positive test result with key submission supported`() {
+
+        every { isKeySubmissionSupported(expectedTestResult) } returns true
+
+        acknowledgeTestResult(expectedTestResult)
+
+        verifyOrder {
+            submitEpidemiologyDataForTestResult(expectedTestKitType, expectedRequiresConfirmatoryTest)
+            isKeySubmissionSupported(expectedTestResult)
+            isolationStateMachine.processEvent(OnTestResultAcknowledge(expectedTestResult))
+        }
+        verify(exactly = 0) { getHighestPriorityTestResult() }
+    }
+
+    @Test
+    fun `invoke with test result parameter - acknowledge positive test result with key submission not supported`() {
+        every { isKeySubmissionSupported(expectedTestResult) } returns false
+
+        acknowledgeTestResult(expectedTestResult)
+
+        verifyOrder {
+            submitEpidemiologyDataForTestResult(expectedTestKitType, expectedRequiresConfirmatoryTest)
+            isKeySubmissionSupported(expectedTestResult)
+            submitEmptyData()
+            isolationStateMachine.processEvent(OnTestResultAcknowledge(expectedTestResult))
+        }
+        verify(exactly = 0) { getHighestPriorityTestResult() }
+    }
+
+    @Test
+    fun `invoke with test result parameter - acknowledge non-positive test result`() {
+        every { expectedTestResult.isPositive() } returns false
+
+        acknowledgeTestResult(expectedTestResult)
+
+        verifyOrder {
+            submitObfuscationData()
+            isolationStateMachine.processEvent(OnTestResultAcknowledge(expectedTestResult))
+        }
+        verify(exactly = 0) { getHighestPriorityTestResult() }
+    }
+
     private fun confirmVerificationForAllMocksComplete() {
         confirmVerified(
             isolationStateMachine,

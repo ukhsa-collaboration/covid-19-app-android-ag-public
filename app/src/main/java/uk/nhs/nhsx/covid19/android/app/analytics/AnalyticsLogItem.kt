@@ -81,6 +81,11 @@ enum class RegularAnalyticsEventType(
     COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE({ it.completedV2SymptomsQuestionnaire++ }),
     COMPLETED_V2_SYMPTOMS_QUESTIONNAIRE_AND_STAY_AT_HOME({ it.completedV2SymptomsQuestionnaireAndStayAtHome++ }),
     COMPLETED_V3_SYMPTOMS_QUESTIONNAIRE_AND_HAS_SYMPTOMS({ it.completedV3SymptomsQuestionnaireAndHasSymptoms++ }),
+    SELF_REPORTED_VOID_SELF_LFD_TEST_RESULT_ENTERED_MANUALLY({ it.selfReportedVoidSelfLFDTestResultEnteredManually++ }),
+    SELF_REPORTED_NEGATIVE_SELF_LFD_TEST_RESULT_ENTERED_MANUALLY({ it.selfReportedNegativeSelfLFDTestResultEnteredManually++ }),
+    IS_POSITIVE_SELF_LFD_FREE({ it.isPositiveSelfLFDFree++ }),
+    SELF_REPORTED_POSITIVE_SELF_LFD_ON_GOV({ it.selfReportedPositiveSelfLFDOnGov++ }),
+    COMPLETED_SELF_REPORTING_TEST_FLOW({ it.completedSelfReportingTestFlow++ })
 }
 
 @JsonClass(generateAdapter = true)

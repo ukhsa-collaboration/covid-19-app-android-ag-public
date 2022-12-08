@@ -7,7 +7,9 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 data class TemporaryExposureKeysPayload(
     val diagnosisKeySubmissionToken: String,
-    val temporaryExposureKeys: List<NHSTemporaryExposureKey>
+    val temporaryExposureKeys: List<NHSTemporaryExposureKey>,
+    val isPrivateJourney: Boolean,
+    val testKit: String
 )
 
 @JsonClass(generateAdapter = true)

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/testTypeContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/primaryToolbar"
+        layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        android:id="@+id/selfReportTestTypeScrollViewContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/vertical_margin"
+            android:paddingHorizontal="@dimen/margin_horizontal_reduced">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ErrorView
+                android:id="@+id/selfReportTestTypeErrorView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:error_description="@string/self_report_test_type_error_description"
+                app:error_title="@string/error_title"
+                tools:visibility="gone"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingEnd="4dp"
+                android:layout_marginTop="@dimen/vertical_margin">
+
+                <View
+                    android:id="@+id/enterTestTypeErrorIndicator"
+                    android:layout_width="4dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/error_red"
+                    android:visibility="invisible"
+                    tools:visibility="visible" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                        style="@style/Title1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
+                        android:text="@string/self_report_test_type_header" />
+
+                    <TextView
+                        android:id="@+id/selfReportTestTypeErrorText"
+                        style="@style/ErrorTextBold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
+                        android:layout_marginTop="@dimen/vertical_margin"
+                        android:text="@string/self_report_test_type_error_description"
+                        android:visibility="gone"
+                        tools:visibility="visible"/>
+
+                    <uk.nhs.nhsx.covid19.android.app.widgets.TripleVerticalRadioGroup
+                        android:id="@+id/testTypeTripleVerticalRadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/vertical_margin"
+                        app:tripleVerticalOption1ContentDescription="@string/self_report_test_type_radio_button_option_positive"
+                        app:tripleVerticalOption1Text="@string/self_report_test_type_radio_button_option_positive"
+                        app:tripleVerticalOption2ContentDescription="@string/self_report_test_type_radio_button_option_negative"
+                        app:tripleVerticalOption2Text="@string/self_report_test_type_radio_button_option_negative"
+                        app:tripleVerticalOption3ContentDescription="@string/self_report_test_type_radio_button_option_void"
+                        app:tripleVerticalOption3Text="@string/self_report_test_type_radio_button_option_void" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/selfReportTestTypeContinueButton"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced"
+                android:layout_marginVertical="@dimen/vertical_margin"
+                android:text="@string/continue_button" />
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

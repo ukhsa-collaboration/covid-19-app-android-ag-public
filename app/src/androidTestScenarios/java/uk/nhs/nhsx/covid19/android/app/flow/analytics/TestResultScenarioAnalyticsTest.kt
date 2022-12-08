@@ -1,5 +1,6 @@
 package uk.nhs.nhsx.covid19.android.app.flow.analytics
 
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_REPORTING
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.MainActivity
 import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeDistrict.WALES
@@ -15,6 +16,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.NEGATIVE
 import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestResult.POSITIVE
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.TestResultRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.time.temporal.ChronoUnit.DAYS
@@ -26,92 +28,93 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
     private val testResultRobot = TestResultRobot(testAppContext.app)
 
     @Test
-    fun enterPositiveLFDTest_isolateForUnconfirmed_confirmByPCRTest_isolateForConfirmed() {
-        startTestActivity<MainActivity>()
+    fun enterPositiveLFDTest_isolateForUnconfirmed_confirmByPCRTest_isolateForConfirmed() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            startTestActivity<MainActivity>()
 
-        // Current date: 1st Jan
-        // Starting state: App running normally, not in isolation
-        runBackgroundTasks()
+            // Current date: 1st Jan
+            // Starting state: App running normally, not in isolation
+            runBackgroundTasks()
 
-        // Enters positive LFD test result on 1st Jan
-        // Isolation end date: 12th Jan
-        manualTestResultEntry.enterPositive(
-            RAPID_RESULT,
-            requiresConfirmatoryTest = true,
-            symptomsAndOnsetFlowConfiguration = null,
-            expectedScreenState = PositiveWillBeInIsolation()
-        )
+            // Enters positive LFD test result on 1st Jan
+            // Isolation end date: 12th Jan
+            manualTestResultEntry.enterPositive(
+                RAPID_RESULT,
+                requiresConfirmatoryTest = true,
+                symptomsAndOnsetFlowConfiguration = null,
+                expectedScreenState = PositiveWillBeInIsolation()
+            )
 
-        // Current date: 2nd Jan -> Analytics packet for: 1st Jan
-        assertOnFields {
-            // Now in isolation due to positive unconfirmed test result
-            assertEquals(1, Metrics::receivedPositiveTestResult)
-            assertEquals(1, Metrics::receivedPositiveLFDTestResultEnteredManually)
-            assertEquals(1, Metrics::startedIsolation)
-            assertEquals(1, Metrics::receivedUnconfirmedPositiveTestResult)
-            assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
-            assertEquals(1, Metrics::consentedToShareExposureKeysInTheInitialFlow)
-            assertEquals(1, Metrics::successfullySharedExposureKeys)
-            assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForTestedLFDPositiveBackgroundTick)
-            assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
-            assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
+            // Current date: 2nd Jan -> Analytics packet for: 1st Jan
+            assertOnFields {
+                // Now in isolation due to positive unconfirmed test result
+                assertEquals(1, Metrics::receivedPositiveTestResult)
+                assertEquals(1, Metrics::receivedPositiveLFDTestResultEnteredManually)
+                assertEquals(1, Metrics::startedIsolation)
+                assertEquals(1, Metrics::receivedUnconfirmedPositiveTestResult)
+                assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
+                assertEquals(1, Metrics::consentedToShareExposureKeysInTheInitialFlow)
+                assertEquals(1, Metrics::successfullySharedExposureKeys)
+                assertPresent(Metrics::isIsolatingBackgroundTick)
+                assertPresent(Metrics::isIsolatingForTestedLFDPositiveBackgroundTick)
+                assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
+                assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
+            }
+
+            // Dates: 3rd-5th Jan -> Analytics packets for: 2nd-4th Jan
+            assertOnFieldsForDateRange(3..5) {
+                // Still in isolation
+                assertPresent(Metrics::isIsolatingBackgroundTick)
+                assertPresent(Metrics::isIsolatingForTestedLFDPositiveBackgroundTick)
+                assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
+                assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
+            }
+
+            // Enters positive PCR test result on 5th Jan
+            // Isolation end date still 12th Jan
+            manualTestResultEntry.enterPositive(
+                LAB_RESULT,
+                requiresConfirmatoryTest = false,
+                symptomsAndOnsetFlowConfiguration = null,
+                expectedScreenState = PositiveContinueIsolation
+            )
+
+            // Current date: 6th Jan -> Analytics packet for: 5th Jan
+            assertOnFields {
+                // Now in isolation due to positive unconfirmed test result
+                assertEquals(1, Metrics::receivedPositiveTestResult)
+                assertEquals(1, Metrics::receivedPositiveTestResultEnteredManually)
+                assertPresent(Metrics::isIsolatingBackgroundTick)
+                assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
+                assertPresent(Metrics::isIsolatingForTestedLFDPositiveBackgroundTick)
+                assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
+                assertEquals(1, Metrics::positiveLabResultAfterPositiveLFD)
+                assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
+                assertEquals(1, Metrics::consentedToShareExposureKeysInTheInitialFlow)
+                assertEquals(1, Metrics::successfullySharedExposureKeys)
+            }
+
+            // Dates: 7th-12th Jan -> Analytics packets for: 6th-11th Jan
+            assertOnFieldsForDateRange(7..12) {
+                // Still in isolation
+                assertPresent(Metrics::isIsolatingBackgroundTick)
+                assertPresent(Metrics::isIsolatingForTestedLFDPositiveBackgroundTick)
+                assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
+            }
+
+            // Dates: 13th-26th Jan -> Analytics packets for: 12th-25th Jan
+            assertOnFieldsForDateRange(13..26) {
+                // Isolation is over, and analytics are not kept
+                assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
+            }
+
+            // Current date: 27th Jan -> Analytics packet for: 26th Jan
+            // Previous isolation reason no longer stored
+            assertAnalyticsPacketIsNormal()
         }
-
-        // Dates: 3rd-5th Jan -> Analytics packets for: 2nd-4th Jan
-        assertOnFieldsForDateRange(3..5) {
-            // Still in isolation
-            assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForTestedLFDPositiveBackgroundTick)
-            assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
-            assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
-        }
-
-        // Enters positive PCR test result on 5th Jan
-        // Isolation end date still 12th Jan
-        manualTestResultEntry.enterPositive(
-            LAB_RESULT,
-            requiresConfirmatoryTest = false,
-            symptomsAndOnsetFlowConfiguration = null,
-            expectedScreenState = PositiveContinueIsolation
-        )
-
-        // Current date: 6th Jan -> Analytics packet for: 5th Jan
-        assertOnFields {
-            // Now in isolation due to positive unconfirmed test result
-            assertEquals(1, Metrics::receivedPositiveTestResult)
-            assertEquals(1, Metrics::receivedPositiveTestResultEnteredManually)
-            assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForUnconfirmedTestBackgroundTick)
-            assertPresent(Metrics::isIsolatingForTestedLFDPositiveBackgroundTick)
-            assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
-            assertEquals(1, Metrics::positiveLabResultAfterPositiveLFD)
-            assertEquals(1, Metrics::askedToShareExposureKeysInTheInitialFlow)
-            assertEquals(1, Metrics::consentedToShareExposureKeysInTheInitialFlow)
-            assertEquals(1, Metrics::successfullySharedExposureKeys)
-        }
-
-        // Dates: 7th-12th Jan -> Analytics packets for: 6th-11th Jan
-        assertOnFieldsForDateRange(7..12) {
-            // Still in isolation
-            assertPresent(Metrics::isIsolatingBackgroundTick)
-            assertPresent(Metrics::isIsolatingForTestedLFDPositiveBackgroundTick)
-            assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
-        }
-
-        // Dates: 13th-26th Jan -> Analytics packets for: 12th-25th Jan
-        assertOnFieldsForDateRange(13..26) {
-            // Isolation is over, and analytics are not kept
-            assertNull(Metrics::hasTestedLFDPositiveBackgroundTick)
-        }
-
-        // Current date: 27th Jan -> Analytics packet for: 26th Jan
-        // Previous isolation reason no longer stored
-        assertAnalyticsPacketIsNormal()
-    }
 
     @Test
-    fun enterNegativePCRTest_receiveOldPositiveLFDTest_isolateAndShareKeys() {
+    fun enterNegativePCRTest_receiveOldPositiveLFDTest_isolateAndShareKeys() = runWithFeature(SELF_REPORTING, enabled = false) {
         startTestActivity<MainActivity>()
 
         // Current date: 1st Jan
@@ -209,58 +212,64 @@ class TestResultScenarioAnalyticsTest : AnalyticsTest() {
     }
 
     @Test
-    fun enterPositiveLFD_receiveNegativePCRWithinTimeLimit_sendNegativeLabResultAfterPositiveLFDWithinTimeLimit() {
-        enterPositiveLFD_receivePCR_sendAnalyticsEvent(
-            lfdType = RAPID_RESULT,
-            pcrResult = NEGATIVE,
-            expectedField = Metrics::negativeLabResultAfterPositiveLFDWithinTimeLimit
-        )
-    }
+    fun enterPositiveLFD_receiveNegativePCRWithinTimeLimit_sendNegativeLabResultAfterPositiveLFDWithinTimeLimit() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterPositiveLFD_receivePCR_sendAnalyticsEvent(
+                lfdType = RAPID_RESULT,
+                pcrResult = NEGATIVE,
+                expectedField = Metrics::negativeLabResultAfterPositiveLFDWithinTimeLimit
+            )
+        }
 
     @Test
-    fun enterPositiveLFD_receiveNegativePCROutsideTimeLimit_sendNegativeLabResultAfterPositiveLFDOutsideTimeLimit() {
-        enterPositiveLFD_receivePCR_sendAnalyticsEvent(
-            lfdType = RAPID_RESULT,
-            pcrResult = NEGATIVE,
-            isConfirmatoryTestOutsideDayLimit = true,
-            expectedField = Metrics::negativeLabResultAfterPositiveLFDOutsideTimeLimit
-        )
-    }
+    fun enterPositiveLFD_receiveNegativePCROutsideTimeLimit_sendNegativeLabResultAfterPositiveLFDOutsideTimeLimit() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterPositiveLFD_receivePCR_sendAnalyticsEvent(
+                lfdType = RAPID_RESULT,
+                pcrResult = NEGATIVE,
+                isConfirmatoryTestOutsideDayLimit = true,
+                expectedField = Metrics::negativeLabResultAfterPositiveLFDOutsideTimeLimit
+            )
+        }
 
     @Test
-    fun enterPositiveLFD_receivePositivePCR_sendPositiveLabResultAfterPositiveLFD() {
-        enterPositiveLFD_receivePCR_sendAnalyticsEvent(
-            lfdType = RAPID_RESULT,
-            pcrResult = POSITIVE,
-            expectedField = Metrics::positiveLabResultAfterPositiveLFD
-        )
-    }
+    fun enterPositiveLFD_receivePositivePCR_sendPositiveLabResultAfterPositiveLFD() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterPositiveLFD_receivePCR_sendAnalyticsEvent(
+                lfdType = RAPID_RESULT,
+                pcrResult = POSITIVE,
+                expectedField = Metrics::positiveLabResultAfterPositiveLFD
+            )
+        }
 
     @Test
-    fun enterPositiveSelfReportLFD_receiveNegativePCRWithinTimeLimit_sendNegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit() {
-        enterPositiveLFD_receivePCR_sendAnalyticsEvent(
-            lfdType = RAPID_SELF_REPORTED,
-            pcrResult = NEGATIVE,
-            expectedField = Metrics::negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit
-        )
-    }
+    fun enterPositiveSelfReportLFD_receiveNegativePCRWithinTimeLimit_sendNegativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterPositiveLFD_receivePCR_sendAnalyticsEvent(
+                lfdType = RAPID_SELF_REPORTED,
+                pcrResult = NEGATIVE,
+                expectedField = Metrics::negativeLabResultAfterPositiveSelfRapidTestWithinTimeLimit
+            )
+        }
 
     @Test
-    fun enterPositiveSelfReportLFD_receiveNegativePCROutsideTimeLimit_sendNegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit() {
-        enterPositiveLFD_receivePCR_sendAnalyticsEvent(
-            lfdType = RAPID_SELF_REPORTED,
-            pcrResult = NEGATIVE,
-            isConfirmatoryTestOutsideDayLimit = true,
-            expectedField = Metrics::negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit
-        )
-    }
+    fun enterPositiveSelfReportLFD_receiveNegativePCROutsideTimeLimit_sendNegativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterPositiveLFD_receivePCR_sendAnalyticsEvent(
+                lfdType = RAPID_SELF_REPORTED,
+                pcrResult = NEGATIVE,
+                isConfirmatoryTestOutsideDayLimit = true,
+                expectedField = Metrics::negativeLabResultAfterPositiveSelfRapidTestOutsideTimeLimit
+            )
+        }
 
     @Test
-    fun enterPositiveSelfReportLFD_receivePositivePCR_sendPositiveLabResultAfterPositiveSelfRapidTest() {
-        enterPositiveLFD_receivePCR_sendAnalyticsEvent(
-            lfdType = RAPID_SELF_REPORTED,
-            pcrResult = POSITIVE,
-            expectedField = Metrics::positiveLabResultAfterPositiveSelfRapidTest
-        )
-    }
+    fun enterPositiveSelfReportLFD_receivePositivePCR_sendPositiveLabResultAfterPositiveSelfRapidTest() =
+        runWithFeature(SELF_REPORTING, enabled = false) {
+            enterPositiveLFD_receivePCR_sendAnalyticsEvent(
+                lfdType = RAPID_SELF_REPORTED,
+                pcrResult = POSITIVE,
+                expectedField = Metrics::positiveLabResultAfterPositiveSelfRapidTest
+            )
+        }
 }

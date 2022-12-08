@@ -28,6 +28,7 @@ class FetchKeysHelperTest {
     )
 
     private val testSubject = spyk(FetchKeysHelper(callback, fetchTemporaryExposureKeys, coroutineScope, keySharingInfo))
+    private val testSubjectWithoutKeySharingInfo = spyk(FetchKeysHelper(callback, fetchTemporaryExposureKeys, coroutineScope, null))
 
     @Test
     fun `invokes callback's onSuccess after fetching keys successfully`() = coroutineScope.runBlockingTest {
@@ -38,6 +39,19 @@ class FetchKeysHelperTest {
         testSubject.fetchKeys()
 
         verify { callback.onSuccess(temporaryExposureKeys, keySharingInfo.diagnosisKeySubmissionToken) }
+
+        confirmVerified(callback)
+    }
+
+    @Test
+    fun `invokes callback's onSuccess after fetching keys successfully without keySharingInfo`() = coroutineScope.runBlockingTest {
+        val temporaryExposureKeys = listOf<NHSTemporaryExposureKey>()
+        coEvery { fetchTemporaryExposureKeys(null) } returns
+                TemporaryExposureKeysFetchResult.Success(temporaryExposureKeys)
+
+        testSubjectWithoutKeySharingInfo.fetchKeys()
+
+        verify { callback.onSuccess(temporaryExposureKeys, null) }
 
         confirmVerified(callback)
     }

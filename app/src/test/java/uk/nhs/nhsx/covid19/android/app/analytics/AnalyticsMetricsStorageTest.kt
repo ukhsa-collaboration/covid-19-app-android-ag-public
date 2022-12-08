@@ -106,7 +106,12 @@ class AnalyticsMetricsStorageTest : ProviderTest<AnalyticsMetricsStorage, Metric
             "completedV2SymptomsQuestionnaireAndStayAtHome":91,
             "hasCompletedV2SymptomsQuestionnaireBackgroundTick":92,
             "hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick":93,
-            "completedV3SymptomsQuestionnaireAndHasSymptoms":94
+            "completedV3SymptomsQuestionnaireAndHasSymptoms":94,
+            "selfReportedVoidSelfLFDTestResultEnteredManually":95,
+            "selfReportedNegativeSelfLFDTestResultEnteredManually":96,
+            "isPositiveSelfLFDFree":97,
+            "selfReportedPositiveSelfLFDOnGov":98,
+            "completedSelfReportingTestFlow":99
             }
             """.trimIndent().replace("\n", "")
         private val metrics = Metrics(
@@ -196,6 +201,11 @@ class AnalyticsMetricsStorageTest : ProviderTest<AnalyticsMetricsStorage, Metric
             hasCompletedV2SymptomsQuestionnaireBackgroundTick = 92,
             hasCompletedV2SymptomsQuestionnaireAndStayAtHomeBackgroundTick = 93,
             completedV3SymptomsQuestionnaireAndHasSymptoms = 94,
+            selfReportedVoidSelfLFDTestResultEnteredManually = 95,
+            selfReportedNegativeSelfLFDTestResultEnteredManually = 96,
+            isPositiveSelfLFDFree = 97,
+            selfReportedPositiveSelfLFDOnGov = 98,
+            completedSelfReportingTestFlow = 99,
         )
     }
 }

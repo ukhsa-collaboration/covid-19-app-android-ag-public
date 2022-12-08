@@ -13,14 +13,18 @@ class SubmitTemporaryExposureKeys @Inject constructor(
 ) {
     suspend operator fun invoke(
         exposureKeys: List<NHSTemporaryExposureKey>,
-        diagnosisKeySubmissionToken: String
+        diagnosisKeySubmissionToken: String = DEFAULT_DIAGNOSIS_KEY_SUBMISSION_TOKEN,
+        isPrivateJourney: Boolean = false,
+        testKit: String = "LAB_RESULT"
     ): Result<Unit> =
         withContext(Dispatchers.IO) {
             try {
                 keysSubmissionApi.submitGeneratedKeys(
                     TemporaryExposureKeysPayload(
                         diagnosisKeySubmissionToken = diagnosisKeySubmissionToken,
-                        temporaryExposureKeys = exposureKeys
+                        temporaryExposureKeys = exposureKeys,
+                        isPrivateJourney = isPrivateJourney,
+                        testKit = testKit
                     )
                 )
                 return@withContext Result.Success(Unit)
@@ -29,3 +33,5 @@ class SubmitTemporaryExposureKeys @Inject constructor(
             }
         }
 }
+
+const val DEFAULT_DIAGNOSIS_KEY_SUBMISSION_TOKEN = "00000000-0000-0000-0000-000000000000"

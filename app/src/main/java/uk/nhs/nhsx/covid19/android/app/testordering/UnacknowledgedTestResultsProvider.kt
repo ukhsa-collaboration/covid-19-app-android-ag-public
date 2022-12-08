@@ -78,7 +78,8 @@ data class ReceivedTestResult(
     val requiresConfirmatoryTest: Boolean = false,
     val shouldOfferFollowUpTest: Boolean? = null,
     val symptomsOnsetDate: SymptomsDate? = null,
-    override val confirmatoryDayLimit: Int? = null
+    override val confirmatoryDayLimit: Int? = null,
+    val isSelfReporting: Boolean = false
 ) : TestResult, Parcelable {
 
     override fun isPositive(): Boolean =

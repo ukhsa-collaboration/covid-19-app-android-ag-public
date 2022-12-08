@@ -120,7 +120,7 @@ class ShareKeysReminderViewModelTest {
     }
 
     @Test
-    fun `on fetch keys success`() {
+    fun `on fetch keys success should navigate to submit keys progress activity`() {
         val keys = emptyList<NHSTemporaryExposureKey>()
         val token = ""
 
@@ -129,6 +129,19 @@ class ShareKeysReminderViewModelTest {
         verifyOrder {
             analyticsEventProcessor.track(ConsentedToShareExposureKeysInReminderScreen)
             navigationObserver.onChanged(SubmitKeysProgressActivity(keys, token))
+        }
+    }
+
+    @Test
+    fun `on fetch keys success unexpectedly called without token finishes and reset keySharingInfo`() {
+        val keys = emptyList<NHSTemporaryExposureKey>()
+        val token = null
+
+        testSubject.onFetchKeysSuccess(keys, token)
+
+        verifyOrder {
+            keySharingInfoProvider.reset()
+            navigationObserver.onChanged(Finish)
         }
     }
 

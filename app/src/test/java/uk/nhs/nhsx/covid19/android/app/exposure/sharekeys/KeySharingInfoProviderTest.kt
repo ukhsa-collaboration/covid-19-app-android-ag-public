@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.exposure.sharekeys
 
 import org.junit.jupiter.api.Test
+import uk.nhs.nhsx.covid19.android.app.remote.data.VirologyTestKitType.LAB_RESULT
 import uk.nhs.nhsx.covid19.android.app.util.ProviderTest
 import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectation
 import uk.nhs.nhsx.covid19.android.app.util.ProviderTestExpectationDirection.JSON_TO_OBJECT
@@ -21,7 +22,16 @@ class KeySharingInfoProviderTest : ProviderTest<KeySharingInfoProvider, KeyShari
             objectValue = keySharingInfo.copy(notificationSentDate = Instant.parse(notificationSentDate)),
             direction = JSON_TO_OBJECT
         ),
-
+        ProviderTestExpectation(
+            json = keySharingInfoAppVersion4FormatJson(),
+            objectValue = keySharingInfo,
+            direction = JSON_TO_OBJECT
+        ),
+        ProviderTestExpectation(
+            json = keySharingInfoAppVersion4FormatWithNotificationSentAndKeySharingDeclinedJson(),
+            objectValue = keySharingInfo.copy(hasDeclinedSharingKeys = true, notificationSentDate = Instant.parse(notificationSentDate)),
+            direction = JSON_TO_OBJECT
+        ),
     )
 
     @Test
@@ -56,20 +66,30 @@ class KeySharingInfoProviderTest : ProviderTest<KeySharingInfoProvider, KeyShari
         private const val token = "token"
         private const val acknowledgedDate = "2020-07-25T10:00:00Z"
         private const val notificationSentDate = "2020-07-25T11:00:00Z"
+        private const val isSelfReporting = false
+        private val testKitType = LAB_RESULT
         private val keySharingInfo = KeySharingInfo(
             diagnosisKeySubmissionToken = token,
             acknowledgedDate = Instant.parse(acknowledgedDate),
             notificationSentDate = null,
-            hasDeclinedSharingKeys = false
+            hasDeclinedSharingKeys = false,
+            isSelfReporting = isSelfReporting,
+            testKitType = testKitType
         )
 
         private fun keySharingInfoJson(hasDeclinedSharingKeys: Boolean = false) =
-            """{"diagnosisKeySubmissionToken":"$token","acknowledgedDate":"$acknowledgedDate","hasDeclinedSharingKeys":$hasDeclinedSharingKeys}"""
+            """{"diagnosisKeySubmissionToken":"$token","acknowledgedDate":"$acknowledgedDate","hasDeclinedSharingKeys":$hasDeclinedSharingKeys,"isSelfReporting":$isSelfReporting,"testKitType":"$testKitType"}"""
 
         private fun keySharingInfoJson(notificationSentDate: String, hasDeclinedSharingKeys: Boolean = false) =
-            """{"diagnosisKeySubmissionToken":"$token","acknowledgedDate":"$acknowledgedDate","notificationSentDate":"$notificationSentDate","hasDeclinedSharingKeys":$hasDeclinedSharingKeys}"""
+            """{"diagnosisKeySubmissionToken":"$token","acknowledgedDate":"$acknowledgedDate","notificationSentDate":"$notificationSentDate","hasDeclinedSharingKeys":$hasDeclinedSharingKeys,"isSelfReporting":$isSelfReporting,"testKitType":"$testKitType"}"""
 
         private fun keySharingInfoJsonWithAdditionalProperties() =
             """{"diagnosisKeySubmissionToken":"$token","acknowledgedDate":"$acknowledgedDate","notificationSentDate":"2020-07-25T11:00:00Z","hasDeclinedSharingKeys":false,"testKitType":"LAB_RESULT"}"""
+
+        private fun keySharingInfoAppVersion4FormatJson() =
+            """{"diagnosisKeySubmissionToken":"$token","acknowledgedDate":"$acknowledgedDate","hasDeclinedSharingKeys":false}"""
+
+        private fun keySharingInfoAppVersion4FormatWithNotificationSentAndKeySharingDeclinedJson() =
+            """{"diagnosisKeySubmissionToken":"$token","acknowledgedDate":"$acknowledgedDate","notificationSentDate":"2020-07-25T11:00:00Z","hasDeclinedSharingKeys":true}"""
     }
 }

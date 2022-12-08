@@ -26,7 +26,11 @@ class ShouldEnterShareKeysFlow @Inject constructor(
             } else {
                 None
             }
-        } else Initial
+        } else if (!keySharingInfo.isSelfReporting) {
+            Initial
+        } else {
+            None
+        }
     }
 }
 

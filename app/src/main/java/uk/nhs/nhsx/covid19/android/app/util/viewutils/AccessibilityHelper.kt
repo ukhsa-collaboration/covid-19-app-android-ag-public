@@ -63,6 +63,22 @@ fun AppCompatActivity.setNavigateUpToolbar(
     )
 }
 
+fun AppCompatActivity.setNavigateUpToolbarWithCustomBackButtonDescriptionResId(
+    toolbar: MaterialToolbar,
+    @StringRes titleResId: Int,
+    @StringRes upContentDescriptionResId: Int,
+    @DrawableRes upIndicator: Int = R.drawable.ic_arrow_back_white,
+    listenerAction: () -> Unit = {}
+) {
+    setNavigateUpToolbar(
+        toolbar = toolbar,
+        titleResId = titleResId,
+        upContentDescription = upContentDescriptionResId,
+        upIndicator = upIndicator,
+        listenerAction = listenerAction
+    )
+}
+
 private fun AppCompatActivity.setNavigateUpToolbar(
     toolbar: MaterialToolbar,
     @StringRes titleResId: Int,
@@ -75,6 +91,29 @@ private fun AppCompatActivity.setNavigateUpToolbar(
     supportActionBar?.setHomeAsUpIndicator(upIndicator)
     supportActionBar?.setHomeActionContentDescription(upContentDescription)
     supportActionBar?.title = getString(titleResId)
+    toolbar.setNavigationOnClickListener {
+        listenerAction()
+        onBackPressed()
+    }
+
+    toolbar.getChildAt(0)?.let {
+        if (it is TextView) {
+            it.setUpAccessibilityHeading()
+        }
+    }
+}
+
+fun AppCompatActivity.setNavigateUpToolbarWithoutTitle(
+    toolbar: MaterialToolbar,
+    @DrawableRes upIndicator: Int,
+    @StringRes upContentDescription: Int = R.string.go_back,
+    listenerAction: () -> Unit = {}
+) {
+    setSupportActionBar(toolbar)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.setHomeAsUpIndicator(upIndicator)
+    supportActionBar?.setHomeActionContentDescription(upContentDescription)
+    supportActionBar?.setDisplayShowTitleEnabled(false)
     toolbar.setNavigationOnClickListener {
         listenerAction()
         onBackPressed()

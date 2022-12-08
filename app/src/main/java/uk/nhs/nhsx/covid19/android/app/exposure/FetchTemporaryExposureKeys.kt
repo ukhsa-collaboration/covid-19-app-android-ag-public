@@ -17,27 +17,41 @@ class FetchTemporaryExposureKeys @Inject constructor(
     private val transmissionRiskLevelApplier: TransmissionRiskLevelApplier
 ) {
 
-    suspend operator fun invoke(keySharingInfo: KeySharingInfo): TemporaryExposureKeysFetchResult =
+    suspend operator fun invoke(keySharingInfo: KeySharingInfo?): TemporaryExposureKeysFetchResult =
         withContext(Dispatchers.IO) {
-            runCatching {
-                val keys: List<NHSTemporaryExposureKey> =
+            if (keySharingInfo == null) {
+                runCatching {
                     exposureNotificationApi.temporaryExposureKeyHistory()
+                }.fold(
+                    onFailure = { t ->
+                        when (t) {
+                            is ApiException -> handleApiException(t)
+                            else -> Failure(t)
+                        }
+                    },
+                    onSuccess = { Success(it) }
+                )
+            } else {
+                runCatching {
+                    val keys: List<NHSTemporaryExposureKey> =
+                        exposureNotificationApi.temporaryExposureKeyHistory()
 
-                transmissionRiskLevelApplier.applyTransmissionRiskLevels(keys, keySharingInfo)
-                    .filter {
-                        it.transmissionRiskLevel != null &&
-                            it.transmissionRiskLevel > MIN_TRANSMISSION_RISK_LEVEL &&
-                            it.rollingPeriod == 144
-                    }
-            }.fold(
-                onFailure = { t ->
-                    when (t) {
-                        is ApiException -> handleApiException(t)
-                        else -> Failure(t)
-                    }
-                },
-                onSuccess = { Success(it) }
-            )
+                    transmissionRiskLevelApplier.applyTransmissionRiskLevels(keys, keySharingInfo)
+                        .filter {
+                            it.transmissionRiskLevel != null &&
+                                    it.transmissionRiskLevel > MIN_TRANSMISSION_RISK_LEVEL &&
+                                    it.rollingPeriod == 144
+                        }
+                }.fold(
+                    onFailure = { t ->
+                        when (t) {
+                            is ApiException -> handleApiException(t)
+                            else -> Failure(t)
+                        }
+                    },
+                    onSuccess = { Success(it) }
+                )
+            }
         }
 
     private fun handleApiException(apiException: ApiException): TemporaryExposureKeysFetchResult =

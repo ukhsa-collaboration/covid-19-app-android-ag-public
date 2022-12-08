@@ -90,4 +90,93 @@ class IsKeySubmissionSupportedTest {
 
         assertTrue(isKeySubmissionSupported(testResult))
     }
+
+    @Test
+    fun `when self reporting journey and test result is not positive return false`() {
+        every { testResult.isPositive() } returns false
+
+        assertFalse(isKeySubmissionSupported(testResult, isSelfReportJourney = true))
+    }
+
+    @Test
+    fun `when self reporting journey and test result does not support key submission then return false`() {
+        every { testResult.diagnosisKeySubmissionSupported } returns false
+
+        assertFalse(isKeySubmissionSupported(testResult, isSelfReportJourney = true))
+    }
+
+    @Test
+    fun `when self reporting journey and test result supports key submission and keySharingInfo not null, but key submission should be prevented then return false`() {
+        every { testResult.diagnosisKeySubmissionSupported } returns true
+        every { isolationStateMachine.readState() } returns currentIsolationState
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                currentIsolationState,
+                testResult,
+                Instant.now(fixedClock)
+            )
+        } returns DoNotTransition(preventKeySubmission = true, keySharingInfo = mockk())
+
+        assertFalse(isKeySubmissionSupported(testResult, isSelfReportJourney = true))
+    }
+
+    @Test
+    fun `when test result supports key submission and key submission not prevented and keySharingInfo not null then return true`() {
+        every { testResult.diagnosisKeySubmissionSupported } returns true
+        every { isolationStateMachine.readState() } returns currentIsolationState
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                currentIsolationState,
+                testResult,
+                Instant.now(fixedClock)
+            )
+        } returns DoNotTransition(preventKeySubmission = false, keySharingInfo = mockk())
+
+        assertTrue(isKeySubmissionSupported(testResult, isSelfReportJourney = true))
+    }
+
+    @Test
+    fun `when self reporting journey and test result supports key submission, but key submission should be prevented and keySharingInfo is null, then return false`() {
+        every { testResult.diagnosisKeySubmissionSupported } returns true
+        every { isolationStateMachine.readState() } returns currentIsolationState
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                currentIsolationState,
+                testResult,
+                Instant.now(fixedClock)
+            )
+        } returns DoNotTransition(preventKeySubmission = true, keySharingInfo = null)
+
+        assertFalse(isKeySubmissionSupported(testResult, isSelfReportJourney = true))
+    }
+
+    @Test
+    fun `when test result supports key submission and key submission not prevented, but keySharingInfo is null then return false`() {
+        every { testResult.diagnosisKeySubmissionSupported } returns true
+        every { isolationStateMachine.readState() } returns currentIsolationState
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                currentIsolationState,
+                testResult,
+                Instant.now(fixedClock)
+            )
+        } returns DoNotTransition(preventKeySubmission = false, keySharingInfo = null)
+
+        assertFalse(isKeySubmissionSupported(testResult, isSelfReportJourney = true))
+    }
+
+    @Test
+    fun `when self reporting journey and test result supports key submission and state transition imminent then return true`() {
+        every { testResult.diagnosisKeySubmissionSupported } returns true
+        every { isolationStateMachine.readState() } returns currentIsolationState
+        every {
+            testResultIsolationHandler.computeTransitionWithTestResultAcknowledgment(
+                currentIsolationState,
+                testResult,
+                Instant.now(fixedClock)
+            )
+        } returns Transition(mockk(), mockk())
+
+        assertTrue(isKeySubmissionSupported(testResult, isSelfReportJourney = true))
+    }
 }

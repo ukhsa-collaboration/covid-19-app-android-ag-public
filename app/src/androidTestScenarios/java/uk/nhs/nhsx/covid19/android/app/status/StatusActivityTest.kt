@@ -8,6 +8,7 @@ import com.jeroenmols.featureflag.framework.FeatureFlag.COVID19_GUIDANCE_HOME_SC
 import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_COVID_STATS
 import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_ENGLAND
 import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_ISOLATION_HOME_SCREEN_BUTTON_WALES
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_REPORTING
 import com.jeroenmols.featureflag.framework.FeatureFlag.TESTING_FOR_COVID19_HOME_SCREEN_BUTTON
 import com.jeroenmols.featureflag.framework.FeatureFlag.VENUE_CHECK_IN_BUTTON
 import org.junit.Test
@@ -479,7 +480,7 @@ class StatusActivityTest(override val configuration: TestConfiguration) : Espres
     }
 
     @Test
-    fun clickLinkTestResult_whenBackPressed_linkTestResultButtonShouldBeEnabled() {
+    fun clickLinkTestResult_whenBackPressed_linkTestResultButtonShouldBeEnabled() = runWithFeature(SELF_REPORTING, enabled = false) {
         startTestActivity<StatusActivity>()
 
         statusRobot.clickLinkTestResult()

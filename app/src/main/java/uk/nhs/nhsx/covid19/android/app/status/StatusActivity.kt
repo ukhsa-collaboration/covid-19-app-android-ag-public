@@ -7,6 +7,7 @@ import android.os.Parcelable
 import android.provider.Settings
 import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
+import com.jeroenmols.featureflag.framework.FeatureFlag.SELF_REPORTING
 import com.jeroenmols.featureflag.framework.FeatureFlag.TESTING_FOR_COVID19_HOME_SCREEN_BUTTON
 import com.jeroenmols.featureflag.framework.FeatureFlag.VENUE_CHECK_IN_BUTTON
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
@@ -65,6 +66,7 @@ import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubActivity
 import uk.nhs.nhsx.covid19.android.app.status.guidancehub.GuidanceHubWalesActivity
 import uk.nhs.nhsx.covid19.android.app.status.isolationhub.IsolationHubActivity
 import uk.nhs.nhsx.covid19.android.app.status.localmessage.LocalMessageActivity
+import uk.nhs.nhsx.covid19.android.app.status.selfreporttest.TestTypeActivity
 import uk.nhs.nhsx.covid19.android.app.status.testinghub.TestingHubActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.TestResultActivity
 import uk.nhs.nhsx.covid19.android.app.testordering.linktestresult.LinkTestResultActivity
@@ -231,7 +233,11 @@ class StatusActivity : StatusBaseActivity() {
 
         optionLinkTestResult.setOnSingleClickListener {
             optionLinkTestResult.isEnabled = false
-            startActivity<LinkTestResultActivity>()
+            if (RuntimeBehavior.isFeatureEnabled(SELF_REPORTING)) {
+                startActivity<TestTypeActivity>()
+            } else {
+                startActivity<LinkTestResultActivity>()
+            }
         }
 
         optionSettings.setOnSingleClickListener {

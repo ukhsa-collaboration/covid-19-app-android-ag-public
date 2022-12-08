@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/selfReportNegativeVoidResultContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/primaryToolbar"
+        layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="@dimen/margin_horizontal"
+            android:paddingBottom="@dimen/vertical_margin_large">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                style="@style/Title1"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/self_report_negative_or_void_test_result_header" />
+
+            <TextView
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/self_report_negative_or_void_test_result_para_one"/>
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                style="@style/LinkText.WithIcon"
+                android:id="@+id/englandSelfReportedLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/self_report_negative_or_void_test_result_link_text_one"
+                app:linkUrl="@string/self_report_negative_or_void_test_result_link_url_one" />
+
+            <TextView
+                style="@style/Body1"
+                android:id="@+id/englandSelfReportedEligibleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/self_report_negative_or_void_test_result_para_two"/>
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                style="@style/Title2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/self_report_negative_or_void_test_result_subtitle" />
+
+            <TextView
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/self_report_negative_or_void_test_result_para_three"/>
+
+            <TextView
+                style="@style/Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/self_report_negative_or_void_test_result_para_four"/>
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                style="@style/LinkText.WithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/self_report_negative_or_void_test_result_nhs_online_text"
+                app:linkUrl="@string/url_nhs_111_online" />
+
+            <Button
+                android:id="@+id/buttonReturnToHomeScreen"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/vertical_margin_large"
+                android:text="@string/back_to_home" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

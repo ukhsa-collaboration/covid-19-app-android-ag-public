@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/selfReportSymptomsContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/primaryToolbar"
+        layout="@layout/view_toolbar_primary" />
+
+    <ScrollView
+        android:id="@+id/selfReportSymptomsScrollViewContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal_reduced"
+            android:paddingVertical="@dimen/vertical_margin">
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ErrorView
+                android:id="@+id/selfReportSymptomsErrorView"
+                app:error_description="@string/self_report_symptoms_error_description"
+                app:error_title="@string/error_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                tools:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin"
+                android:orientation="horizontal"
+                android:paddingEnd="4dp">
+
+                <View
+                    android:id="@+id/selfReportSymptomsErrorIndicator"
+                    android:layout_width="4dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/error_red"
+                    android:visibility="invisible"
+                    tools:visibility="visible" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                        style="@style/Title1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
+                        android:layout_marginBottom="@dimen/vertical_margin"
+                        android:text="@string/self_report_symptoms_header" />
+
+                    <uk.nhs.nhsx.covid19.android.app.widgets.BulletedParagraphsContainer
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
+                        app:paddingBetweenItems="8dp"
+                        android:layout_marginVertical="8dp"
+                        app:rawText="@string/self_report_symptoms_bullets_content"/>
+
+                    <TextView
+                        android:id="@+id/selfReportSymptomsErrorText"
+                        style="@style/ErrorTextBold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/vertical_margin"
+                        android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
+                        android:text="@string/self_report_symptoms_error_description"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <uk.nhs.nhsx.covid19.android.app.widgets.BinaryRadioGroup
+                        android:id="@+id/selfReportSymptomsBinaryRadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/vertical_margin"
+                        android:paddingHorizontal="@dimen/margin_horizontal_reduced_relative"
+                        app:option1ContentDescription="@string/self_report_symptoms_radio_button_option_yes"
+                        app:option1Text="@string/self_report_symptoms_radio_button_option_yes"
+                        app:option2ContentDescription="@string/self_report_symptoms_radio_button_option_no"
+                        app:option2Text="@string/self_report_symptoms_radio_button_option_no" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/selfReportSymptomsContinueButton"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_horizontal_reduced"
+                android:layout_marginVertical="@dimen/vertical_margin"
+                android:text="@string/continue_button" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
