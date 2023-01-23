@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/amber"
+    android:background="@color/amber_improved"
     android:elevation="5dp"
     android:padding="@dimen/local_message_banner_padding"
     tools:parentTag="android.widget.LinearLayout">
@@ -42,12 +42,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:drawableEnd="@drawable/ic_chevron_right"
-            android:drawableTint="#005EB8"
+            android:drawableTint="#004299"
             android:gravity="center_vertical"
             android:includeFontPadding="false"
             android:paddingEnd="8dp"
             android:text="@string/local_message_banner_read_more"
-            android:textColor="@color/primaryColorOnAmber"
+            android:textColor="@color/primaryColorOnAmberImproved"
             android:textSize="16sp" />
     </LinearLayout>
 </merge>

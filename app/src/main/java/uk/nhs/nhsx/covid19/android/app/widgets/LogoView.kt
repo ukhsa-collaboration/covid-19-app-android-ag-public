@@ -66,7 +66,6 @@ class LogoView @JvmOverloads constructor(
 
     private fun setLogo() = launch {
         val postCodeDistrict = localAuthorityPostCodeProvider.getPostCodeDistrict()
-
         val logoWithDescription = LogoWithDescription.forDistrict(postCodeDistrict)
 
         with(binding) {
@@ -95,14 +94,14 @@ class LogoView @JvmOverloads constructor(
 
 enum class LogoWithDescription(@DrawableRes val logoImage: Int, @StringRes val description: Int?) {
     COVID_19(R.drawable.ic_nhs_covid_logo, null),
-    ENGLAND_TEST_TRACE(R.drawable.ic_nhs_covid_logo, R.string.logo_nhs_england_description),
-    WALES_TEST_TRACE(R.drawable.wales_test_trace_logo, R.string.logo_nhs_wales_description);
+    ENGLAND_NHS(R.drawable.ic_nhs_covid_logo, R.string.logo_nhs_england_description),
+    WALES_NHS(R.drawable.nhs_wales_logo, R.string.logo_nhs_wales_description);
 
     companion object {
         fun forDistrict(district: PostCodeDistrict?): LogoWithDescription {
             return when (district) {
-                ENGLAND -> ENGLAND_TEST_TRACE
-                WALES -> WALES_TEST_TRACE
+                ENGLAND -> ENGLAND_NHS
+                WALES -> WALES_NHS
                 else -> COVID_19
             }
         }

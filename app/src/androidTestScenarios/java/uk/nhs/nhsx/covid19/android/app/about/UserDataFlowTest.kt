@@ -30,9 +30,11 @@ class UserDataFlowTest : EspressoTest() {
 
         waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
+        val fullExpectedExpiryDate = "Monday, 21 December 2020"
+
         val expectedExpiryDate = "21 Dec 2020"
 
-        statusRobot.checkIsolationSubtitleIsDisplayedWithText(testAppContext.app, expectedExpiryDate)
+        statusRobot.checkIsolationSubtitleIsDisplayedWithText(testAppContext.app, fullExpectedExpiryDate)
 
         statusRobot.clickSettings()
 

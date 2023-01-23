@@ -304,7 +304,7 @@
     <string name="link_test_result_error_unknown">કંઈક ખોટું થઇ ગયું હતું. મહેરબાની કરી ને ફરી થી પ્રયાસ કરો.</string>
     <string name="logo_nhs_england_description">NHS Covid 19 ઍપ</string>
     <string name="logo_nhs_generic_description">NHS Covid 19</string>
-    <string name="logo_nhs_wales_description">NHS વેલ્સ ટેસ્ટ ટ્રેસ પ્રોટેક્ટ</string>
+    <string name="logo_nhs_wales_description">NHS વેલ્સ</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_text_updating_database">લોડ થઈ રહ્યું છે...</string>
@@ -330,9 +330,9 @@
     <string name="qr_code_intro_text">જો તમે કોઈ એક સ્થળમાં પ્રવેશ કરી રહયા હો (દાખલા તરીકે બાર અથવા રેસ્ટોરા) કે જેઓની પાસે ઓફિશ્યલ NHS QR કોડ પોસ્ટર હોય તો, આ એપનો ઉપયોગ કરી તેને સ્કેન કરો. તમે સ્થળમાં દાખલ થયાના સમયની ત્યારબાદ એપ રજિસ્ટરકરે છે.\n\nસ્થળની તપાસનો ઉપયોગ કરવાથી, જો કોરોનાવાઈરસવાળા લોકોએ તમારી માફક એકજ સરખા સમયે એકજ સરખા સ્થળની મુલાકાત લીધી હોય તો તમને સૂચના મળી શકે.  આવી સૂચનામાં પ્રત્યેક સલાહનો સમાવેશ થઈ શકે, જેમકે કોરોનાવાઈરસ રોગના લક્ષણોને માટે સાવધાન રહેવું.</string>
     <string name="ask_me_later">મને પછીથી પૂછો કે વિનંતી કરો</string>
     <string name="notification_text_recommended_app_update">વધુ માહિતી માટે અહીં ટેપ કરો.</string>
-    <string name="notification_title_recommended_app_update">કૃપા કરી તમારા NHS COVID-19 એપને લેટેસ્ટ વર્શન માટે અપડેટ કરો</string>
+    <string name="notification_title_recommended_app_update">કૃપા કરી તમારા NHS COVID-19 એપને લેટેસ્ટ તમે માટે અપડેટ કરો</string>
     <string name="test_ordering_getting_tested_description">બુક એ ટેસ્ટ ફોર યોરસેલ્ફ એટલેકે તમારા પોતાના માટે ટેસ્ટ કે કસોટી નોંધાવાનું\' પસંદ કરવાથી તમને સરકારની કોરોનાવાઈરસ ટેસ્ટ કરનારી વેબસાઈટમાં લઈ જશે કે જયાં તમને તમારી થોડીક વ્યક્તિગત વિગતો પૂરી કરવા વિનંતી કરવામાં આવશે (જેમકે તમારું સરનામું) જેથી કરીને ટેસ્ટ કે કસોટી મેળવી શકાય. વેબસાઈટમાં તમે જે દાખલ કરો તે કોઈ પણ શેર કરવામાં આવશે નહિ.\n\nકોઈ એક ડિજિટલ (આંકડાને લગતુ) \'ટોકન કે નિશાની- ચિહ્નનું\' નિર્માણ કરવામાં આવશે કે જે અમને એપ માટે તમારું પરિણામ પાછુ મેળવવામાં મદદરૂપ બનશે.</string>
-    <string name="update_in_play_store">હમણાંજ તમારી એપને અપડેટ કરો</string>
+    <string name="update_in_play_store">હમણાં જ તમારી એપને અપડેટ કરો</string>
     <string name="updated_privacy_control_text">અમે નવી નીતિ સાથે\n\n એપ્લિકેશનને અનુરૂપ બનાવવા માટે તેમાં ફેરફારો કર્યા છે. જેઓનું સંપૂર્ણપણે રસીકરણ થઈ ગયું છે અથવા 18 વર્ષથી ઓછી ઉંમરના લોકો જો કોઈ એવા વ્યક્તિના સંપર્કમાં આવ્યા હોય કે જેમનું COVID-19 માટેના ટેસ્ટનું પરિણામ પોઝિટિવ આવ્યું હોય, તો તેઓને હવે સેલ્ફ-આઈસોલેટ થવાની સલાહ આપવામાં આવતી નથી, પરંતુ તેઓને ટેસ્ટ કરાવવાની સલાહ આપવામાં આવે છે.\nનવીનતમ સલાહ સાથે અપડેટ રહેવા માટે તમારા ઉપકરણ પર એપ્લિકેશન રાખો અને COVID-19 ના ફેલાવાને રોકવામાં સહાય કરો.\n\nઆ ફેરફારોને પ્રતિબિંબિત કરવા માટે ઉપયોગની શરતો અને ગોપનીયતા માટેની સૂચના અપડેટ કરવામાં આવી છે.</string>
     <string name="updated_privacy_title">અમારી પોલિસિ થતાં ફેરફારો</string>
     <string name="checkin_information_title_new">વધુ માહિતી</string>
@@ -514,7 +514,7 @@
     <string name="testing_hub_find_out_about_testing_description">COVID-19 (જો તમને લક્ષણો ન હોય તો) માટે રેપીડ લેટરલ ફલો ટેસ્ટ કેવી રીતે કરી શકાય છે, ટેસ્ટ કેવી રીતે કરવું અને તમારા ટેસ્ટ રિઝલ્ટનો મતલબ શું છે તે જાણો</string>
     <string name="testing_hub_find_out_about_testing_title" />
     <string name="testing_hub_title">COVID-19 માટે ટેસ્ટ કરાવો</string>
-    <string name="unknown_test_result_action_button">હમણાંજ તમારી એપને અપડેટ કરો</string>
+    <string name="unknown_test_result_action_button">હમણાં જ તમારી એપને અપડેટ કરો</string>
     <string name="unknown_test_result_description">તમારું ટેસ્ટ રિઝલ્ટ બરાબર છે, પણ એપના આ વર્ઝન દ્વારા સપોર્ટેડ નથી.\n\nકૃપા કરીને આગળ શું કરવું તે વિશે ઇમેઇલ અથવા ટેક્સ્ટ મેસેજ દ્વારા તમે પ્રાપ્ત કરેલ માર્ગદર્શનને અનુસરો.\n\nએકવાર તમે એપને અપડેટ કરો છો, તો તમારો રિઝલ્ટ કોડ કામ કરશે નહીં કારણ કે તે સમાપ્ત થઈ ગયો છે અથવા વધુ વખત દાખલ થયો છે.</string>
     <string name="unknown_test_result_please_update_app">તમારું ટેસ્ટ રિઝલ્ટ જોવા માટે એપને અપડેટ કરો</string>
     <string name="user_data_acknowledged_date">સ્વિકાર્યાની તારીખ</string>
@@ -874,7 +874,7 @@
         <item quantity="other">સુધી વધારાની સાવધાની લો અને અન્યોનું રક્ષણ કરો %1$s વાગ્યે 23:59. ત્યાં સુધી %2$s દિવસ બાકી છે.</item>
     </plurals>
     <string name="be_careful_until_date_title">વધારાની કાળજી લો અને અન્યોને સુરક્ષિત રાખો</string>
-    <string name="about_this_app_software_information_date_of_release_description">12/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">01/2023</string>
     <string name="back_to_home_screen">હોમ સ્ક્રીન પર પાછા</string>
     <string name="covid_guidance_hub_check_ssp_description">COVID-19 માટે ટેસ્ટિંગ અંગે જાણો</string>
     <string name="covid_guidance_hub_check_ssp_title">નવીનતમ COVID-19 ટેસ્ટિંગ માર્ગદર્શન</string>

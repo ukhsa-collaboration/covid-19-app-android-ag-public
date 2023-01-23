@@ -6,11 +6,7 @@
     android:orientation="vertical"
     android:layout_height="match_parent">
 
-    <uk.nhs.nhsx.covid19.android.app.widgets.LogoView
-        android:id="@+id/logoView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp" />
+    <include layout="@layout/include_onboarding_toolbar" />
 
     <ScrollView
         style="@style/ScrollContainer"

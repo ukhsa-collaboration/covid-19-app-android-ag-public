@@ -9,6 +9,7 @@ import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.databinding.ViewIsolationStatusBinding
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.Isolating
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
+import uk.nhs.nhsx.covid19.android.app.util.uiFullFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView.AnimationState.ANIMATION_DISABLED_EN_DISABLED
 import uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView.AnimationState.ANIMATION_DISABLED_EN_ENABLED
@@ -63,7 +64,7 @@ class IsolationStatusView @JvmOverloads constructor(
 
         val lastDayOfIsolation = isolation.expiryDate.minusDays(1)
         subTitleIsolationCountdown.text = context.getString(
-            R.string.isolation_until_date, lastDayOfIsolation.uiFormat(context)
+            R.string.isolation_until_date, lastDayOfIsolation.uiFullFormat(context)
         )
 
         isolationDaysToGo.text = daysToGo.toString()

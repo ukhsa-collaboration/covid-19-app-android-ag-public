@@ -25,6 +25,7 @@
     <color name="error_red">#D5281B</color>
     <color name="focus_yellow">#FFEB3B</color>
     <color name="amber">#FFB81C</color>
+    <color name="amber_improved">#FAB000</color>
 
     <!--no isolation, England colors-->
     <color name="no_isolation_blue">#00A9CE</color>
@@ -80,4 +81,5 @@
     <!-- local message banner -->
     <color name="colorOnAmber">#212B32</color>
     <color name="primaryColorOnAmber">#005EB8</color>
+    <color name="primaryColorOnAmberImproved">#004299</color>
 </resources>

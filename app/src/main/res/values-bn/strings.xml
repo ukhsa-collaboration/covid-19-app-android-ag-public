@@ -307,7 +307,7 @@
     <string name="link_test_result_error_unknown">কিছু ভুল হয়েছে। অনুগ্রহপূর্বক আবার চেষ্টা করুন।</string>
     <string name="logo_nhs_england_description">NHS Covid 19 অ্যাপ</string>
     <string name="logo_nhs_generic_description">NHS কোভিড 19</string>
-    <string name="logo_nhs_wales_description">NHS ওয়েল্‌স টেস্ট ট্রেস প্রোটেক্ট</string>
+    <string name="logo_nhs_wales_description">NHS ওয়েলস</string>
     <string name="notification_channel_background_work_description">These notifications inform about your app’s background activities</string>
     <string name="notification_channel_background_work_name">Background activities</string>
     <string name="notification_text_updating_database">লোড হচ্ছে…</string>
@@ -330,9 +330,9 @@
     <string name="qr_code_intro_text">করোনাভাইরাস আক্রান্ত কোন ব্যক্তি আপনার কাছাকাছি বা একই সময়ে কোন ভেন্যুতে গেলে এই ভেন্যু চেক-ইন ব্যবহার করে আপনি একটি নোটিফিকেশন পেতে সক্ষম হবেন। সেই নোটিফিকেশনে অন্তর্ভুক্ত থাকবে প্রাসঙ্গিক উপদেশ, যেমন করোনাভাইরাসের উপসর্গের উপর নজর রাখা।\n\nআপনি যদি একটি QR কোড স্ক্যান করতে না পারেন এবং অন্য কোনভাবে চেক ইন করতে চান তাহলে কর্মীদলের একজন সদস্যের সাথে কথা বলুন।</string>
     <string name="ask_me_later">আমাকে পরে স্মরণ করিয়ে দেবেন</string>
     <string name="notification_text_recommended_app_update">আরো তথ্যের জন্য এখানে ট্যাপ করুন।</string>
-    <string name="notification_title_recommended_app_update">দয়া করে আপনার এনএইচএস কোভিড-১৯ অ্যাপটি হালনাগাদ করুন</string>
+    <string name="notification_title_recommended_app_update">দয়া করে আপনার এনএইচএস কোভিড-১৯ অ্যাপটি আপডেট করুন</string>
     <string name="test_ordering_getting_tested_description">\'নিজের জন্য একটি পরীক্ষা বুকিং করুন\' বেছে নিলে তা আপনাকে সরকারের করোনাভাইরাস পরীক্ষার ওয়েবসাইটে নিয়ে যাবে যেখানে পরীক্ষার বন্দোবস্ত করার জন্য আপনাকে কিছু ব্যক্তিগত তথ্য (যেমন আপনার ঠিকানা) পূরণ করতে বলা হবে। আপনি ওয়েবসাইটে যে তথ্য দেবেন তার কোনকিছুই শেয়ার করা হবে না।\n\nএকটি ডিজিটাল \'টোকেন\' তৈরি হবে যা আপনার ফলাফল অ্যাপটিতে পৌঁছে দিতে আমাদের সহায়তা করবে।</string>
-    <string name="update_in_play_store">এখনই আপনার অ্যাপটি হালনাগাদ করুন</string>
+    <string name="update_in_play_store">এখনই আপনার অ্যাপটি আপডেট করুন</string>
     <string name="updated_privacy_control_text">NHS COVID-19 অ্যাপটি ব্যবহার করার জন্য আপনাকে ধন্যবাদ। \n\nনতুন নীতির সাথে সামঞ্জস্য রাখতে আমরা অ্যাপটিতে পরিবর্তন এনেছি। যারা পুরোপুরি টিকা নিয়েছে বা যাদের বয়স ১৮ বছরের কম তারা কোভিড-১৯-এ আক্রান্ত হিসাবে সনাক্ত হওয়া কারো সংস্পর্শে এসে থাকলে তাদের আর স্ব-বিচ্ছিন্ন থাকার পরামর্শ দেওয়া হচ্ছে না, তবে পরীক্ষা করাতে বলা হচ্ছে। \n\nআপনি যদি আক্রান্ত কারোর সংস্পর্শে আসার ফলে ইতিমধ্যেই স্ব-বিচ্ছিন্ন থাকতে শুরু করে থাকেন এবং সম্পূর্ণভাবে টিকাপ্রাপ্ত হন বা আপনার ১৮ বছরের কম বয়স হয়, তাহলে আপনার স্ব-বিচ্ছিন্ন থাকা অব্যাহত রাখতে হবে না। আপনার যদি উপসর্গ থাকে অথবা পরীক্ষায় পজিটিভ ধরা পড়ে, তাহলে আপনার স্ব-বিচ্ছিন্ন থাকার সময়কাল পূর্ণ করা উচিত।\n\nআপনার ডিভাইসে অ্যাপটি রাখুন যাতে সর্বশেষ পরামর্শ পেয়ে নিজেকে হালনাগাদ রাখতে পারেন ও কোভিড-১৯ এর বিস্তার থামাতে সাহায্য করতে পারেন। \n\nএসব পরিবর্তন প্রতিফলিত করার জন্য ব্যবহারের শর্তাবলী ও গোপনীয়তার বিজ্ঞপ্তি হালনাগাদ করা হয়েছে।</string>
     <string name="updated_privacy_title">আমাদের নীতিমালায় পরিবর্তনসমূহ</string>
     <string name="checkin_information_title_new">আরো তথ্যাদি</string>
@@ -514,7 +514,7 @@
     <string name="testing_hub_find_out_about_testing_description">কোভিড-১৯ (যদি উপসর্গ না থাকে) এর জন্য কীভাবে র‍্যাপিড ল্যাটারাল ফ্লো পরীক্ষা করা যায়, কীভাবে পরীক্ষা করানো যায় এবং আপনার পরীক্ষার ফলাফলের অর্থ কী তা জানুন</string>
     <string name="testing_hub_find_out_about_testing_title" />
     <string name="testing_hub_title">কোভিড-১৯ পরীক্ষা</string>
-    <string name="unknown_test_result_action_button">এখনই আপনার অ্যাপটি হালনাগাদ করুন</string>
+    <string name="unknown_test_result_action_button">এখনই আপনার অ্যাপটি আপডেট করুন</string>
     <string name="unknown_test_result_description">আপনার পরীক্ষার ফলাফল যথাবিহিত, তবে অ্যাপের এই সংস্করণে সমর্থিত নয়।\n\nএরপর কী করতে হবে সেই সম্পর্কে ইমেইল বা টেক্সট মেসেজের মাধ্যমে আপনি যে নির্দেশিকা পেয়েছেন তা অনুসরণ করুন।\n\nঅ্যাপটি আপডেট করার পর আপনার ফলাফলের কোডটি কাজ নাও করতে পারে এই কারণে যে এটি হয়তো মেয়াদোত্তীর্ণ বা বহুবার প্রবেশ করা হয়ে গেছে।</string>
     <string name="unknown_test_result_please_update_app">আপনার পরীক্ষার ফলাফল দেখতে অ্যাপটি আপডেট করুন</string>
     <string name="user_data_acknowledged_date">অ্যাকনলেজ করার তারিখ</string>
@@ -874,7 +874,7 @@
         <item quantity="other">পর্যন্ত অতিরিক্ত যত্ন নিন এবং অন্যদের সুরক্ষিত রাখুন %1$s এ 23:59 । তখন পর্যন্ত %2$s দিন বাকি আছে।</item>
     </plurals>
     <string name="be_careful_until_date_title">অতিরিক্ত যত্ন নিন এবং অন্যদের রক্ষা করুন</string>
-    <string name="about_this_app_software_information_date_of_release_description">12/2022</string>
+    <string name="about_this_app_software_information_date_of_release_description">01/2023</string>
     <string name="back_to_home_screen">হোম স্ক্রিনে ফিরে যান</string>
     <string name="covid_guidance_hub_check_ssp_description">COVID-19 এর পরীক্ষা সম্পর্কে জানুন</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 পরীক্ষার সর্বশেষ নির্দেশনা</string>
