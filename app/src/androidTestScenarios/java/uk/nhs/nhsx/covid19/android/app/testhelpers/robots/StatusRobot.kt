@@ -20,6 +20,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.positional.isFollowed
 import uk.nhs.nhsx.covid19.android.app.testhelpers.matcher.positional.isPrecededBy
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.interfaces.HasActivity
 import uk.nhs.nhsx.covid19.android.app.util.uiFormat
+import uk.nhs.nhsx.covid19.android.app.util.uiFullFormat
 import java.time.LocalDate
 
 class StatusRobot : HasActivity {
@@ -272,9 +273,9 @@ class StatusRobot : HasActivity {
         onView(withId(R.id.isolationView))
             .check(matches(withContentDescription(context.resources.getQuantityString(
                 R.plurals.isolation_view_accessibility_description_england,
-                6,
-                lastDayOfIsolation.uiFormat(context),
-                "6"
+                5,
+                lastDayOfIsolation.uiFullFormat(context),
+                "5"
             ))))
     }
 

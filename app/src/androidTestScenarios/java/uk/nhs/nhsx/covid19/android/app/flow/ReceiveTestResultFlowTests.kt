@@ -514,7 +514,7 @@ class ReceiveTestResultFlowTests : EspressoTest() {
         statusRobot.checkActivityIsDisplayed()
 
         val testResponse = receiveIndicativePosTestResultWithKeySubmissionNotSupported(
-            testEndDate = testEndDate.minus(DurationDays().england.indexCaseSinceTestResultEndDate.toLong(), ChronoUnit.DAYS),
+            testEndDate = testEndDate.minus(isolationHelper.isolationConfiguration.indexCaseSinceTestResultEndDate.toLong(), ChronoUnit.DAYS),
             confirmatoryDayLimit = 2
         )
 

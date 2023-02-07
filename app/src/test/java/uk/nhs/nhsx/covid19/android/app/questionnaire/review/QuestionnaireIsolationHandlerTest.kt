@@ -129,7 +129,7 @@ class QuestionnaireIsolationHandlerTest {
 
     @Test
     fun `when isSymptomaticSelfIsolationEnabled is false compute advice given user is not isolating due to positive test and has symptoms then isolates due to self assessment but no countdown timer`() {
-        val expectedRemainingDaysInIsolation = 6
+        val expectedRemainingDaysInIsolation = 5
 
         every { riskCalculator.isRiskAboveThreshold(selectedSymptoms, riskThreshold) } returns true
         every { isolationStateMachine.readLogicalState() } returns isolationHelper.neverInIsolation()

@@ -17,6 +17,7 @@
     <color name="tertiary_text_grey">#D8DDE0</color>
     <color name="background">#F0F4F5</color>
     <color name="surface_background">#FFFFFF</color>
+    <color name="overline_border">#4C6272</color>
     <color name="white">#FFFFFF</color>
     <color name="accordion_icon">#FFFFFF</color>
     <color name="transparent">#00000000</color>

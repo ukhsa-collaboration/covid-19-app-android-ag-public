@@ -26,19 +26,19 @@ data class CountrySpecificConfiguration(
 data class DurationDays(
     val england: CountrySpecificConfiguration = CountrySpecificConfiguration(
         contactCase = 11,
-        indexCaseSinceSelfDiagnosisOnset = 11,
-        indexCaseSinceSelfDiagnosisUnknownOnset = 9,
-        maxIsolation = 21,
-        indexCaseSinceTestResultEndDate = 11,
+        indexCaseSinceSelfDiagnosisOnset = 6,
+        indexCaseSinceSelfDiagnosisUnknownOnset = 4,
+        maxIsolation = 16,
+        indexCaseSinceTestResultEndDate = 6,
         pendingTasksRetentionPeriod = 14,
         testResultPollingTokenRetentionPeriod = 28
     ),
     val wales: CountrySpecificConfiguration = CountrySpecificConfiguration(
         contactCase = 11,
-        indexCaseSinceSelfDiagnosisOnset = 6,
-        indexCaseSinceSelfDiagnosisUnknownOnset = 6,
+        indexCaseSinceSelfDiagnosisOnset = 5,
+        indexCaseSinceSelfDiagnosisUnknownOnset = 5,
         maxIsolation = 16,
-        indexCaseSinceTestResultEndDate = 6,
+        indexCaseSinceTestResultEndDate = 5,
         pendingTasksRetentionPeriod = 14,
         testResultPollingTokenRetentionPeriod = 28
     )

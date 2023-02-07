@@ -30,7 +30,7 @@ class UserDataFlowTest : EspressoTest() {
 
         waitFor { statusRobot.checkIsolationViewIsDisplayed() }
 
-        val fullExpectedExpiryDate = "Monday, 21 December 2020"
+        val fullExpectedExpiryDate = "Monday 21 December 2020"
 
         val expectedExpiryDate = "21 Dec 2020"
 

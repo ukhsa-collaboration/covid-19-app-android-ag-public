@@ -72,7 +72,7 @@ fun LocalDate.uiFullFormat(context: Context): String {
         DateTimeFormatter.ofLocalizedDate(FULL).withLocale(context.getResourcesLocale())
             .format(this)
     } else {
-        DateTimeFormatter.ofPattern("eeee, d MMMM yyyy", context.getResourcesLocale())
+        DateTimeFormatter.ofPattern("eeee d MMMM yyyy", context.getResourcesLocale())
             .format(this)
     }
 }

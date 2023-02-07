@@ -874,7 +874,7 @@
         <item quantity="other">تک اضافی نگہداشت کریں اور دوسروں کی حفاظت کریں تک %1$s  بجے 23:59۔ اس وقت میں ابھی %2$s دن باقی ہے۔</item>
     </plurals>
     <string name="be_careful_until_date_title">اضافی دھیان رکھیں اور دوسروں کو بچائیں</string>
-    <string name="about_this_app_software_information_date_of_release_description">01/2023</string>
+    <string name="about_this_app_software_information_date_of_release_description">02/2023</string>
     <string name="back_to_home_screen">ہوم اسکرین پر واپس جائیں</string>
     <string name="covid_guidance_hub_check_ssp_description">COVID-19 کی جانچ کے بارے میں جانکاری حاصل کریں</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 کی جانچ سے متعلق تازہ ترین صلاح</string>

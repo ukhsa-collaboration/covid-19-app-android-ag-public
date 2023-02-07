@@ -171,7 +171,7 @@
     <string name="test_ordering_book_test_for_someone_else">حجز اختبار لشخصٍ آخر</string>
     <string name="error_title">توجد مشكلة</string>
     <string name="enable_exposure_notifications_title">السماح لـ \"Exposure notifications\" لكي يعمل هذا التطبيق</string>
-    <string name="enable_exposure_notifications_rationale">هذه هي الطريقة التي يخبرك بها التطبيق إذا ما كنت على اتصال وثيق بشخص ما ثبُتت إصابته بـ COVID-19.\n\nقد يتصل هاتفك بهذه الـ ’Exposure notifications’ أو ’Exposure logging’.\n\nانتقل الى إعدادات هاتفك وقم بالتغيير إلى \"السماح.\" \'(Allow)\'</string>
+    <string name="enable_exposure_notifications_rationale">هذه هي الطريقة التي يخبرك بها التطبيق إذا ما كنت على اتصال وثيق بشخص ما ثبُتت إصابته بـ COVID-19.\n\nقد يتصل هاتفك بهذه الـ ’Exposure notifications’ أو ’Exposure logging’.\n\nانتقل الى إعدادات هاتفك وقم بالتغيير إلى \"السماح\" \'(Allow)\'.</string>
     <string name="enable_exposure_notifications">افتح إعدادات الهاتف</string>
     <string name="scan_qr_code_to_check_in">مسح ضوئي لملصق أحد رموز NHS QR الرسمية لتسجيل الدخول</string>
     <string name="how_to_scan_qr_code">كيف يساعدنا ذلك في البقاء بأمانٍ</string>
@@ -914,7 +914,7 @@
         <item quantity="other">توخى المزيد من الحرص وأحمي الأخرين حتى %1$s الساعة 23:59. يتبقى %2$s أيام حتى ذلك الحين.</item>
     </plurals>
     <string name="be_careful_until_date_title">توخى المزيد من الحذر وأعمل على حماية الأخرين</string>
-    <string name="about_this_app_software_information_date_of_release_description">01/2023</string>
+    <string name="about_this_app_software_information_date_of_release_description">02/2023</string>
     <string name="back_to_home_screen">الرجوع إلى الشاشة الرئيسية</string>
     <string name="covid_guidance_hub_check_ssp_description">تعرف علي المعلومات المتعلقة باختبار COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">أحدث الإرشادات المتعلقة باختبار COVID-19</string>

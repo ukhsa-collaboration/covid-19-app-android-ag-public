@@ -73,10 +73,10 @@ class FlowTests : EspressoTest(), LocalAuthoritySetupHelper {
         runWithFeature(SELF_REPORTING, enabled = false) {
             val walesConfiguration = IsolationConfiguration(
                 contactCase = 11,
-                indexCaseSinceSelfDiagnosisOnset = 6,
-                indexCaseSinceSelfDiagnosisUnknownOnset = 6,
+                indexCaseSinceSelfDiagnosisOnset = 5,
+                indexCaseSinceSelfDiagnosisUnknownOnset = 5,
                 maxIsolation = 16,
-                indexCaseSinceTestResultEndDate = 6,
+                indexCaseSinceTestResultEndDate = 5,
                 pendingTasksRetentionPeriod = 14,
                 testResultPollingTokenRetentionPeriod = 28
             )
@@ -121,10 +121,10 @@ class FlowTests : EspressoTest(), LocalAuthoritySetupHelper {
         runWithFeature(SELF_REPORTING, enabled = false) {
             val walesConfiguration = IsolationConfiguration(
                 contactCase = 11,
-                indexCaseSinceSelfDiagnosisOnset = 6,
-                indexCaseSinceSelfDiagnosisUnknownOnset = 6,
+                indexCaseSinceSelfDiagnosisOnset = 5,
+                indexCaseSinceSelfDiagnosisUnknownOnset = 5,
                 maxIsolation = 16,
-                indexCaseSinceTestResultEndDate = 6,
+                indexCaseSinceTestResultEndDate = 5,
                 pendingTasksRetentionPeriod = 14,
                 testResultPollingTokenRetentionPeriod = 28
             )

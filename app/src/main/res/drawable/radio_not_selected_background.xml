@@ -8,6 +8,9 @@
     </item>
     <item android:bottom="2dp">
         <shape>
+            <stroke
+                android:width="2dp"
+                android:color="@color/overline_border" />
             <solid android:color="@color/surface_background" />
 
             <corners android:radius="8dp" />

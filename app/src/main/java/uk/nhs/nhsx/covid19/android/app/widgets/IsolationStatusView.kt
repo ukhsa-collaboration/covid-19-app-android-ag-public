@@ -8,7 +8,6 @@ import androidx.core.view.isVisible
 import uk.nhs.nhsx.covid19.android.app.R
 import uk.nhs.nhsx.covid19.android.app.databinding.ViewIsolationStatusBinding
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.IsolationViewState.Isolating
-import uk.nhs.nhsx.covid19.android.app.util.uiFormat
 import uk.nhs.nhsx.covid19.android.app.util.uiFullFormat
 import uk.nhs.nhsx.covid19.android.app.util.viewutils.setUpAccessibilityHeading
 import uk.nhs.nhsx.covid19.android.app.widgets.IsolationStatusView.AnimationState.ANIMATION_DISABLED_EN_DISABLED
@@ -78,7 +77,7 @@ class IsolationStatusView @JvmOverloads constructor(
         contentDescription = context.resources.getQuantityString(
             R.plurals.isolation_view_accessibility_description_england,
             daysToGo,
-            lastDayOfIsolation.uiFormat(context),
+            lastDayOfIsolation.uiFullFormat(context),
             daysToGo
         )
     }

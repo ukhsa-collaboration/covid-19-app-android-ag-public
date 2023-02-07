@@ -17,6 +17,7 @@
     <color name="background">#191919</color>
     <color name="accordion_icon">#191919</color>
     <color name="surface_background">#212B32</color>
+    <color name="overline_border">#FAFAFA</color>
     <color name="white">#ffffff</color>
     <color name="transparent">#00000000</color>
 

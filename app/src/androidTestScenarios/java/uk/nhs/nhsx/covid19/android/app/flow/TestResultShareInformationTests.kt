@@ -56,7 +56,7 @@ class TestResultShareInformationTests : EspressoTest() {
         linkTestResultSymptomsRobot.clickNo()
 
         waitFor {
-            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(remainingDaysInIsolation = 4)
+            testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(remainingDaysInIsolation = 3)
         }
 
         testResultRobot.clickIsolationActionButton()
@@ -96,7 +96,7 @@ class TestResultShareInformationTests : EspressoTest() {
             linkTestResultSymptomsRobot.clickNo()
 
             waitFor {
-                testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(remainingDaysInIsolation = 4)
+                testResultRobot.checkActivityDisplaysPositiveWillBeInIsolation(remainingDaysInIsolation = 3)
             }
 
             testResultRobot.clickIsolationActionButton()
