@@ -3,6 +3,8 @@ package uk.nhs.nhsx.covid19.android.app.availability
 import androidx.annotation.VisibleForTesting
 import androidx.work.ListenableWorker.Result.Failure
 import androidx.work.ListenableWorker.Result.Success
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,7 +64,7 @@ class ApplicationStartAreaRiskUpdater(
     }
 
     private fun shouldUpdateAreaRisk(): Boolean =
-        onboardingCompletedProvider.value == true &&
+        !RuntimeBehavior.isFeatureEnabled(DECOMMISSIONING_CLOSURE_SCREEN) && onboardingCompletedProvider.value == true &&
             appAvailabilityProvider.isAppAvailable() &&
             isAreaRiskInformationOutdated()
 

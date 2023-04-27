@@ -8,6 +8,8 @@ import androidx.work.NetworkType.CONNECTED
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.util.toWorkerResult
 import javax.inject.Inject
@@ -22,6 +24,10 @@ class SubmitOnboardingAnalyticsWorker(
 
     override suspend fun doWork(): Result {
         applicationContext.appComponent.inject(this)
+
+        if (RuntimeBehavior.isFeatureEnabled(DECOMMISSIONING_CLOSURE_SCREEN)) {
+            return Result.failure()
+        }
 
         return submitOnboardingAnalytics.invoke().toWorkerResult()
     }

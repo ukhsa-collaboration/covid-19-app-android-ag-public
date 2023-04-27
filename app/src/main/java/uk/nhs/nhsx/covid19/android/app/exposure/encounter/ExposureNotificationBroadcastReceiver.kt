@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.google.android.gms.nearby.exposurenotification.ExposureNotificationClient
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.appComponent
 import uk.nhs.nhsx.covid19.android.app.state.IsolationStateMachine
@@ -24,6 +26,10 @@ class ExposureNotificationBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         context.appComponent.inject(this)
+
+        if (RuntimeBehavior.isFeatureEnabled(DECOMMISSIONING_CLOSURE_SCREEN)) {
+            return
+        }
 
         val action = intent.action
         Timber.d("onReceive: action = $action")

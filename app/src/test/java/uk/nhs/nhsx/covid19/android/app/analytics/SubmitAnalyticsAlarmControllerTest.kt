@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.os.PowerManager
 import android.os.PowerManager.WakeLock
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
 import io.mockk.MockKVerificationScope
 import io.mockk.called
 import io.mockk.coEvery
@@ -19,6 +20,7 @@ import org.junit.Before
 import org.junit.Test
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.TotalAlarmManagerBackgroundTasks
 import uk.nhs.nhsx.covid19.android.app.receiver.SubmitAnalyticsAlarmReceiver
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
 import uk.nhs.nhsx.covid19.android.app.util.HasInternetConnectivity
 import java.time.Clock
@@ -67,7 +69,7 @@ class SubmitAnalyticsAlarmControllerTest {
     }
 
     @Test
-    fun `when device is rebooted should submit analytics`() {
+    fun `when device is rebooted should submit analytics`() = runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, false) {
         whenDeviceIsRebooted()
 
         coVerifyOrder {
@@ -80,7 +82,17 @@ class SubmitAnalyticsAlarmControllerTest {
     }
 
     @Test
-    fun `given no internet connectivity when device is rebooted do not submit analytics`() {
+    fun `given in decommissioning mode when device is rebooted do not submit analytics`() = runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, true) {
+        whenDeviceIsRebooted()
+
+        thenNoAlarmIsScheduled()
+        thenInternetConnectionIsNotChecked()
+        thenNoAnalyticsEventIsTracked()
+        thenNoAnalyticsAreSubmitted()
+    }
+
+    @Test
+    fun `given no internet connectivity when device is rebooted do not submit analytics`() = runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, false) {
         givenNoInternetConnectivity()
 
         whenDeviceIsRebooted()
@@ -96,7 +108,7 @@ class SubmitAnalyticsAlarmControllerTest {
     }
 
     @Test
-    fun `when app is created should submit analytics`() {
+    fun `when app is created should submit analytics`() = runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, false) {
         givenNoAlarmIsScheduled()
 
         whenAppIsCreated()
@@ -111,7 +123,19 @@ class SubmitAnalyticsAlarmControllerTest {
     }
 
     @Test
-    fun `given no internet connectivity when app is created do not submit analytics`() {
+    fun `given in decommissioning mode when app is created do not submit analytics`() = runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, true) {
+        givenNoAlarmIsScheduled()
+
+        whenAppIsCreated()
+
+        thenNoAlarmIsScheduled()
+        thenInternetConnectionIsNotChecked()
+        thenNoAnalyticsEventIsTracked()
+        thenNoAnalyticsAreSubmitted()
+    }
+
+    @Test
+    fun `given no internet connectivity when app is created do not submit analytics`() = runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, false) {
         givenNoInternetConnectivity()
         givenNoAlarmIsScheduled()
 
@@ -127,7 +151,7 @@ class SubmitAnalyticsAlarmControllerTest {
     }
 
     @Test
-    fun `when alarm is triggered submit analytics`() {
+    fun `when alarm is triggered submit analytics`() = runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, false) {
         whenAlarmIsTriggered()
 
         coVerifyOrder {
@@ -140,7 +164,17 @@ class SubmitAnalyticsAlarmControllerTest {
     }
 
     @Test
-    fun `given no internet connectivity when alarm is triggered do not submit analytics`() {
+    fun `given in decommissioning mode when alarm is triggered do not submit analytics`() = runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, true) {
+        whenAlarmIsTriggered()
+
+        thenNoAlarmIsScheduled()
+        thenInternetConnectionIsNotChecked()
+        thenNoAnalyticsEventIsTracked()
+        thenNoAnalyticsAreSubmitted()
+    }
+
+    @Test
+    fun `given no internet connectivity when alarm is triggered do not submit analytics`() = runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, false) {
         givenNoInternetConnectivity()
 
         whenAlarmIsTriggered()
@@ -288,5 +322,9 @@ class SubmitAnalyticsAlarmControllerTest {
 
     private fun thenWakeLockIsReleased() {
         wakeLock.release()
+    }
+
+    private fun thenInternetConnectionIsNotChecked() {
+        verify { hasInternetConnectivity wasNot called }
     }
 }

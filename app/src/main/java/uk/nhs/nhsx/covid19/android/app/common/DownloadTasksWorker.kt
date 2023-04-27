@@ -5,9 +5,11 @@ import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.ListenableWorker.Result.Success
 import androidx.work.WorkerParameters
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
 import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import timber.log.Timber
+import uk.nhs.nhsx.covid19.android.app.DecommissioningNotificationSentProvider
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalytics
@@ -70,6 +72,9 @@ class DownloadTasksWorker(
     lateinit var onboardingCompletedProvider: OnboardingCompletedProvider
 
     @Inject
+    lateinit var decommissioningNotificationSentProvider: DecommissioningNotificationSentProvider
+
+    @Inject
     lateinit var hasSuccessfullyProcessedNewExposureProvider: HasSuccessfullyProcessedNewExposureProvider
 
     @Inject
@@ -88,6 +93,13 @@ class DownloadTasksWorker(
         applicationContext.appComponent.inject(this)
         Timber.d("Running DownloadTasksWorker")
 
+        if (RuntimeBehavior.isFeatureEnabled(DECOMMISSIONING_CLOSURE_SCREEN)) {
+            if (!decommissioningNotificationSentProvider.value.defaultFalse()) {
+                decommissioningNotificationSentProvider.value = true
+                notificationProvider.showAppHasBeenDecommissionedNotification()
+            }
+            return Result.failure()
+        }
         setForeground()
 
         getAvailabilityStatus()

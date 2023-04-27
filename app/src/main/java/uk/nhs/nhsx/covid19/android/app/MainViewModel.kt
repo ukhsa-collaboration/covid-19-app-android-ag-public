@@ -4,9 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.launch
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.BatteryOptimizationNotAcknowledged
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.Completed
+import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.DecommissioningClosureState
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.ExposureNotificationsNotAvailable
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.LocalAuthorityMissing
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.OnboardingStarted
@@ -41,6 +44,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
 
             val state = when {
+                RuntimeBehavior.isFeatureEnabled(DECOMMISSIONING_CLOSURE_SCREEN) -> DecommissioningClosureState
                 !exposureNotificationApi.isAvailable() -> ExposureNotificationsNotAvailable
                 onboardingCompletedProvider.value.defaultFalse() && !policyUpdateProvider.isPolicyAccepted() -> PolicyUpdated
                 onboardingCompletedProvider.value.defaultFalse() && policyUpdateProvider.isPolicyAccepted() ->
@@ -62,6 +66,7 @@ class MainViewModel @Inject constructor(
     }
 
     sealed class MainViewState {
+        object DecommissioningClosureState : MainViewState()
         object ExposureNotificationsNotAvailable : MainViewState()
         object OnboardingStarted : MainViewState()
         object PolicyUpdated : MainViewState()

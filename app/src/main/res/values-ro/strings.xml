@@ -884,7 +884,7 @@
         <item quantity="other">Aveți mare grijă și protejați-i pe ceilalți până când  %1$s, la ora 23:59. Mai sunt %2$s zile până atunci.</item>
     </plurals>
     <string name="be_careful_until_date_title">Luați măsuri de protecție suplimentare și protejați-i pe ceilalți</string>
-    <string name="about_this_app_software_information_date_of_release_description">02/2023</string>
+    <string name="about_this_app_software_information_date_of_release_description">04/2023</string>
     <string name="back_to_home_screen">Înapoi la ecranul de pornire</string>
     <string name="covid_guidance_hub_check_ssp_description">Aflați despre testarea pentru COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">Cele mai recente recomandări privind testarea COVID-19</string>
@@ -1191,4 +1191,20 @@
     <string name="self_report_thank_you_para_unsuccessfully_shared_keys_and_no_need_to_report_test">Continuați pentru a primi sfaturi pentru protejarea celorlalți pe baza informațiilor furnizate de dvs.</string>
     <string name="self_report_thank_you_successfully_shared_header">Mulțumim, aplicația a notificat în mod anonim alți utilizatori</string>
     <string name="self_report_thank_you_title">Răspunsuri trimise</string>
+    <string name="decommissioning_closure_screen_header">Aplicația s-a închis</string>
+    <string name="decommissioning_closure_screen_image_content_description">Ilustrație cu un grup de persoane care socializează. Unele persoane poartă măști. În spatele lor este un curcubeu</string>
+    <string name="decommissioning_closure_screen_para">Aplicația NHS COVID-19 s-a închis.\n\nRespectați în continuare cele mai recente indicații pentru a vă proteja pe dvs. și pe cei din jur. Acest lucru include și raportarea rezultatelor testelor NHS cu flux lateral pe GOV.UK.\n\nDacă sunteți eligibil(ă) pentru tratamentul COVID-19, trebuie să raportați rezultatele pentru ca NHS să vă poată contacta în privința tratamentului.\n\nVă mulțumim pentru utilizarea aplicației - ați ajutat la menținerea sănătății comunității și la salvarea vieților.</string>
+    <string name="decommissioning_closure_screen_title">Aplicația se va închide</string>
+    <string name="decommissioning_closure_screen_url_1_label">De ce s-a închis aplicația NHS COVID-19 (se va deschide în afara aplicației, pe GOV.UK)</string>
+    <string name="decommissioning_closure_screen_url_1_link">https://www.gov.uk/government/collections/aplica-ia-nhs-covid-19.ro</string>
+    <string name="decommissioning_closure_screen_url_2_label">Anglia - cele mai recente indicații și servicii pentru COVID-19 (se va deschide în afara aplicației, pe nhs.uk)</string>
+    <string name="decommissioning_closure_screen_url_2_link">https://www.nhs.uk/covid-19-advice-and-services/</string>
+    <string name="decommissioning_closure_screen_url_3_label">Țara Galilor - cele mai recente indicații și servicii pentru COVID-19 (se va deschide în afara aplicației, pe GOV.WALES)</string>
+    <string name="decommissioning_closure_screen_url_3_link">https://www.gov.wales/guidance-people-symptoms-respiratory-infection-including-covid-19</string>
+    <string name="decommissioning_closure_screen_url_4_label">Raportați rezultatul unui test NHS cu flux lateral pe GOV.UK (se va deschide în afara aplicației)</string>
+    <string name="decommissioning_closure_screen_url_4_link">https://www.gov.uk/report-covid19-result</string>
+    <string name="decommissioning_closure_screen_url_5_label">Datele dvs. din aplicație și confidențialitate (se va deschide în afara aplicației)</string>
+    <string name="decommissioning_closure_screen_url_5_link">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
+    <string name="notification_text_app_decommissioned">Acum puteți șterge aplicația NHS COVID-19. Atingeți pentru detalii suplimentare.</string>
+    <string name="notification_title_app_decommissioned">Aplicația s-a închis</string>
 </resources>

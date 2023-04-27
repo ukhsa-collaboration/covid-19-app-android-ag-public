@@ -819,6 +819,7 @@ class DebugActivity : AppCompatActivity() {
             notifications.showStateExpirationNotification()
             notifications.showTestResultsReceivedNotification()
             notifications.showRecommendedAppUpdateIsAvailable()
+            notifications.showAppHasBeenDecommissionedNotification()
             GlobalScope.launch {
                 val message = appComponent.provideGetLocalMessageFromStorage().invoke()
                 if (message != null) {

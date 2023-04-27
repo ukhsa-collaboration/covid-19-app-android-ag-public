@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/decommissioningClosureScreenContainer"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/logo_nhs_england_description"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_nhs_covid_logo" />
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <ScrollView
+        style="@style/ScrollContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/margin_horizontal"
+            android:paddingVertical="@dimen/vertical_margin_large">
+
+            <ImageView
+                style="@style/GoneInLandscape"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/decommissioning_closure_screen_image_content_description"
+                android:src="@drawable/ic_onboarding_welcome" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.HeadingTextView
+                android:id="@+id/decommissioningClosureTitle"
+                style="@style/Title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/decommissioning_closure_screen_header"
+                android:textAlignment="center" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.ParagraphsContainer
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:layout_marginBottom="@dimen/vertical_margin_small"
+                android:text="@string/decommissioning_closure_screen_para"
+                app:rawText="@string/decommissioning_closure_screen_para"/>
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                style="@style/LinkText.WithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/minimum_touch_target_size"
+                android:layout_marginVertical="@dimen/vertical_margin_small"
+                android:text="@string/decommissioning_closure_screen_url_1_label"
+                app:linkUrl="@string/decommissioning_closure_screen_url_1_link" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                style="@style/LinkText.WithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/minimum_touch_target_size"
+                android:layout_marginVertical="@dimen/vertical_margin_small"
+                android:text="@string/decommissioning_closure_screen_url_2_label"
+                app:linkUrl="@string/decommissioning_closure_screen_url_2_link" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                style="@style/LinkText.WithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/minimum_touch_target_size"
+                android:layout_marginVertical="@dimen/vertical_margin_small"
+                android:text="@string/decommissioning_closure_screen_url_3_label"
+                app:linkUrl="@string/decommissioning_closure_screen_url_3_link" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                style="@style/LinkText.WithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/minimum_touch_target_size"
+                android:layout_marginVertical="@dimen/vertical_margin_small"
+                android:text="@string/decommissioning_closure_screen_url_4_label"
+                app:linkUrl="@string/decommissioning_closure_screen_url_4_link" />
+
+            <uk.nhs.nhsx.covid19.android.app.widgets.LinkTextView
+                style="@style/LinkText.WithIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/minimum_touch_target_size"
+                android:layout_marginVertical="@dimen/vertical_margin_small"
+                android:text="@string/decommissioning_closure_screen_url_5_label"
+                app:linkUrl="@string/decommissioning_closure_screen_url_5_link" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

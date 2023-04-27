@@ -171,7 +171,7 @@
     <string name="test_ordering_book_test_for_someone_else">حجز اختبار لشخصٍ آخر</string>
     <string name="error_title">توجد مشكلة</string>
     <string name="enable_exposure_notifications_title">السماح لـ \"Exposure notifications\" لكي يعمل هذا التطبيق</string>
-    <string name="enable_exposure_notifications_rationale">هذه هي الطريقة التي يخبرك بها التطبيق إذا ما كنت على اتصال وثيق بشخص ما ثبُتت إصابته بـ COVID-19.\n\nقد يتصل هاتفك بهذه الـ ’Exposure notifications’ أو ’Exposure logging’.\n\nانتقل الى إعدادات هاتفك وقم بالتغيير إلى \"السماح\" \'(Allow)\'.</string>
+    <string name="enable_exposure_notifications_rationale">هذه هي الطريقة التي يخبرك بها التطبيق إذا ما كنت على اتصال وثيق بشخص ما ثبُتت إصابته بـ COVID-19.\n\nقد يتصل هاتفك بهذه الـ ’Exposure notifications’ أو ’Exposure logging’.\n\nانتقل الى إعدادات هاتفك وقم بالتغيير إلى \"السماح\" \'(Allow)\'</string>
     <string name="enable_exposure_notifications">افتح إعدادات الهاتف</string>
     <string name="scan_qr_code_to_check_in">مسح ضوئي لملصق أحد رموز NHS QR الرسمية لتسجيل الدخول</string>
     <string name="how_to_scan_qr_code">كيف يساعدنا ذلك في البقاء بأمانٍ</string>
@@ -260,7 +260,7 @@
     <string name="exposure_notification_hint">لقد اكتشف التطبيق أنك كنت مخالطًا لأحد الأشخاص المصابين بفيروس كورونا (كوفيد-19).</string>
     <string name="exposure_notification_recommendation">إذا كان عمرك أقل من 18 عامًا، فإننا نوصيك بعرض هذه الرسالة على شخصٍ بالغٍ محل ثقةٍ لديك.\n\nهناك احتمالية كبيرة بأنك مصاب بفيروس كوفيد-19 وقد تتسبب في انتقاله للآخرين؛ حتى إذا لم يظهر عليك أيّ أعراضٍ. نوصيك بالبقاء في المنزل لحماية نفسك والآخرين. إن التزامك بالخضوع للعزل الذاتي طوال المدة المقررة بالكامل من شأنه أن يساعد في إيقاف تفشي فيروس كوفيد-19.\n\nنظرًا لأنك كنت مخالطًا لشخصٍ ثبتت إصابته بالفيروس، فيمكنك حجز اختبارٍ لمعرفة ما إذا كنت مصابًا بفيروس كوفيد-19 أم لا. إذا سجَّلت نتيجة إيجابية في الاختبار، فيمكنك إخبار الآخرين بأنهم قد يكونوا عرضة لخطر الإصابة دون الكشف عن هويتك. أمَّا إذا سجَّلت نتيجة سلبية في الاختبار، فيظل من المحتمل أن تتسبب في انتقال العدوى للآخرين. يُرجى اتّباع النصائح المُقدمة لك عند استلام نتيجة الاختبار الخاص بك.\n\nيمكنك حجز اختبارٍ من الشاشة الرئيسية للتطبيق.</string>
     <string name="risk_level_link_text">تعريفات مستويات الخطورة في منطقة ما</string>
-    <string name="open_in_browser_warning">افتح التطبيق في المتصفح لديك</string>
+    <string name="open_in_browser_warning">افتح في شاشة التصفح</string>
     <string name="done_button_text">تم</string>
     <string name="delete_single_venue_visit_title">هل تريد بالتأكيد تأكيد هذا المكان من تاريخ الأماكن لديك؟</string>
     <string name="delete_single_venue_visit_text">يؤدي تأكيد أحد الأماكن إلى تقليل كفاءة خدمة تتبع الاتصال.\n\nبعد الانتهاء من الحذف، لن يصبح بإمكانك استلام التنبيهات ذات الصلة بهذا المكان.</string>
@@ -914,7 +914,7 @@
         <item quantity="other">توخى المزيد من الحرص وأحمي الأخرين حتى %1$s الساعة 23:59. يتبقى %2$s أيام حتى ذلك الحين.</item>
     </plurals>
     <string name="be_careful_until_date_title">توخى المزيد من الحذر وأعمل على حماية الأخرين</string>
-    <string name="about_this_app_software_information_date_of_release_description">02/2023</string>
+    <string name="about_this_app_software_information_date_of_release_description">04/2023</string>
     <string name="back_to_home_screen">الرجوع إلى الشاشة الرئيسية</string>
     <string name="covid_guidance_hub_check_ssp_description">تعرف علي المعلومات المتعلقة باختبار COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">أحدث الإرشادات المتعلقة باختبار COVID-19</string>
@@ -1227,4 +1227,20 @@
     <string name="self_report_thank_you_para_unsuccessfully_shared_keys_and_no_need_to_report_test">قم بالمتابعة للحصول على المشورة بشأن كيفية حماية الآخرين، بناءً على المعلومات التي قدمتها.</string>
     <string name="self_report_thank_you_successfully_shared_header">شكرًا لك، لقد أخطر التطبيق مستخدمي التطبيق الآخرين دون الكشف عن الهوية</string>
     <string name="self_report_thank_you_title">تم إرسال الإجابات</string>
+    <string name="decommissioning_closure_screen_header">لقد تم إغلاق التطبيق</string>
+    <string name="decommissioning_closure_screen_image_content_description">رسم توضيحي لمجموعة من الأشخاص يتواصلون اجتماعيًا. يرتدي البعض أقنعة وخلفهم قوس قزح</string>
+    <string name="decommissioning_closure_screen_para">لقد تم إغلاق تطبيق COVID-19 المُقدّم من قِبل NHS.\n\nيُرجى الحرص على مواصلة اتباع أحدث الإرشادات لحماية نفسك والآخرين. يتضمّن ذلك الإبلاغ عن نتائج اختبار التدفق الأفقي من NHS على \nGOV.UK\nإذا كنت مؤهلاً للحصول على علاج COVID-19، فيجب عليك الإبلاغ عن نتيجتك حتى تتمكن NHS من التواصل معك لعلاجك.\n\nشكرًا لك على استخدام التطبيق - لقد ساعدت في الحفاظ على صحة الأفراد في مجتمعك وإنقاذ الأرواح.</string>
+    <string name="decommissioning_closure_screen_title">حول إغلاق التطبيق</string>
+    <string name="decommissioning_closure_screen_url_1_label">لماذا تم إغلاق تطبيق COVID-19 المُقدّم من قِبل NHS (يفتح خارج التطبيق على GOV.UK)</string>
+    <string name="decommissioning_closure_screen_url_1_link">https://www.gov.uk/government/collections/nhs-covid-19--30.ar</string>
+    <string name="decommissioning_closure_screen_url_2_label">إنجلترا - أحدث الإرشادات والخدمات الخاصة بـ COVID-19 (تفتح خارج التطبيق على nhs.uk)</string>
+    <string name="decommissioning_closure_screen_url_2_link">https://www.nhs.uk/covid-19-advice-and-services/</string>
+    <string name="decommissioning_closure_screen_url_3_label">ويلز - أحدث الإرشادات والخدمات الخاصة بـ COVID-19 (تفتح خارج التطبيق على GOV.WALES)</string>
+    <string name="decommissioning_closure_screen_url_3_link">https://www.gov.wales/guidance-people-symptoms-respiratory-infection-including-covid-19</string>
+    <string name="decommissioning_closure_screen_url_4_label">أبلغ عن نتيجة اختبار التدفق الأفقي المُقدِّم من قِبل NHS على GOV.UK (يفتح خارج التطبيق)</string>
+    <string name="decommissioning_closure_screen_url_4_link">https://www.gov.uk/report-covid19-result</string>
+    <string name="decommissioning_closure_screen_url_5_label">بيانات التطبيق والخصوصية (يفتح خارج التطبيق على GOV.UK)</string>
+    <string name="decommissioning_closure_screen_url_5_link">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
+    <string name="notification_text_app_decommissioned">يمكنك إزالة تطبيق COVID-19 المُقدّم من قِبل NHS. اضغط للاطِّلاع على التفاصيل.</string>
+    <string name="notification_title_app_decommissioned">لقد تم إغلاق التطبيق</string>
 </resources>

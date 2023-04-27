@@ -814,7 +814,7 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">ਆਪਣੇ ਪਰਿਵਾਰ ਵਿੱਚ ਉਸ ਕਿਸੇ ਵੀ ਵਿਅਕਤੀ ਨਾਲ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਨੂੰ ਸੀਮਿਤ ਕਰੋ ਜਿਸ ਨੂੰ COVID-19 ਹੈ</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">ਭੀੜ-ਭੜੱਕੇ ਵਾਲੀਆਂ, ਬੰਦ ਜਾਂ ਮਾੜੀ ਹਵਾਦਾਰੀ ਵਾਲੀਆਂ ਥਾਵਾਂ \'ਤੇ ਚਿਹਰੇ ਦੀ ਕਵਰਿੰਗ ਪਹਿਨੋ</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">ਜੇਕਰ ਤੁਹਾਡੇ ਘਰ ਵਿੱਚ ਕਿਸੇ ਨੂੰ COVID-19 ਹੈ ਤਾਂ ਜੇ ਹੋ ਸਕੇ ਤਾਂ ਘਰੋਂ ਕੰਮ ਕਰੋ</string>
-    <string name="about_this_app_software_information_date_of_release_description">02/2023</string>
+    <string name="about_this_app_software_information_date_of_release_description">04/2023</string>
     <string name="contact_case_exposure_info_screen_continue_button_england">ਜਾਰੀ ਰੱਖੋ</string>
     <string name="contact_case_exposure_info_screen_continue_button_wales">ਜਾਰੀ ਰੱਖੋ</string>
     <string name="contact_case_exposure_info_screen_exposure_date_england">%s ਨੂੰ ਨਜ਼ਦੀਕੀ ਸੰਪਰਕ ਹੋਇਆ</string>
@@ -1179,4 +1179,20 @@
     <string name="self_report_thank_you_para_unsuccessfully_shared_keys_and_no_need_to_report_test">ਤੁਹਾਡੇ ਦੁਆਰਾ ਪ੍ਰਦਾਨ ਕੀਤੀ ਗਈ ਜਾਣਕਾਰੀ ਦੇ ਆਧਾਰ \'ਤੇ, ਦੂਜਿਆਂ ਦੀ ਰੱਖਿਆ ਕਰਨ ਬਾਰੇ ਸਲਾਹ ਲੈਣ ਲਈ ਜਾਰੀ ਰੱਖੋ।</string>
     <string name="self_report_thank_you_successfully_shared_header">ਤੁਹਾਡਾ ਧੰਨਵਾਦ, ਐਪ ਨੇ ਅਗਿਆਤ ਤੌਰ \'ਤੇ ਦੂਜੇ ਐਪ ਵਰਤੋਂਕਾਰਾਂ ਨੂੰ ਸੂਚਿਤ ਕਰ ਦਿੱਤਾ ਹੈ</string>
     <string name="self_report_thank_you_title">ਜਵਾਬ ਜਮ੍ਹਾਂ ਕਰ ਦਿੱਤੇ ਗਏ</string>
+    <string name="decommissioning_closure_screen_header">ਐਪ ਬੰਦ ਹੋ ਗਈ ਹੈ</string>
+    <string name="decommissioning_closure_screen_image_content_description">ਮੇਲ-ਜੋਲ ਕਰ ਰਹੇ ਲੋਕਾਂ ਦੇ ਸਮੂਹ ਦਾ ਚਿੱਤਰ। ਕੁਝ ਨੇ ਮਾਸਕ ਪਹਿਨੇ ਹੋਏ ਹਨ। ਉਹਨਾਂ ਦੇ ਪਿੱਛੇ ਇੱਕ ਰੇਨਬੋ ਹੈ</string>
+    <string name="decommissioning_closure_screen_para">NHS COVID-19 ਐਪ ਬੰਦ ਹੋ ਗਈ ਹੈ।\n\nਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਅਤੇ ਦੂਜਿਆਂ ਦੀ ਰੱਖਿਆ ਕਰਨ ਲਈ ਨਵੀਨਤਮ ਮਾਰਗਦਰਸ਼ਨ ਦੀ ਪਾਲਣਾ ਕਰਨਾ ਜਾਰੀ ਰੱਖੋ। ਇਸ ਵਿੱਚ NHS ਲੇਟਰਲ ਫਲੋ ਟੈਸਟ ਦੇ ਨਤੀਜਿਆਂ ਦੀ GOV.UK \'ਤੇ ਰਿਪੋਰਟ ਕਰਨਾ ਸ਼ਾਮਲ ਹੈ।\n\nਜੇ ਤੁਸੀਂ COVID-19 ਦੇ ਇਲਾਜ ਲਈ ਯੋਗ ਹੋ, ਤਾਂ ਤੁਹਾਨੂੰ ਆਪਣੇ ਨਤੀਜੇ ਦੀ ਲਾਜ਼ਮੀ ਰਿਪੋਰਟ ਕਰਨੀ ਚਾਹੀਦੀ ਹੈ ਤਾਂ ਜੋ NHS ਤੁਹਾਡੇ ਨਾਲ ਇਲਾਜ ਬਾਰੇ ਸੰਪਰਕ ਕਰ ਸਕੇ।\n\nਐਪ ਨੂੰ ਵਰਤਣ ਲਈ ਤੁਹਾਡਾ ਧੰਨਵਾਦ - ਤੁਸੀਂ ਆਪਣੇ ਭਾਈਚਾਰੇ ਨੂੰ ਸਿਹਤਮੰਦ ਰੱਖਣ ਅਤੇ ਜ਼ਿੰਦਗੀਆਂ ਬਚਾਉਣ ਵਿੱਚ ਮਦਦ ਕੀਤੀ ਹੈ।</string>
+    <string name="decommissioning_closure_screen_title">ਐਪ ਦੇ ਬੰਦ ਹੋਣ ਬਾਰੇ</string>
+    <string name="decommissioning_closure_screen_url_1_label">NHS COVID-19 ਐਪ ਕਿਉਂ ਬੰਦ ਹੋ ਗਈ ਹੈ (ਐਪ ਦੇ ਬਾਹਰ GOV.UK \'ਤੇ ਖੁੱਲ੍ਹਦਾ ਹੈ)</string>
+    <string name="decommissioning_closure_screen_url_1_link">https://www.gov.uk/government/collections/nhs-covid-19--29.pa</string>
+    <string name="decommissioning_closure_screen_url_2_label">ਇੰਗਲੈਂਡ - COVID-19 ਬਾਰੇ ਨਵੀਨਤਮ ਮਾਰਗਦਰਸ਼ਨ ਅਤੇ ਸੇਵਾਵਾਂ (ਐਪ ਤੋਂ ਬਾਹਰ nhs.uk \'ਤੇ ਖੁੱਲ੍ਹਦਾ ਹੈ)</string>
+    <string name="decommissioning_closure_screen_url_2_link">https://www.nhs.uk/covid-19-advice-and-services/</string>
+    <string name="decommissioning_closure_screen_url_3_label">ਵੇਲਜ਼ - COVID-19 ਬਾਰੇ ਨਵੀਨਤਮ ਮਾਰਗਦਰਸ਼ਨ ਅਤੇ ਸੇਵਾਵਾਂ (ਐਪ ਤੋਂ ਬਾਹਰ GOV.WALES \'ਤੇ ਖੁੱਲ੍ਹਦਾ ਹੈ)</string>
+    <string name="decommissioning_closure_screen_url_3_link">https://www.gov.wales/guidance-people-symptoms-respiratory-infection-including-covid-19</string>
+    <string name="decommissioning_closure_screen_url_4_label">NHS ਲੇਟਰਲ ਫਲੋ ਟੈਸਟ ਦੇ ਨਤੀਜੇ ਦੀ GOV.UK \'ਤੇ ਰਿਪੋਰਟ ਕਰੋ (ਐਪ ਤੋਂ ਬਾਹਰ ਖੁੱਲ੍ਹਦਾ ਹੈ)</string>
+    <string name="decommissioning_closure_screen_url_4_link">https://www.gov.uk/report-covid19-result</string>
+    <string name="decommissioning_closure_screen_url_5_label">ਤੁਹਾਡਾ ਐਪ ਡੇਟਾ ਅਤੇ ਨਿੱਜਤਾ (ਐਪ ਤੋਂ ਬਾਹਰ GOV.UK \'ਤੇ ਖੁੱਲ੍ਹਦਾ ਹੈ)</string>
+    <string name="decommissioning_closure_screen_url_5_link">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
+    <string name="notification_text_app_decommissioned">ਤੁਸੀਂ ਹੁਣ NHS COVID-19 ਐਪ ਨੂੰ ਹਟਾ ਸਕਦੇ ਹੋ। ਵੇਰਵਿਆਂ ਲਈ ਟੈਪ ਕਰੋ।</string>
+    <string name="notification_title_app_decommissioned">ਐਪ ਬੰਦ ਹੋ ਗਈ ਹੈ</string>
 </resources>

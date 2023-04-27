@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
@@ -63,6 +64,7 @@ class NotificationProvider @Inject constructor(
         const val SHARE_KEY_REMINDER_NOTIFICATION_ID = 10
         const val LOCAL_MESSAGE_NOTIFICATION_ID = 11
         const val ISOLATION_HUB_REMINDER_NOTIFICATION_ID = 12
+        const val APP_DECOMMISSIONED_NOTIFICATION_ID = 13
 
         const val REQUEST_CODE_APP_IS_NOT_AVAILABLE = 1
         const val REQUEST_CODE_APP_IS_AVAILABLE = 2
@@ -78,6 +80,7 @@ class NotificationProvider @Inject constructor(
         const val REQUEST_CODE_SHARE_KEYS_REMINDER = 13
         const val REQUEST_CODE_LOCAL_MESSAGE_NOTIFICATION = 14
         const val REQUEST_CODE_ISOLATION_HUB_REMINDER_NOTIFICATION = 15
+        const val REQUEST_CODE_APP_DECOMMISSIONED_NOTIFICATION = 16
 
         const val CONTACT_TRACING_HUB_ACTION = "CONTACT_TRACING_HUB_ACTION"
         const val TAPPED_ON_LOCAL_MESSAGE_NOTIFICATION = "TAPPED_ON_LOCAL_MESSAGE_NOTIFICATION"
@@ -485,6 +488,33 @@ class NotificationProvider @Inject constructor(
 
         NotificationManagerCompat.from(context)
             .notify(RECOMMENDED_APP_UPDATE_NOTIFICATION_ID, recommendedAppUpdateNotification)
+    }
+
+    fun showAppHasBeenDecommissionedNotification() {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(
+                context,
+                REQUEST_CODE_APP_DECOMMISSIONED_NOTIFICATION,
+                intent,
+                FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE
+            )
+
+        val appDecommissionedNotification = createNotification(
+            APP_AVAILABILITY_CHANNEL_ID,
+            R.string.notification_title_app_decommissioned,
+            R.string.notification_text_app_decommissioned,
+            pendingIntent
+        )
+
+        NotificationManagerCompat.from(context)
+            .notify(
+                APP_DECOMMISSIONED_NOTIFICATION_ID,
+                appDecommissionedNotification
+            )
     }
 
     fun showIsolationHubReminderNotification() {

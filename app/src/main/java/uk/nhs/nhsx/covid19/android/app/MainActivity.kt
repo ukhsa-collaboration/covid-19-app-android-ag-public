@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.BatteryOptimizationNotAcknowledged
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.Completed
+import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.DecommissioningClosureState
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.ExposureNotificationsNotAvailable
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.LocalAuthorityMissing
 import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.OnboardingStarted
@@ -46,6 +47,9 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.viewState().observe(this) { mainViewState ->
             when (mainViewState) {
+                DecommissioningClosureState -> startActivity<DecommissioningClosureScreenActivity>() {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
                 OnboardingStarted -> WelcomeActivity.start(this)
                 PolicyUpdated -> PolicyUpdateActivity.start(this)
                 PostCodeToLocalAuthorityMissing -> PostCodeActivity.start(this, missingLocalAuthorityMapping = true)

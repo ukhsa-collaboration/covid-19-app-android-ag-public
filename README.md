@@ -14,7 +14,7 @@ This token has to be stored in the Keychain for MacOS users or the Credential Ma
 1. Open Keychain Access
 2. Select __login__ from __Default Keychain__ from the left panel    
 3. Go to File > New Password Item…
-   1. __Service__ (__Keychain Item Name__) should be _nihp-public_
+   1. __Service__ (__Keychain Item Name__) should be _ukhsa-collaboration_
    2. __Account__ is your Github username
    3. As __Password__ enter your personal access token
 
@@ -24,7 +24,7 @@ First the token has to be stored.
 
 1. Open Credential Manager
 2. Go to _Add a generic credential_
-   1. __Internet or work address__ should be _nihp-public_
+   1. __Internet or work address__ should be _ukhsa-collaboration_
    2. __User name__ is your Github username
    3. As __Password__ enter your personal access token
 

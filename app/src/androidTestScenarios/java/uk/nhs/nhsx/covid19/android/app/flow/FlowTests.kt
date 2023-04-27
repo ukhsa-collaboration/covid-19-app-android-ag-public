@@ -56,7 +56,6 @@ class FlowTests : EspressoTest(), LocalAuthoritySetupHelper {
 
     @Before
     fun setUp() {
-        FeatureFlagTestHelper.clearFeatureFlags()
         FeatureFlagTestHelper.enableFeatureFlag(USE_WEB_VIEW_FOR_INTERNAL_BROWSER)
 
         givenLocalAuthorityIsInWales()

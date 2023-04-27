@@ -3,6 +3,8 @@ package uk.nhs.nhsx.covid19.android.app.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -25,6 +27,11 @@ class ExposureNotificationReminderReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         context.appComponent.inject(this)
+
+        if (RuntimeBehavior.isFeatureEnabled(DECOMMISSIONING_CLOSURE_SCREEN)) {
+            return
+        }
+
         CoroutineScope(SupervisorJob()).launch {
             if (!exposureNotificationApi.isEnabled()) {
                 notificationProvider.showExposureNotificationReminder()

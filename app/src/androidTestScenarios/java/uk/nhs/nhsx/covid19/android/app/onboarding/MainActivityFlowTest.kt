@@ -1,6 +1,7 @@
 package uk.nhs.nhsx.covid19.android.app.onboarding
 
 import com.jeroenmols.featureflag.framework.FeatureFlag
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import org.junit.After
 import org.junit.Test
@@ -12,6 +13,7 @@ import uk.nhs.nhsx.covid19.android.app.remote.MockLocalMessagesApi
 import uk.nhs.nhsx.covid19.android.app.testhelpers.base.EspressoTest
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.BatteryOptimizationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.ContactTracingHubRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.DecommissioningClosureScreenRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.IsolationHubRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityInformationRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalAuthorityRobot
@@ -19,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.LocalMessageRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PolicyUpdateRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.PostCodeRobot
 import uk.nhs.nhsx.covid19.android.app.testhelpers.robots.StatusRobot
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeatureEnabled
 
 class MainActivityFlowTest : EspressoTest() {
 
@@ -31,10 +34,21 @@ class MainActivityFlowTest : EspressoTest() {
     private val contactTracingHubRobot = ContactTracingHubRobot()
     private val isolationHubRobot = IsolationHubRobot()
     private val localMessageRobot = LocalMessageRobot()
+    private val decommissioningClosureScreenRobot = DecommissioningClosureScreenRobot()
 
     @After
     fun tearDown() {
         FeatureFlagTestHelper.clearFeatureFlags()
+    }
+
+    @Test
+    fun startingAppInDecommissioningState_shouldShowDecommissioningClosureScreen() {
+        runWithFeatureEnabled(DECOMMISSIONING_CLOSURE_SCREEN, clearFeatureFlags = true) {
+
+            startTestActivity<MainActivity>()
+
+            waitFor { decommissioningClosureScreenRobot.checkActivityIsDisplayed() }
+        }
     }
 
     @Test

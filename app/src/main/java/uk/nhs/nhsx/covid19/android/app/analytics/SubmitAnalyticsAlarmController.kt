@@ -4,6 +4,8 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.os.PowerManager
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -54,6 +56,9 @@ class SubmitAnalyticsAlarmController @Inject constructor(
     }
 
     private fun submitAnalyticsAndSetupNext(onFinished: () -> Unit = {}) {
+        if (RuntimeBehavior.isFeatureEnabled(DECOMMISSIONING_CLOSURE_SCREEN)) {
+            return
+        }
         Timber.d("submitAnalyticsAndSetupNext")
         applicationScope.launch {
             executeWithWakeLock {

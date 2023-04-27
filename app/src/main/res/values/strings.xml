@@ -1005,7 +1005,7 @@
     <string name="contact_case_start_isolation_primary_button_title_wales">Get a free rapid lateral flow kit</string>
     <string name="contact_case_start_isolation_book_lfd_test_url">https://gov.wales/get-tested-coronavirus-covid-19</string>
     <string name="contact_case_start_isolation_list_item_testing_once_asap_wales">You are advised to take a free rapid lateral flow test as soon as possible.</string>
-    <string name="about_this_app_software_information_date_of_release_description">02/2023</string>
+    <string name="about_this_app_software_information_date_of_release_description">04/2023</string>
     <string name="exposure_notification_message">Exposure notifications are off during this period</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_social_distancing_england">Limit close contact with anyone in your household who has COVID-19</string>
     <string name="contact_case_no_isolation_fully_vaccinated_list_item_get_tested_before_meeting_vulnerable_people_england">Take a PCR test if you have symptoms of COVID-19</string>
@@ -1236,4 +1236,20 @@
         <item quantity="one">Try to stay at home and away from others for %1$s day until %2$s at 23:59</item>
         <item quantity="other">Try to stay at home and away from others for %1$s days until %2$s at 23:59</item>
     </plurals>
+    <string name="decommissioning_closure_screen_title">About the app closing down</string>
+    <string name="decommissioning_closure_screen_image_content_description">Illustration of a group of people socialising. Some are wearing masks. There is a rainbow behind them</string>
+    <string name="decommissioning_closure_screen_header">The app has closed down</string>
+    <string name="decommissioning_closure_screen_para">The NHS COVID-19 app has closed down.\n\nPlease continue to follow the latest guidance to protect yourself and others. This includes reporting NHS lateral flow test results on GOV.UK.\n\nIf you’re eligible for COVID-19 treatment, you must report your result so the NHS can contact you about treatment.\n\nThank you for using the app - you’ve helped to keep your community healthy and save lives.</string>
+    <string name="decommissioning_closure_screen_url_1_label">Why the NHS COVID-19 app has closed down (opens outside the app on GOV.UK)</string>
+    <string name="decommissioning_closure_screen_url_1_link">https://www.gov.uk/government/collections/nhs-covid-19-app</string>
+    <string name="decommissioning_closure_screen_url_2_label">England - latest COVID-19 guidance and services (opens outside the app on nhs.uk)</string>
+    <string name="decommissioning_closure_screen_url_2_link">https://www.nhs.uk/covid-19-advice-and-services/</string>
+    <string name="decommissioning_closure_screen_url_3_label">Wales - latest COVID-19 guidance and services (opens outside the app on GOV.WALES)</string>
+    <string name="decommissioning_closure_screen_url_3_link">https://www.gov.wales/guidance-people-symptoms-respiratory-infection-including-covid-19</string>
+    <string name="decommissioning_closure_screen_url_4_label">Report an NHS lateral flow test result on GOV.UK (opens outside the app)</string>
+    <string name="decommissioning_closure_screen_url_4_link">https://www.gov.uk/report-covid19-result</string>
+    <string name="decommissioning_closure_screen_url_5_label">Your app data and privacy (opens outside the app on GOV.UK)</string>
+    <string name="decommissioning_closure_screen_url_5_link">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
+    <string name="notification_title_app_decommissioned">The app has closed down</string>
+    <string name="notification_text_app_decommissioned">You can now remove the NHS COVID-19 app. Tap for details.</string>
 </resources>

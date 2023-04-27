@@ -105,6 +105,12 @@ enum class FeatureFlag(
         "Self Reporting",
         "Enable self reporting test journey",
         defaultValue = true
+    ),
+    DECOMMISSIONING_CLOSURE_SCREEN(
+        "feature.DecommissioningClosureScreen",
+        "Decommissioning closure screen",
+        "Enable decommissioning closure screen state",
+        defaultValue = true
     )
 }
 

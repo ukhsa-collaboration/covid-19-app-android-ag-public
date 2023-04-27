@@ -874,7 +874,7 @@
         <item quantity="other">পর্যন্ত অতিরিক্ত যত্ন নিন এবং অন্যদের সুরক্ষিত রাখুন %1$s এ 23:59 । তখন পর্যন্ত %2$s দিন বাকি আছে।</item>
     </plurals>
     <string name="be_careful_until_date_title">অতিরিক্ত যত্ন নিন এবং অন্যদের রক্ষা করুন</string>
-    <string name="about_this_app_software_information_date_of_release_description">02/2023</string>
+    <string name="about_this_app_software_information_date_of_release_description">04/2023</string>
     <string name="back_to_home_screen">হোম স্ক্রিনে ফিরে যান</string>
     <string name="covid_guidance_hub_check_ssp_description">COVID-19 এর পরীক্ষা সম্পর্কে জানুন</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 পরীক্ষার সর্বশেষ নির্দেশনা</string>
@@ -1179,4 +1179,20 @@
     <string name="self_report_thank_you_para_unsuccessfully_shared_keys_and_no_need_to_report_test">আপনার দেওয়া তথ্যের উপর ভিত্তি করে কীভাবে অন্যদের রক্ষা করা যায় সে সম্পর্কে পরামর্শের জন্য চালিয়ে যান।</string>
     <string name="self_report_thank_you_successfully_shared_header">ধন্যবাদ, অ্যাপটি অন্য অ্যাপ ব্যবহারকারীদের নামহীনভাবে অবহিত করেছে</string>
     <string name="self_report_thank_you_title">উত্তরগুলি জমা দেওয়া হয়েছে</string>
+    <string name="decommissioning_closure_screen_header">অ্যাপটি বন্ধ হয়ে গেছে</string>
+    <string name="decommissioning_closure_screen_image_content_description">একদল লোকের সামাজিক মেলামেশার চিত্র। কেউ কেউ মাস্ক পরে আছেন। তাদের পিছনে একটি রংধনু আছে</string>
+    <string name="decommissioning_closure_screen_para">NHS COVID-19 অ্যাপটি বন্ধ হয়ে গেছে।\n\nনিজেকে এবং অন্যদের রক্ষা করার জন্য অনুগ্রহ করে সর্বশেষ নির্দেশিকা অনুসরণ করা চালিয়ে যান। এর মধ্যে NHS ল্যাটারাল ফ্লো পরীক্ষার ফলাফল GOV.UK-এ রিপোর্ট করা অন্তর্ভুক্ত।\n\nআপনি যদি COVID-19 চিকিৎসার জন্য যোগ্য হন, তাহলে আপনাকে অবশ্যই আপনার ফলাফল রিপোর্ট করতে হবে যাতে NHS চিকিৎসার বিষয়ে আপনার সাথে যোগাযোগ করতে পারে।\n\nঅ্যাপটি ব্যবহার করার জন্য আপনাকে ধন্যবাদ - আপনি আপনার সম্প্রদায়কে সুস্থ রাখতে এবং জীবন বাঁচাতে সাহায্য করেছেন৷</string>
+    <string name="decommissioning_closure_screen_title">অ্যাপটি বন্ধ হওয়ার বিষয়ে</string>
+    <string name="decommissioning_closure_screen_url_1_label">NHS COVID-19 অ্যাপটি কেন বন্ধ হয়ে গেছে (অ্যাপটির বাইরে GOV.UK এ খোলে)</string>
+    <string name="decommissioning_closure_screen_url_1_link">https://www.gov.uk/government/collections/nhs-covid-19--28.bn</string>
+    <string name="decommissioning_closure_screen_url_2_label">ইংল্যান্ড - COVID-19 সংক্রান্ত সর্বশেষ নির্দেশিকা ও পরিষেবা (অ্যাপটির বাইরে nhs.uk এ খোলে)</string>
+    <string name="decommissioning_closure_screen_url_2_link">https://www.nhs.uk/covid-19-advice-and-services/</string>
+    <string name="decommissioning_closure_screen_url_3_label">ওয়েলস - COVID-19 সংক্রান্ত সর্বশেষ নির্দেশিকা ও পরিষেবা (অ্যাপটির বাইরে GOV.WALES এ খোলে)</string>
+    <string name="decommissioning_closure_screen_url_3_link">https://www.gov.wales/guidance-people-symptoms-respiratory-infection-including-covid-19</string>
+    <string name="decommissioning_closure_screen_url_4_label">NHS ল্যাটারাল ফ্লো পরীক্ষার ফলাফল GOV.UK এ রিপোর্ট করুন (অ্যাপটির বাইরে খোলে)</string>
+    <string name="decommissioning_closure_screen_url_4_link">https://www.gov.uk/report-covid19-result</string>
+    <string name="decommissioning_closure_screen_url_5_label">আপনার অ্যাপের ডেটা এবং গোপনীয়তা (অ্যাপটির বাইরে GOV.UK এ খোলে)</string>
+    <string name="decommissioning_closure_screen_url_5_link">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
+    <string name="notification_text_app_decommissioned">আপনি এখন NHS COVID-19 অ্যাপটি সরিয়ে দিতে পারেন। বিশদ বিবরণের জন্য ট্যাপ করুন।</string>
+    <string name="notification_title_app_decommissioned">অ্যাপটি বন্ধ হয়ে গেছে</string>
 </resources>

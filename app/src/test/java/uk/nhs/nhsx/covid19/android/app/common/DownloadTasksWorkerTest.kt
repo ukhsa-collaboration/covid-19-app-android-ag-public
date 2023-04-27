@@ -4,6 +4,7 @@ import android.app.Notification
 import androidx.work.ForegroundInfo
 import androidx.work.ListenableWorker.Result
 import androidx.work.WorkerParameters
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
 import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
 import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import io.mockk.coEvery
@@ -18,6 +19,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.DecommissioningNotificationSentProvider
 import uk.nhs.nhsx.covid19.android.app.FieldInjectionUnitTest
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.BackgroundTaskCompletion
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
@@ -60,6 +62,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
         mockk<ProcessRemoteServiceExceptionCrashReport>(relaxUnitFun = true)
     private val updateConfigurationsMock = mockk<UpdateConfigurations>(relaxUnitFun = true)
     private val clearOutdatedDataMock = mockk<ClearOutdatedData>(relaxUnitFun = true)
+    private val decommissioningNotificationSentProviderMock = mockk<DecommissioningNotificationSentProvider>(relaxUnitFun = true)
 
     private var result: Result? = null
 
@@ -82,6 +85,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
             processRemoteServiceExceptionCrashReport = processRemoteServiceExceptionCrashReportMock
             updateConfigurations = updateConfigurationsMock
             clearOutdatedData = clearOutdatedDataMock
+            decommissioningNotificationSentProvider = decommissioningNotificationSentProviderMock
         }
     )
 
@@ -110,7 +114,32 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
     }
 
     @Test
+    fun `app is in decommissioning state and decommissioning notification has been sent returns failure`() = runBlocking {
+        givenFeatureDecommissioningClosureScreenIsEnabled()
+        givenDecommissioningNotificationHasBeenSent()
+
+        whenDoingWork()
+
+        thenDecommissioningNotificationIsNotProvided()
+        thenBackgroundTaskCompletionEventIsNotTracked()
+        thenWorkHasFailed()
+    }
+
+    @Test
+    fun `app is in decommissioning state and decommissioning notification has not been sent, send notification and return failure`() = runBlocking {
+        givenFeatureDecommissioningClosureScreenIsEnabled()
+        givenDecommissioningNotificationHasNotBeenSent()
+
+        whenDoingWork()
+
+        thenDecommissioningNotificationIsProvided()
+        thenBackgroundTaskCompletionEventIsNotTracked()
+        thenWorkHasFailed()
+    }
+
+    @Test
     fun `app is not available returns failure`() = runBlocking {
+        givenFeatureDecommissioningClosureScreenIsDisabled()
         givenAppIsNotAvailable()
         givenOnboardingIsCompleted()
 
@@ -122,6 +151,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
 
     @Test
     fun `onboarding not completed returns failure`() = runBlocking {
+        givenFeatureDecommissioningClosureScreenIsDisabled()
         givenAppIsAvailable()
         givenOnboardingIsNotCompleted()
 
@@ -134,6 +164,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
     @Test
     fun `app is available calls cleanup, tracking and download tasks when last attempt to process new exposure was successful`() =
         runBlocking {
+            givenFeatureDecommissioningClosureScreenIsDisabled()
             givenFeatureSubmitAnalyticsViaAlarmManagerIsDisabled()
             givenAppIsAvailable()
             givenOnboardingIsCompleted()
@@ -150,6 +181,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
     @Test
     fun `app is available calls cleanup, tracking and download tasks when last attempt to process new exposure failed`() =
         runBlocking {
+            givenFeatureDecommissioningClosureScreenIsDisabled()
             givenFeatureSubmitAnalyticsViaAlarmManagerIsDisabled()
             givenAppIsAvailable()
             givenOnboardingIsCompleted()
@@ -165,6 +197,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
 
     @Test
     fun `worker does not send analytics when feature flag is enabled`() = runBlocking {
+        givenFeatureDecommissioningClosureScreenIsDisabled()
         givenFeatureSubmitAnalyticsViaAlarmManagerIsEnabled()
         givenAppIsAvailable()
         givenOnboardingIsCompleted()
@@ -177,6 +210,7 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
 
     @Test
     fun `uses foreground worker`() = runBlocking {
+        givenFeatureDecommissioningClosureScreenIsDisabled()
         givenOnboardingIsCompleted()
         givenAppIsAvailable()
 
@@ -194,12 +228,28 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
         FeatureFlagTestHelper.disableFeatureFlag(SUBMIT_ANALYTICS_VIA_ALARM_MANAGER)
     }
 
+    private fun givenFeatureDecommissioningClosureScreenIsEnabled() {
+        FeatureFlagTestHelper.enableFeatureFlag(DECOMMISSIONING_CLOSURE_SCREEN)
+    }
+
+    private fun givenFeatureDecommissioningClosureScreenIsDisabled() {
+        FeatureFlagTestHelper.disableFeatureFlag(DECOMMISSIONING_CLOSURE_SCREEN)
+    }
+
     private fun givenOnboardingIsCompleted() {
         coEvery { onboardingCompletedProviderMock.value } returns true
     }
 
     private fun givenOnboardingIsNotCompleted() {
         every { onboardingCompletedProviderMock.value } returns null
+    }
+
+    private fun givenDecommissioningNotificationHasBeenSent() {
+        every { decommissioningNotificationSentProviderMock.value } returns true
+    }
+
+    private fun givenDecommissioningNotificationHasNotBeenSent() {
+        every { decommissioningNotificationSentProviderMock.value } returns null
     }
 
     private fun givenAppIsAvailable() {
@@ -245,6 +295,16 @@ class DownloadTasksWorkerTest : FieldInjectionUnitTest() {
 
     private fun thenUpdatingDatabaseNotificationIsProvided() {
         verify { notificationProviderMock.getUpdatingDatabaseNotification() }
+    }
+
+    private fun thenDecommissioningNotificationIsProvided() {
+        verify { decommissioningNotificationSentProviderMock setProperty "value" value eq(true) }
+        verify { notificationProviderMock.showAppHasBeenDecommissionedNotification() }
+    }
+
+    private fun thenDecommissioningNotificationIsNotProvided() {
+        verify(exactly = 0) { decommissioningNotificationSentProviderMock setProperty "value" value eq(true) }
+        verify(exactly = 0) { notificationProviderMock.showAppHasBeenDecommissionedNotification() }
     }
 
     private fun thenBackgroundTaskCompletionEventIsTracked() {

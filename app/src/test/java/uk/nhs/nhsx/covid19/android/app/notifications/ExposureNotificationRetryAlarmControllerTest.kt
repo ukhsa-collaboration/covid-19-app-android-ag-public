@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.notifications
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
 import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
@@ -14,6 +15,7 @@ import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController.Companion.EXPOSURE_NOTIFICATION_RETRY_ALARM_INTENT_ID
 import uk.nhs.nhsx.covid19.android.app.notifications.userinbox.ShouldShowEncounterDetectionActivityProvider
 import uk.nhs.nhsx.covid19.android.app.receiver.ExposureNotificationRetryReceiver
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 import uk.nhs.nhsx.covid19.android.app.util.BroadcastProvider
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -57,14 +59,28 @@ class ExposureNotificationRetryAlarmControllerTest {
     }
 
     @Test
-    fun `when device is rebooted and should show encounter detection activity show notification and schedule a new alarm`() {
-        every { shouldShowEncounterDetectionActivityProvider.value } returns true
+    fun `when device is rebooted in decommissioning state and should show encounter detection activity do not show notification and do not schedule a new alarm`() {
+        runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = true) {
+            every { shouldShowEncounterDetectionActivityProvider.value } returns true
 
-        testSubject.onDeviceRebooted()
+            testSubject.onDeviceRebooted()
 
-        verify { notificationProvider.showExposureNotification() }
-        verify { analyticsEventProcessor.track(RiskyContactReminderNotification) }
-        verifyAlarmScheduled()
+            verify { notificationProvider wasNot called }
+            verify { alarmManager wasNot called }
+        }
+    }
+
+    @Test
+    fun `when device is rebooted in non decommissioning state and should show encounter detection activity show notification and schedule a new alarm`() {
+        runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
+            every { shouldShowEncounterDetectionActivityProvider.value } returns true
+
+            testSubject.onDeviceRebooted()
+
+            verify { notificationProvider.showExposureNotification() }
+            verify { analyticsEventProcessor.track(RiskyContactReminderNotification) }
+            verifyAlarmScheduled()
+        }
     }
 
     @Test
@@ -78,22 +94,36 @@ class ExposureNotificationRetryAlarmControllerTest {
     }
 
     @Test
-    fun `when app is created and should show encounter detection activity and alarm is not scheduled show notification and schedule a new alarm`() {
-        every { shouldShowEncounterDetectionActivityProvider.value } returns true
-        every {
-            broadcastProvider.getBroadcast(
-                context,
-                EXPOSURE_NOTIFICATION_RETRY_ALARM_INTENT_ID,
-                ExposureNotificationRetryReceiver::class.java,
-                PendingIntent.FLAG_NO_CREATE
-            )
-        } returns null
+    fun `when app is created in decommissioning state and should show encounter detection activity do not show notification and do not schedule a new alarm`() {
+        runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = true) {
+            every { shouldShowEncounterDetectionActivityProvider.value } returns true
 
-        testSubject.onAppCreated()
+            testSubject.onAppCreated()
 
-        verify { notificationProvider.showExposureNotification() }
-        verify { analyticsEventProcessor.track(RiskyContactReminderNotification) }
-        verifyAlarmScheduled()
+            verify { notificationProvider wasNot called }
+            verify { alarmManager wasNot called }
+        }
+    }
+
+    @Test
+    fun `when app is created in non decommissioning state and should show encounter detection activity and has no alarm show notification and schedule alarm`() {
+        runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
+            every { shouldShowEncounterDetectionActivityProvider.value } returns true
+            every {
+                broadcastProvider.getBroadcast(
+                    context,
+                    EXPOSURE_NOTIFICATION_RETRY_ALARM_INTENT_ID,
+                    ExposureNotificationRetryReceiver::class.java,
+                    PendingIntent.FLAG_NO_CREATE
+                )
+            } returns null
+
+            testSubject.onAppCreated()
+
+            verify { notificationProvider.showExposureNotification() }
+            verify { analyticsEventProcessor.track(RiskyContactReminderNotification) }
+            verifyAlarmScheduled()
+        }
     }
 
     @Test
@@ -125,14 +155,28 @@ class ExposureNotificationRetryAlarmControllerTest {
     }
 
     @Test
-    fun `when alarm is triggered and should show encounter detection activity show notification and schedule a new alarm`() {
-        every { shouldShowEncounterDetectionActivityProvider.value } returns true
+    fun `when alarm is triggered in decommissioning state and should show encounter detection activity do not show notification and do not schedule a new alarm`() {
+        runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = true) {
+            every { shouldShowEncounterDetectionActivityProvider.value } returns true
 
-        testSubject.onAlarmTriggered()
+            testSubject.onAlarmTriggered()
 
-        verify { notificationProvider.showExposureNotification() }
-        verify { analyticsEventProcessor.track(RiskyContactReminderNotification) }
-        verifyAlarmScheduled()
+            verify { notificationProvider wasNot called }
+            verify { alarmManager wasNot called }
+        }
+    }
+
+    @Test
+    fun `when alarm is triggered in non decommissioning state and should show encounter detection activity show notification and schedule a new alarm`() {
+        runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
+            every { shouldShowEncounterDetectionActivityProvider.value } returns true
+
+            testSubject.onAlarmTriggered()
+
+            verify { notificationProvider.showExposureNotification() }
+            verify { analyticsEventProcessor.track(RiskyContactReminderNotification) }
+            verifyAlarmScheduled()
+        }
     }
 
     @Test

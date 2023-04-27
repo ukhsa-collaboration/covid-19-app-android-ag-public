@@ -844,7 +844,7 @@
     <string name="risky_contact_isolation_advice_medically_exempt_social_distancing_england">Ogranicz bliski kontakt z ze wszystkimi członkami gospodarstwa domowego zarażonymi COVID-19</string>
     <string name="risky_contact_isolation_advice_medically_exempt_wear_a_mask_england">Noś zakrycie twarzy w zatłoczonych, zamkniętych lub słabo wentylowanych pomieszczeniach</string>
     <string name="risky_contact_isolation_advice_medically_exempt_work_from_home_england">Jeżeli ktoś z Twojego gospodarstwa domowego ma COVID-19, w miarę możliwości pracuj z domu</string>
-    <string name="about_this_app_software_information_date_of_release_description">02/2023</string>
+    <string name="about_this_app_software_information_date_of_release_description">04/2023</string>
     <string name="contact_case_exposure_info_screen_continue_button_england">Kontynuuj</string>
     <string name="contact_case_exposure_info_screen_continue_button_wales">Kontynuuj</string>
     <string name="contact_case_exposure_info_screen_exposure_date_england">Bliski kontakt miał miejsce dnia %s</string>
@@ -1211,4 +1211,20 @@
     <string name="self_report_thank_you_para_unsuccessfully_shared_keys_and_no_need_to_report_test">Przejdź dalej, aby uzyskać porady, jak chronić innych, oparte na podanych przez Ciebie informacjach.</string>
     <string name="self_report_thank_you_successfully_shared_header">Dziękujemy, aplikacja anonimowo powiadomiła innych użytkowników</string>
     <string name="self_report_thank_you_title">Odpowiedzi wysłane</string>
+    <string name="decommissioning_closure_screen_header">Aplikacja została wycofana z eksploatacji</string>
+    <string name="decommissioning_closure_screen_image_content_description">Ilustracja pokazująca spotkanie towarzyskie grupy ludzi. Niektórzy noszą maski. Za nimi widać tęczę</string>
+    <string name="decommissioning_closure_screen_para">Aplikacja NHS COVID-19 została wycofana z eksploatacji.\n\nNależy nadal stosować się do aktualnych wytycznych, aby chronić siebie i innych. Obejmuje to zgłaszanie wyników testu przepływu bocznego NHS na witrynie GOV.UK.\n\nJeśli kwalifikujesz się do leczenia COVID-19, musisz zgłosić swój wynik, aby NHS mogło skontaktować się z Tobą w sprawie leczenia.\n\nDziękujemy za korzystanie z aplikacji — jej użytkownicy pomogli w dbaniu o zdrowie swoich społeczności i ocalili życie wielu ludzi.</string>
+    <string name="decommissioning_closure_screen_title">O wycofaniu aplikacji z eksploatacji</string>
+    <string name="decommissioning_closure_screen_url_1_label">Dlaczego aplikacja NHS COVID-19 została wycofana (otwiera witrynę na GOV.UK poza aplikacją)</string>
+    <string name="decommissioning_closure_screen_url_1_link">https://www.gov.uk/government/collections/aplikacja-nhs-covid-19.pl</string>
+    <string name="decommissioning_closure_screen_url_2_label">Anglia – najnowsze wskazówki i usługi związane z COVID-19 (otwiera witrynę nhs.uk poza aplikacją)</string>
+    <string name="decommissioning_closure_screen_url_2_link">https://www.nhs.uk/covid-19-advice-and-services/</string>
+    <string name="decommissioning_closure_screen_url_3_label">Walia – najnowsze wskazówki i usługi związane z COVID-19 (otwiera witrynę GOV.WALES poza aplikacją)</string>
+    <string name="decommissioning_closure_screen_url_3_link">https://www.gov.wales/guidance-people-symptoms-respiratory-infection-including-covid-19</string>
+    <string name="decommissioning_closure_screen_url_4_label">Zgłoś wynik testu bocznego przepływu NHS na GOV.UK (otwiera się poza aplikacją)</string>
+    <string name="decommissioning_closure_screen_url_4_link">https://www.gov.uk/report-covid19-result</string>
+    <string name="decommissioning_closure_screen_url_5_label">Twoich danych w aplikacji i ochronie prywatności (otwiera się poza aplikacją)</string>
+    <string name="decommissioning_closure_screen_url_5_link">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
+    <string name="notification_text_app_decommissioned">Można już usunąć aplikację NHS COVID-19. Stuknij, aby poznać więcej informacji.</string>
+    <string name="notification_title_app_decommissioned">Aplikacja została wycofana z eksploatacji</string>
 </resources>

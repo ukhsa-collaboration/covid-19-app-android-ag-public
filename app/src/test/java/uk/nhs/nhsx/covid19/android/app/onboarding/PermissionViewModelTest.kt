@@ -3,6 +3,7 @@ package uk.nhs.nhsx.covid19.android.app.onboarding
 import android.app.Activity
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -21,6 +22,7 @@ import uk.nhs.nhsx.covid19.android.app.onboarding.PermissionViewModel.Navigation
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.PermissionRequestResult
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.PermissionRequestResult.Error
 import uk.nhs.nhsx.covid19.android.app.status.StatusViewModel.PermissionRequestResult.Request
+import uk.nhs.nhsx.covid19.android.app.testhelpers.runWithFeature
 
 class PermissionViewModelTest {
 
@@ -50,56 +52,79 @@ class PermissionViewModelTest {
 
     @Test
     fun `when exposure notifications successfully enabled and battery optimization required should fire battery optimization and send onboarding analytics`() {
-        every { batteryOptimizationRequired() } returns true
-        every { submittedOnboardingAnalyticsProvider.value } returns null
+        runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
+            every { batteryOptimizationRequired() } returns true
+            every { submittedOnboardingAnalyticsProvider.value } returns null
 
-        testSubject.onExposureNotificationsEnabled()
+            testSubject.onExposureNotificationsEnabled()
 
-        verify { onboardingCompletedProvider setProperty "value" value eq(true) }
-        verify { submitAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent() }
-        verify { submittedOnboardingAnalyticsProvider setProperty "value" value eq(true) }
-        verify { periodicTasks.schedule() }
-        verify { navigationTargetObserver.onChanged(BatteryOptimization) }
+            verify { onboardingCompletedProvider setProperty "value" value eq(true) }
+            verify { submitAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent() }
+            verify { submittedOnboardingAnalyticsProvider setProperty "value" value eq(true) }
+            verify { periodicTasks.schedule() }
+            verify { navigationTargetObserver.onChanged(BatteryOptimization) }
+        }
     }
 
     @Test
     fun `when exposure notifications successfully enabled and battery optimization required should fire battery optimization without sending onboarding analytics`() {
-        every { batteryOptimizationRequired() } returns true
-        every { submittedOnboardingAnalyticsProvider.value } returns true
+        runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
+            every { batteryOptimizationRequired() } returns true
+            every { submittedOnboardingAnalyticsProvider.value } returns true
 
-        testSubject.onExposureNotificationsEnabled()
+            testSubject.onExposureNotificationsEnabled()
 
-        verify { onboardingCompletedProvider setProperty "value" value eq(true) }
-        verify(exactly = 0) { submitAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent() }
-        verify { periodicTasks.schedule() }
-        verify { navigationTargetObserver.onChanged(BatteryOptimization) }
+            verify { onboardingCompletedProvider setProperty "value" value eq(true) }
+            verify(exactly = 0) { submitAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent() }
+            verify { periodicTasks.schedule() }
+            verify { navigationTargetObserver.onChanged(BatteryOptimization) }
+        }
     }
 
     @Test
     fun `when exposure notifications successfully enabled and battery optimization not required should fire status activity without sending onboarding analytics`() {
-        every { batteryOptimizationRequired() } returns false
-        every { submittedOnboardingAnalyticsProvider.value } returns true
+        runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
+            every { batteryOptimizationRequired() } returns false
+            every { submittedOnboardingAnalyticsProvider.value } returns true
 
-        testSubject.onExposureNotificationsEnabled()
+            testSubject.onExposureNotificationsEnabled()
 
-        verify { onboardingCompletedProvider setProperty "value" value eq(true) }
-        verify(exactly = 0) { submitAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent() }
-        verify { periodicTasks.schedule() }
-        verify { navigationTargetObserver.onChanged(Status) }
+            verify { onboardingCompletedProvider setProperty "value" value eq(true) }
+            verify(exactly = 0) { submitAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent() }
+            verify { periodicTasks.schedule() }
+            verify { navigationTargetObserver.onChanged(Status) }
+        }
     }
 
     @Test
     fun `when exposure notifications successfully enabled and battery optimization not required should fire status activity and send onboarding analytics`() {
-        every { batteryOptimizationRequired() } returns false
-        every { submittedOnboardingAnalyticsProvider.value } returns false
+        runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
+            every { batteryOptimizationRequired() } returns false
+            every { submittedOnboardingAnalyticsProvider.value } returns false
 
-        testSubject.onExposureNotificationsEnabled()
+            testSubject.onExposureNotificationsEnabled()
 
-        verify { onboardingCompletedProvider setProperty "value" value eq(true) }
-        verify { submitAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent() }
-        verify { submittedOnboardingAnalyticsProvider setProperty "value" value eq(true) }
-        verify { periodicTasks.schedule() }
-        verify { navigationTargetObserver.onChanged(Status) }
+            verify { onboardingCompletedProvider setProperty "value" value eq(true) }
+            verify { submitAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent() }
+            verify { submittedOnboardingAnalyticsProvider setProperty "value" value eq(true) }
+            verify { periodicTasks.schedule() }
+            verify { navigationTargetObserver.onChanged(Status) }
+        }
+    }
+
+    @Test
+    fun `when exposure notifications successfully enabled in decommission state and onboarding analytics has not been sent should not send onboarding analytics`() {
+        runWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = true) {
+            every { batteryOptimizationRequired() } returns false
+            every { submittedOnboardingAnalyticsProvider.value } returns false
+
+            testSubject.onExposureNotificationsEnabled()
+
+            verify { onboardingCompletedProvider setProperty "value" value eq(true) }
+            verify(exactly = 0) { submitAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent() }
+            verify { periodicTasks.schedule() }
+            verify { navigationTargetObserver.onChanged(Status) }
+        }
     }
 
     @Test

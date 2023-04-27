@@ -323,6 +323,10 @@
             android:name=".status.selfreporttest.SelfReportAdviceActivity"
             android:label="@string/self_report_advice_title"/>
 
+        <activity
+            android:name=".DecommissioningClosureScreenActivity"
+            android:label="@string/decommissioning_closure_screen_title"/>
+
         <!-- Receivers -->
         <receiver
             android:name=".exposure.encounter.ExposureNotificationBroadcastReceiver"

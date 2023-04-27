@@ -864,7 +864,7 @@
         <item quantity="other">加倍小心和保护他人 直至%1$s时23:59。还剩%2$s天。</item>
     </plurals>
     <string name="be_careful_until_date_title">加倍注意，保护他人</string>
-    <string name="about_this_app_software_information_date_of_release_description">02/2023</string>
+    <string name="about_this_app_software_information_date_of_release_description">04/2023</string>
     <string name="back_to_home_screen">返回主屏幕</string>
     <string name="covid_guidance_hub_check_ssp_description">了解 COVID-19 检测</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 检测最新指南</string>
@@ -1167,4 +1167,20 @@
     <string name="self_report_thank_you_para_unsuccessfully_shared_keys_and_no_need_to_report_test">我们将基于您提供的信息，继续寻求保护他人的建议。</string>
     <string name="self_report_thank_you_successfully_shared_header">谢谢，本应用已匿名通知其他应用用户</string>
     <string name="self_report_thank_you_title">回答已提交</string>
+    <string name="decommissioning_closure_screen_header">应用已下架</string>
+    <string name="decommissioning_closure_screen_image_content_description">图片上一群人在聚会，一些人戴着口罩，他们身后有一道彩虹</string>
+    <string name="decommissioning_closure_screen_para">NHS COVID-19 应用已下架。\n\n请继续按照最新指南操作，保护您自己和他人。这包括在 GOV.UK 上报告 NHS（国民保健服务）侧流检测结果。\n\n如果您符合 COVID-19 治疗的标准，必须报告结果，这样 NHS（国民保健服务）可以联系您商定治疗事宜。\n\n感谢使用应用，您为保持社区健康、挽救生命做出了贡献。</string>
+    <string name="decommissioning_closure_screen_title">关于应用下架</string>
+    <string name="decommissioning_closure_screen_url_1_label">为什么 NHS COVID-19 应用已下架（在应用外部 GOV.UK 上打开）</string>
+    <string name="decommissioning_closure_screen_url_1_link">https://www.gov.uk/government/collections/nhs-covid-19.zh</string>
+    <string name="decommissioning_closure_screen_url_2_label">英格兰 - 最新 COVID-19 指南和服务（在应用外部 nhs.uk 上打开）</string>
+    <string name="decommissioning_closure_screen_url_2_link">https://www.nhs.uk/covid-19-advice-and-services/</string>
+    <string name="decommissioning_closure_screen_url_3_label">威尔士 - 最新 COVID-19 指南和服务（在应用外部 GOV.WALES 上打开）</string>
+    <string name="decommissioning_closure_screen_url_3_link">https://www.gov.wales/guidance-people-symptoms-respiratory-infection-including-covid-19</string>
+    <string name="decommissioning_closure_screen_url_4_label">在 GOV.UK 上报告 NHS（国民保健服务）侧流检测结果（在应用外部打开）</string>
+    <string name="decommissioning_closure_screen_url_4_link">https://www.gov.uk/report-covid19-result</string>
+    <string name="decommissioning_closure_screen_url_5_label">您的应用数据和隐私 （在应用外部打开）</string>
+    <string name="decommissioning_closure_screen_url_5_link">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
+    <string name="notification_text_app_decommissioned">现在您可以删除 NHS COVID-19 应用。点击了解详情。</string>
+    <string name="notification_title_app_decommissioned">应用已下架</string>
 </resources>

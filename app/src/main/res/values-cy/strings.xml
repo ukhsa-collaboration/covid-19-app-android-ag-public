@@ -914,7 +914,7 @@
         <item quantity="other">Byddwch yn ofalus iawn a diogelu eraill tan  %1$s am 23:59. Mae yna %2$s dd/diwrnod tan hynny.</item>
     </plurals>
     <string name="be_careful_until_date_title">Byddwch yn ofalus iawn a diogelu eraill</string>
-    <string name="about_this_app_software_information_date_of_release_description">02/2023</string>
+    <string name="about_this_app_software_information_date_of_release_description">04/2023</string>
     <string name="back_to_home_screen">Yn ôl i’r sgrîn gartref</string>
     <string name="covid_guidance_hub_check_ssp_description">Dysgu am brofion ar gyfer COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">Canllawiau diweddaraf profion COVID-19</string>
@@ -1227,4 +1227,20 @@
     <string name="self_report_thank_you_para_unsuccessfully_shared_keys_and_no_need_to_report_test">Ewch ymlaen i gael cyngor ar sut i ddiogelu pobl eraill, ar sail yr wybodaeth rydych chi wedi’i rhoi.</string>
     <string name="self_report_thank_you_successfully_shared_header">Diolch, mae’r ap wedi rhoi gwybod i ddefnyddwyr eraill yr ap yn ddienw</string>
     <string name="self_report_thank_you_title">Atebion wedi’u cyflwyno</string>
+    <string name="decommissioning_closure_screen_header">Mae\'r ap wedi cau</string>
+    <string name="decommissioning_closure_screen_image_content_description">Darlun o grŵp o bobl yn cymdeithasu. Mae rhai yn gwisgo mygydau. Mae enfys y tu ôl iddyn nhw</string>
+    <string name="decommissioning_closure_screen_para">Mae ap COVID-19 y GIG wedi cau.\n\nParhewch i ddilyn y canllawiau diweddaraf i amddiffyn eich hun ac eraill. Mae hyn yn cynnwys adrodd ar ganlyniadau profion llif unffordd y GIG ar GOV.UK.\n\nOs ydych yn gymwys ar gyfer triniaeth COVID-19, rhaid i chi adrodd eich canlyniad fel y gall y GIG gysylltu â chi ynglŷn â thriniaeth.\n\nDiolch am ddefnyddio\'r ap - rydych chi wedi helpu i gadw\'ch cymuned yn iach ac achub bywydau.</string>
+    <string name="decommissioning_closure_screen_title">Ynglŷn â\'r ap yn cau</string>
+    <string name="decommissioning_closure_screen_url_1_label">Pam mae ap GIG COVID-19 wedi cau (yn agor y tu allan i\'r ap ar GOV.UK)</string>
+    <string name="decommissioning_closure_screen_url_1_link">https://www.gov.uk/government/collections/ap-covid-19-y-gig.cy</string>
+    <string name="decommissioning_closure_screen_url_2_label">Lloegr - canllawiau a gwasanaethau COVID-19 diweddaraf (yn agor y tu allan i\'r ap ar nhs.uk)</string>
+    <string name="decommissioning_closure_screen_url_2_link">https://www.nhs.uk/covid-19-advice-and-services/</string>
+    <string name="decommissioning_closure_screen_url_3_label">Cymru - canllawiau a gwasanaethau COVID-19 diweddaraf (yn agor y tu allan i\'r ap ar LLYW.CYMRU)</string>
+    <string name="decommissioning_closure_screen_url_3_link">https://www.gov.wales/guidance-people-symptoms-respiratory-infection-including-covid-19</string>
+    <string name="decommissioning_closure_screen_url_4_label">Rhoi gwybod am ganlyniad prawf llif unffordd y GIG ar GOV.UK (yn agor y tu allan i\'r ap)</string>
+    <string name="decommissioning_closure_screen_url_4_link">https://www.gov.uk/report-covid19-result</string>
+    <string name="decommissioning_closure_screen_url_5_label">Eich data ap a phreifatrwydd (yn agor y tu allan i\'r ap)</string>
+    <string name="decommissioning_closure_screen_url_5_link">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information/ap-covid-19-y-gig</string>
+    <string name="notification_text_app_decommissioned">Gallwch nawr gael gwared ar ap GIG COVID-19. Tapiwch am fanylion.</string>
+    <string name="notification_title_app_decommissioned">Mae\'r ap wedi cau</string>
 </resources>

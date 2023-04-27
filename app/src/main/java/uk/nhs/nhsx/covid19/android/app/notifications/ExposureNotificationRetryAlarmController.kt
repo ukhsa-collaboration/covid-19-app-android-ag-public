@@ -3,6 +3,8 @@ package uk.nhs.nhsx.covid19.android.app.notifications
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEvent.RiskyContactReminderNotification
 import uk.nhs.nhsx.covid19.android.app.analytics.AnalyticsEventProcessor
@@ -50,7 +52,8 @@ class ExposureNotificationRetryAlarmController @Inject constructor(
 
     private fun showNotificationAndSetupNext() {
         Timber.d("showNotificationAndSetupNext")
-        if (shouldShowEncounterDetectionActivityProvider.value == true) {
+        if (shouldShowEncounterDetectionActivityProvider.value == true &&
+            !RuntimeBehavior.isFeatureEnabled(DECOMMISSIONING_CLOSURE_SCREEN)) {
             Timber.d("showing notification")
             notificationProvider.showExposureNotification()
             analyticsEventProcessor.track(RiskyContactReminderNotification)

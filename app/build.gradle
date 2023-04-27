@@ -40,14 +40,14 @@ def getStringFromSecureStorage(String account, String service) {
 }
 
 def user = findProperty("gpr.user") ?: System.getenv("PACKAGES_ACCESS_ACTOR")
-def configurationPasswordService = "nihp-public"
+def configurationPasswordService = "ukhsa-collaboration"
 
 allprojects {
     repositories {
         google()
         mavenCentral()
         maven {
-            url = 'https://maven.pkg.github.com/nihp-public/covid-19-app-configuration'
+            url = 'https://maven.pkg.github.com/UKHSA-Internal/covid-19-app-configuration'
             credentials {
                 username = user
                 password = getStringFromSecureStorage(user, configurationPasswordService) ?: findProperty("gpr.key") ?: System.getenv("PACKAGES_ACCESS_TOKEN")

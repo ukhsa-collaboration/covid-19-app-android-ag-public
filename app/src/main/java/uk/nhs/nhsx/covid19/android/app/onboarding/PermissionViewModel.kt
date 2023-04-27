@@ -4,6 +4,8 @@ import android.app.Activity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
+import com.jeroenmols.featureflag.framework.RuntimeBehavior
 import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitOnboardingAnalyticsWorker
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmittedOnboardingAnalyticsProvider
@@ -39,7 +41,7 @@ class PermissionViewModel @Inject constructor(
 
     override fun onExposureNotificationsEnabled() {
         onboardingCompletedProvider.value = true
-        if (submittedOnboardingAnalyticsProvider.value != true) {
+        if (submittedOnboardingAnalyticsProvider.value != true && !RuntimeBehavior.isFeatureEnabled(DECOMMISSIONING_CLOSURE_SCREEN)) {
             submitOnboardingAnalyticsWorkerScheduler.scheduleOnboardingAnalyticsEvent()
             submittedOnboardingAnalyticsProvider.value = true
         }

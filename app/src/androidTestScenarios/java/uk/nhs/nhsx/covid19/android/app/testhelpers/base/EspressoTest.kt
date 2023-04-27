@@ -6,6 +6,8 @@ import androidx.core.content.edit
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkManager
+import com.jeroenmols.featureflag.framework.FeatureFlag
+import com.jeroenmols.featureflag.framework.FeatureFlagTestHelper
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -43,6 +45,7 @@ abstract class EspressoTest : HasTestAppContext {
     @Before
     fun setup() {
         testAppContext.reset()
+        FeatureFlagTestHelper.disableFeatureFlag(FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN)
     }
 
     @Before

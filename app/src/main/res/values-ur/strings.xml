@@ -874,7 +874,7 @@
         <item quantity="other">تک اضافی نگہداشت کریں اور دوسروں کی حفاظت کریں تک %1$s  بجے 23:59۔ اس وقت میں ابھی %2$s دن باقی ہے۔</item>
     </plurals>
     <string name="be_careful_until_date_title">اضافی دھیان رکھیں اور دوسروں کو بچائیں</string>
-    <string name="about_this_app_software_information_date_of_release_description">02/2023</string>
+    <string name="about_this_app_software_information_date_of_release_description">04/2023</string>
     <string name="back_to_home_screen">ہوم اسکرین پر واپس جائیں</string>
     <string name="covid_guidance_hub_check_ssp_description">COVID-19 کی جانچ کے بارے میں جانکاری حاصل کریں</string>
     <string name="covid_guidance_hub_check_ssp_title">COVID-19 کی جانچ سے متعلق تازہ ترین صلاح</string>
@@ -1179,4 +1179,20 @@
     <string name="self_report_thank_you_para_unsuccessfully_shared_keys_and_no_need_to_report_test">اس معلومات کی بنیاد پر جو آپ نے فراہم کی ہے اس بارے میں صلاح کے لیے جاری رکھیں کہ دوسروں کو کس طرح محفوظ رکھیں۔</string>
     <string name="self_report_thank_you_successfully_shared_header">آپ کا شکریہ، اس ایپ نے گمنام طور پر اس ایپ کے دیگر استعمال کنندگان کو مطلع کر دیا ہے</string>
     <string name="self_report_thank_you_title">جوابات جمع کر دئے گئے ہیں</string>
+    <string name="decommissioning_closure_screen_header">ایپ بند ہو گئی ہے</string>
+    <string name="decommissioning_closure_screen_image_content_description">میل جول بنانے والے لوگوں کے ایک گروپ کی عکس بندی۔ کچھ لوگ ماسک پہنے ہوئے ہیں۔ ان کے پیچھے ایک قوس قزح ہے</string>
+    <string name="decommissioning_closure_screen_para">NHS COVID-19 ایپ بند ہو گئی ہے۔\n\nبراہ کرم خود کا اور دوسروں کا تحفظ کرنے کے لیے تازہ ترین رہنمائی پر عمل کرتے رہیں۔ اس میں GOV.UK پر NHS کے لیٹرل فلو ٹیسٹ کے نتائج کی رپورٹ کرنا شامل ہے۔\n\nاگر آپ COVID-19 کے علاج کے لیے اہل ہیں تو، آپ پر اپنے نتیجے کی رپورٹ کرنا لازم ہے تاکہ NHS آپ کے علاج کے بارے میں آپ سے رابطہ کر سکے۔\n\nایپ استعمال کرنے کا شکریہ - آپ نے اپنی کمیونٹی کو صحت مند رکھنے اور زندگیاں بچانے میں مدد کی ہے۔</string>
+    <string name="decommissioning_closure_screen_title">ایپ بند ہونے کے بارے میں</string>
+    <string name="decommissioning_closure_screen_url_1_label">NHS COVID-19 ایپ کیوں بند ہو گئی ہے (GOV.UK پر ایپ سے باہر کھلتی ہے)</string>
+    <string name="decommissioning_closure_screen_url_1_link">https://www.gov.uk/government/collections/nhs-covid-19--31.ur</string>
+    <string name="decommissioning_closure_screen_url_2_label">انگلینڈ - تازہ ترین COVID-19 کی رہنمائی اور خدمات (nhs.uk پر ایپ سے باہر کھلتی ہے)</string>
+    <string name="decommissioning_closure_screen_url_2_link">https://www.nhs.uk/covid-19-advice-and-services/</string>
+    <string name="decommissioning_closure_screen_url_3_label">ویلز - تازہ ترین COVID-19 کی رہنمائی اور خدمات (GOV.WALES پر ایپ سے باہر کھلتی ہے)</string>
+    <string name="decommissioning_closure_screen_url_3_link">https://www.gov.wales/guidance-people-symptoms-respiratory-infection-including-covid-19</string>
+    <string name="decommissioning_closure_screen_url_4_label">NHS کے لیٹرل فلو ٹیسٹ کے نتائج کی رپورٹ GOV.UK پر کریں (ایپ سے باہر کھلتی ہے)</string>
+    <string name="decommissioning_closure_screen_url_4_link">https://www.gov.uk/report-covid19-result</string>
+    <string name="decommissioning_closure_screen_url_5_label">آپ کی ایپ کا ڈیٹا اور رازداری (GOV.UK پر ایپ سے باہر کھلتی ہے)</string>
+    <string name="decommissioning_closure_screen_url_5_link">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
+    <string name="notification_text_app_decommissioned">اب آپ NHS COVID-19 ایپ کو ہٹا سکتے ہیں۔ تفصیلات کے لیے ٹیپ کریں۔</string>
+    <string name="notification_title_app_decommissioned">ایپ بند ہو گئی ہے</string>
 </resources>

@@ -2,6 +2,7 @@ package uk.nhs.nhsx.covid19.android.app
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -10,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import uk.nhs.nhsx.covid19.android.app.MainViewModel.MainViewState.PostCodeToLocalAuthorityMissing
 import uk.nhs.nhsx.covid19.android.app.battery.BatteryOptimizationRequired
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator
 import uk.nhs.nhsx.covid19.android.app.common.postcode.LocalAuthorityPostCodeValidator.LocalAuthorityPostCodeValidationResult.Invalid
@@ -19,6 +21,7 @@ import uk.nhs.nhsx.covid19.android.app.common.postcode.PostCodeProvider
 import uk.nhs.nhsx.covid19.android.app.exposure.ExposureNotificationApi
 import uk.nhs.nhsx.covid19.android.app.onboarding.OnboardingCompletedProvider
 import uk.nhs.nhsx.covid19.android.app.onboarding.PolicyUpdateProvider
+import uk.nhs.nhsx.covid19.android.app.testhelpers.coRunWithFeature
 
 class MainViewModelTest {
 
@@ -54,126 +57,124 @@ class MainViewModelTest {
 
     @Test
     fun `policy accepted and post code to local authority missing`() = runBlocking {
-        coEvery { onboardingCompletedProvider.value } returns true
+        coRunWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
+            coEvery { onboardingCompletedProvider.value } returns true
 
-        every { policyUpdateProvider.isPolicyAccepted() } returns true
+            every { policyUpdateProvider.isPolicyAccepted() } returns true
 
-        every { postCodeProvider.value } returns postCode
+            every { postCodeProvider.value } returns postCode
 
-        coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Invalid
+            coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Invalid
 
-        testSubject.viewState().observeForever(mainViewState)
+            testSubject.viewState().observeForever(mainViewState)
 
-        testSubject.start()
+            testSubject.start()
 
-        verify { mainViewState.onChanged(MainViewModel.MainViewState.PostCodeToLocalAuthorityMissing) }
+            verify { mainViewState.onChanged(PostCodeToLocalAuthorityMissing) }
+        }
     }
 
     @Test
     fun `policy accepted and local authority missing`() = runBlocking {
+        coRunWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
 
-        coEvery { onboardingCompletedProvider.value } returns true
+            coEvery { onboardingCompletedProvider.value } returns true
 
-        every { policyUpdateProvider.isPolicyAccepted() } returns true
+            every { policyUpdateProvider.isPolicyAccepted() } returns true
 
-        every { postCodeProvider.value } returns postCode
+            every { postCodeProvider.value } returns postCode
 
-        coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Valid(postCode, emptyList())
+            coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Valid(postCode, emptyList())
 
-        every { localAuthorityProvider.value } returns null
+            every { localAuthorityProvider.value } returns null
 
-        testSubject.viewState().observeForever(mainViewState)
+            testSubject.viewState().observeForever(mainViewState)
 
-        testSubject.start()
+            testSubject.start()
 
-        verify { mainViewState.onChanged(MainViewModel.MainViewState.LocalAuthorityMissing) }
+            verify { mainViewState.onChanged(MainViewModel.MainViewState.LocalAuthorityMissing) }
+        }
     }
 
     @Test
     fun `policy accepted and local authority present and battery optimization required`() = runBlocking {
+        coRunWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
 
-        coEvery { onboardingCompletedProvider.value } returns true
+            coEvery { onboardingCompletedProvider.value } returns true
 
-        every { policyUpdateProvider.isPolicyAccepted() } returns true
+            every { policyUpdateProvider.isPolicyAccepted() } returns true
 
-        every { postCodeProvider.value } returns postCode
+            every { postCodeProvider.value } returns postCode
 
-        coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Valid(postCode, emptyList())
+            coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Valid(postCode, emptyList())
 
-        every { localAuthorityProvider.value } returns "1"
+            every { localAuthorityProvider.value } returns "1"
 
-        every { batteryOptimizationRequired() } returns true
+            every { batteryOptimizationRequired() } returns true
 
-        testSubject.viewState().observeForever(mainViewState)
+            testSubject.viewState().observeForever(mainViewState)
 
-        testSubject.start()
+            testSubject.start()
 
-        verify { mainViewState.onChanged(MainViewModel.MainViewState.BatteryOptimizationNotAcknowledged) }
+            verify { mainViewState.onChanged(MainViewModel.MainViewState.BatteryOptimizationNotAcknowledged) }
+        }
     }
 
     @Test
     fun `policy accepted and local authority present`() = runBlocking {
+        coRunWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
 
-        coEvery { onboardingCompletedProvider.value } returns true
+            coEvery { onboardingCompletedProvider.value } returns true
 
-        every { policyUpdateProvider.isPolicyAccepted() } returns true
+            every { policyUpdateProvider.isPolicyAccepted() } returns true
 
-        every { postCodeProvider.value } returns postCode
+            every { postCodeProvider.value } returns postCode
 
-        coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Valid(postCode, emptyList())
+            coEvery { localAuthorityPostCodeValidator.validate(postCode) } returns Valid(postCode, emptyList())
 
-        every { localAuthorityProvider.value } returns "1"
+            every { localAuthorityProvider.value } returns "1"
 
-        testSubject.viewState().observeForever(mainViewState)
+            testSubject.viewState().observeForever(mainViewState)
 
-        testSubject.start()
+            testSubject.start()
 
-        verify { mainViewState.onChanged(MainViewModel.MainViewState.Completed) }
+            verify { mainViewState.onChanged(MainViewModel.MainViewState.Completed) }
+        }
     }
 
     @Test
     fun `policy updated`() = runBlocking {
+        coRunWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
 
-        coEvery { onboardingCompletedProvider.value } returns true
+            coEvery { onboardingCompletedProvider.value } returns true
 
-        every { policyUpdateProvider.isPolicyAccepted() } returns false
+            every { policyUpdateProvider.isPolicyAccepted() } returns false
 
-        testSubject.viewState().observeForever(mainViewState)
+            testSubject.viewState().observeForever(mainViewState)
 
-        testSubject.start()
+            testSubject.start()
 
-        verify { mainViewState.onChanged(MainViewModel.MainViewState.PolicyUpdated) }
+            verify { mainViewState.onChanged(MainViewModel.MainViewState.PolicyUpdated) }
+        }
     }
 
     @Test
     fun `exposure notifications not available`() = runBlocking {
+        coRunWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
 
-        coEvery { exposureNotificationApi.isAvailable() } returns false
+            coEvery { exposureNotificationApi.isAvailable() } returns false
 
-        testSubject.viewState().observeForever(mainViewState)
+            testSubject.viewState().observeForever(mainViewState)
 
-        testSubject.start()
+            testSubject.start()
 
-        verify { mainViewState.onChanged(MainViewModel.MainViewState.ExposureNotificationsNotAvailable) }
+            verify { mainViewState.onChanged(MainViewModel.MainViewState.ExposureNotificationsNotAvailable) }
+        }
     }
 
     @Test
     fun `start onboarding`() = runBlocking {
-
-        coEvery { exposureNotificationApi.isEnabled() } returns false
-
-        coEvery { onboardingCompletedProvider.value } returns false
-
-        testSubject.viewState().observeForever(mainViewState)
-
-        testSubject.start()
-
-        verify { mainViewState.onChanged(MainViewModel.MainViewState.OnboardingStarted) }
-    }
-
-    @Test
-    fun `when post code was entered and permissions not enabled user will be in OnboardingStarted state`() =
-        runBlocking {
+        coRunWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
 
             coEvery { exposureNotificationApi.isEnabled() } returns false
 
@@ -185,4 +186,34 @@ class MainViewModelTest {
 
             verify { mainViewState.onChanged(MainViewModel.MainViewState.OnboardingStarted) }
         }
+    }
+
+    @Test
+    fun `when post code was entered and permissions not enabled user will be in OnboardingStarted state`() =
+        runBlocking {
+            coRunWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = false) {
+
+                coEvery { exposureNotificationApi.isEnabled() } returns false
+
+                coEvery { onboardingCompletedProvider.value } returns false
+
+                testSubject.viewState().observeForever(mainViewState)
+
+                testSubject.start()
+
+                verify { mainViewState.onChanged(MainViewModel.MainViewState.OnboardingStarted) }
+            }
+        }
+
+    @Test
+    fun `decommissioning state navigates to decommissioning closure screen`() = runBlocking {
+        coRunWithFeature(DECOMMISSIONING_CLOSURE_SCREEN, enabled = true) {
+
+            testSubject.viewState().observeForever(mainViewState)
+
+            testSubject.start()
+
+            verify { mainViewState.onChanged(MainViewModel.MainViewState.DecommissioningClosureState) }
+        }
+    }
 }

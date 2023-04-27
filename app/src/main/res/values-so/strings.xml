@@ -169,7 +169,7 @@
     <string name="onboarding_venue_check_in_text">Iskaga xaadiri barnaamijka (app) goobaha sida baararka iyo makhaayadaha leh adigoo isticmaalayaa iskaanka koodhka QR adigoon buuxin wax foomam ah.</string>
     <string name="onboarding_venue_check_in_title">Iska xaadirinta goobaha</string>
     <string name="onboarding_welcome_title">App-kaani waxa uu inaga caawiyaa in uu ka yeelo midba midka kale kuwo badqaba</string>
-    <string name="open_in_browser_warning">Wuxuu ku furmaya daalacashadaada</string>
+    <string name="open_in_browser_warning">ku fur boga biraawsarkaaga</string>
     <string name="permission_title">Raad-raacista shakhsiga</string>
     <string name="post_code_example">Waxaad u baahan tahay nambar boostada Ingiriis ama Welsh ah si aad ugu isticmaasho barnaamijkan.\n\nTusaalooyin: Haddii nambarkaaga boostada u yahay CE1B 2PQ, fadlan gali \'CE1B\'. Hadday tahay CR0 3RL, fadlan gali \'CR0\'. Hadday tahay L4 0RE, fadlan gali \'L4\'.</string>
     <string name="post_code_invalid_title">Koodhka boostada degmada khaldan</string>
@@ -875,7 +875,7 @@
         <item quantity="other">Samey taxadar dheeraad ah oo ilaali dadka kale ilaa %1$s saacada 23:59. Waxaa jiro %2$s maalmood la aado illaa kadib.</item>
     </plurals>
     <string name="be_careful_until_date_title">Samey taxadar dheeraad oo ilaali dadka kale</string>
-    <string name="about_this_app_software_information_date_of_release_description">02/2023</string>
+    <string name="about_this_app_software_information_date_of_release_description">04/2023</string>
     <string name="back_to_home_screen">Ku laabo shaashadda soo-dhoweynta</string>
     <string name="covid_guidance_hub_check_ssp_description">Ogow waxa ku saabsan baaritaanka COVID-19</string>
     <string name="covid_guidance_hub_check_ssp_title">Hagidii ugu dambeysay ee COVID-19</string>
@@ -1180,4 +1180,20 @@
     <string name="self_report_thank_you_para_unsuccessfully_shared_keys_and_no_need_to_report_test">Sii wad si aad  u ogaato sida loobadbaadiyo dadka kale, adigoo isticmaalaya xogti aad na siisay.</string>
     <string name="self_report_thank_you_successfully_shared_header">Mahadsanid, app-ka waxuu si qarsoon ugu warramay dadka kale ee isticmaala oo kula midka ah</string>
     <string name="self_report_thank_you_title">Jawaabaha waa la gudbiye</string>
+    <string name="decommissioning_closure_screen_header">App-ka wuu xirmay</string>
+    <string name="decommissioning_closure_screen_image_content_description">Sawirka koox dad isdhaxgalaya. Qaarkood waxay xiranyihiin maaskaro. Waxaa jiro qaanso ka gadaaleyso</string>
+    <string name="decommissioning_closure_screen_para">App-ka NHS COVID-19 wuu xirmay.\n\nFadlan sii wad si aad u raacdid tilmaanta ugu dambeyso ee naftaada iyo dadka kale aad ku illaalisid. Tan waxaa ka mid ah usoo sheegida natiijooyinka baaritaanka socodka dambe ee NHS ee GOV.UK.\n\nHaddii aad u qalantid daaweynta COVID-19, waa inaad soo sheegtaa natiijooyinkaaga si markaas NHS ay kaagala soo xiriirto daaweynta.\n\nWaad ku mahadsantahay isticmaalida app-ka - waxaad nagu caawisay inaan ku hayno bulshadaada si caafimaadan oo aan nafaf badbaadino.</string>
+    <string name="decommissioning_closure_screen_title">Ku saabsan app-ka xirmayo</string>
+    <string name="decommissioning_closure_screen_url_1_label">Muxuu app-ka NHS COVID-19 u xirmay (wuxuu ka furmaa app-ka dibada GOV.UK)</string>
+    <string name="decommissioning_closure_screen_url_1_link">https://www.gov.uk/government/collections/abka-nhs-ee-covid-19.so</string>
+    <string name="decommissioning_closure_screen_url_2_label">Ingiriiska - tilmaamaha ugu dambeeyo iyo adeegyada COVID-19 (wuxuu ka furmaa app-ka dibada nhs.uk)</string>
+    <string name="decommissioning_closure_screen_url_2_link">https://www.nhs.uk/covid-19-advice-and-services/</string>
+    <string name="decommissioning_closure_screen_url_3_label">Wales - tilmaamaha ugu dambeeyo iyo adeegyada COVID-19 (wuxuu ka furmaa app-ka dibada GOV.WALES)</string>
+    <string name="decommissioning_closure_screen_url_3_link">https://www.gov.wales/guidance-people-symptoms-respiratory-infection-including-covid-19</string>
+    <string name="decommissioning_closure_screen_url_4_label">Soo sheegida natiijooyinka baaritaanka socodka dambe NHS ee GOV.UK (wuxuu ku furmaa app-ka dibada)</string>
+    <string name="decommissioning_closure_screen_url_4_link">https://www.gov.uk/report-covid19-result</string>
+    <string name="decommissioning_closure_screen_url_5_label">App-ka xogtaada iyo sirtaada (wuxuu ku furmaa app-ka dibada)</string>
+    <string name="decommissioning_closure_screen_url_5_link">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
+    <string name="notification_text_app_decommissioned">Waad ka saari kartaa app-ka NHS COVID-19. Taabo wixii sharaxaad ah.</string>
+    <string name="notification_title_app_decommissioned">App-ka wuu xirmay</string>
 </resources>

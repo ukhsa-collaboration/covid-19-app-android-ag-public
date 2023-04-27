@@ -5,12 +5,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_BOOT_COMPLETED
 import android.content.Intent.ACTION_MY_PACKAGE_REPLACED
+import androidx.work.WorkManager
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
 import com.jeroenmols.featureflag.framework.FeatureFlag.SUBMIT_ANALYTICS_VIA_ALARM_MANAGER
 import com.jeroenmols.featureflag.framework.RuntimeBehavior
+import timber.log.Timber
 import uk.nhs.nhsx.covid19.android.app.analytics.SubmitAnalyticsAlarmController
 import uk.nhs.nhsx.covid19.android.app.appComponent
+import uk.nhs.nhsx.covid19.android.app.common.PeriodicTask.PERIODIC_TASKS
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationReminderAlarmController
 import uk.nhs.nhsx.covid19.android.app.notifications.ExposureNotificationRetryAlarmController
+import uk.nhs.nhsx.covid19.android.app.notifications.NotificationProvider
+import uk.nhs.nhsx.covid19.android.app.settings.DeleteAllUserData
 import uk.nhs.nhsx.covid19.android.app.state.IsolationExpirationAlarmController
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.ContactTracingActivationReminderProvider
 import uk.nhs.nhsx.covid19.android.app.status.contacttracinghub.MigrateContactTracingActivationReminderProvider
@@ -37,25 +43,50 @@ class AlarmRestarter : BroadcastReceiver() {
     @Inject
     lateinit var exposureNotificationRetryAlarmController: ExposureNotificationRetryAlarmController
 
+    @Inject
+    lateinit var deleteAllUserData: DeleteAllUserData
+
+    @Inject
+    lateinit var notificationProvider: NotificationProvider
+
     override fun onReceive(context: Context, intent: Intent) {
         context.appComponent.inject(this)
 
         val action = intent.action
         if (action != ACTION_BOOT_COMPLETED && action != ACTION_MY_PACKAGE_REPLACED) return
 
-        exposureNotificationRetryAlarmController.onDeviceRebooted()
+        if (RuntimeBehavior.isFeatureEnabled(DECOMMISSIONING_CLOSURE_SCREEN)) {
+            if (action == ACTION_MY_PACKAGE_REPLACED) {
+                Timber.d("App updated in decommissioning state")
 
-        if (RuntimeBehavior.isFeatureEnabled(SUBMIT_ANALYTICS_VIA_ALARM_MANAGER)) {
-            submitAnalyticsAlarmController.onDeviceRebooted()
-        }
+                notificationProvider.showAppHasBeenDecommissionedNotification()
 
-        isolationExpirationAlarmController.onDeviceRebooted()
+                deleteAllUserData(shouldKeepLanguage = true)
 
-        migrateContactTracingActivationReminderProvider()
+                val workManager = WorkManager.getInstance(context)
+                workManager.cancelUniqueWork(PERIODIC_TASKS.workName)
+                workManager.cancelUniqueWork("SubmitAnalyticsWorkerOnboardingFinished")
 
-        contactTracingActivationReminderProvider.reminder?.let {
-            val alarmTime = Instant.ofEpochMilli(it.alarmTime)
-            exposureNotificationReminderAlarmController.setup(alarmTime)
+                submitAnalyticsAlarmController.cancelIfScheduled()
+            } else {
+                return
+            }
+        } else {
+
+            exposureNotificationRetryAlarmController.onDeviceRebooted()
+
+            if (RuntimeBehavior.isFeatureEnabled(SUBMIT_ANALYTICS_VIA_ALARM_MANAGER)) {
+                submitAnalyticsAlarmController.onDeviceRebooted()
+            }
+
+            isolationExpirationAlarmController.onDeviceRebooted()
+
+            migrateContactTracingActivationReminderProvider()
+
+            contactTracingActivationReminderProvider.reminder?.let {
+                val alarmTime = Instant.ofEpochMilli(it.alarmTime)
+                exposureNotificationReminderAlarmController.setup(alarmTime)
+            }
         }
     }
 }

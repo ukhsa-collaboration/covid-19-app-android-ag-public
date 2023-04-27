@@ -243,7 +243,7 @@
     <string name="exposure_notification_hint">એપએ શોધી કાઢ્યું છે કે તમે કોરોનાવાયરસ (કોવિડ -19) ધરાવતા કોઈની સાથે સંપર્કમાં આવ્યાં છો.</string>
     <string name="exposure_notification_recommendation">જો તમારી ઉંમર 18 વર્ષથી ઓછી છે, તો તમને વિશ્વાસપાત્ર વડીલને વ્યક્તિને આ સંદેશ બતાવવાની સલાહ આપવામાં આવે છે.\n\nજો તમને કોઈ લક્ષણો ન હોય તો પણ, તમને કોવિડ-19 થવાનું અને તેને ફેલાવવાનું જોખમ વધારે છે. તમારી જાતને અને અન્ય લોકોને સુરક્ષિત રાખવા માટે તમને ઘરે જ રહેવાની સલાહ આપવામાં આવે છે. તમને કોવિડ-19 હોવાનું નિદાન થયાના સંપૂર્ણ સમયગાળા દરમિયાન સેલ્ફ-આઇસોલેટમાં રહીને, તમે કોવિડ-19 ના ફેલાવાને રોકવામાં મદદ કરી રહ્યાં છો.\n\nકારણ કે તમે એવા વ્યક્તિનો કોન્ટેક્ટ છો જેમનો ટેસ્ટ પોઝિટીવ આવ્યો છે, તમને કોવિડ -19 છે કે કેમ તે જોવા માટે તમે ટેસ્ટ બુક કરી શકો છો. જો તમારો ટેસ્ટ પોઝિટીવ આવે છે, તો તમે અજ્ઞાત રૂપે અન્ય લોકોને જણાવી શકો છો કે તેઓ જોખમમાં હોઈ શકે છે. જો તમારો ટેસ્ટ નેગેટિવ આવે છે, તો તમે હજી પણ ચેપી હોઈ શકો છો. જ્યારે તમારું ટેસ્ટ પરિણામ મેળવતા હો ત્યારે તમને આપવામાં આવેલી સલાહનું પાલન કરો.\n\nતમે તમારી એપની હોમ સ્ક્રીનથી ટેસ્ટ બુક કરી શકો છો.</string>
     <string name="risk_level_link_text">વિસ્તારના જોખમ-ભયના ધોરણની વ્યાખ્યાઓ</string>
-    <string name="open_in_browser_warning">તમારા બ્રાઉઝરમાં ખોલો</string>
+    <string name="open_in_browser_warning">તમારું બ્રાઉઝર ખોલો</string>
     <string name="done_button_text">થઈ ગયું</string>
     <string name="delete_single_venue_visit_title">શું તમે નિશ્ચિત છો કે તમે તમારી હિસ્ટરી માંથી આ સ્થળ રદ કરવા ઈચ્છો છો?</string>
     <string name="delete_single_venue_visit_text">સ્થળ દૂર કરવાથી સંપર્ક ટ્રેસિંગની અસરકારકતા ઓછી થશે.\n\nએકવખત રદ કર્યાથી, તમને આ સ્થળ વિશે કોઈ સાવધાની કે એલર્ટસ મળશે નહિ.</string>
@@ -874,7 +874,7 @@
         <item quantity="other">સુધી વધારાની સાવધાની લો અને અન્યોનું રક્ષણ કરો %1$s વાગ્યે 23:59. ત્યાં સુધી %2$s દિવસ બાકી છે.</item>
     </plurals>
     <string name="be_careful_until_date_title">વધારાની કાળજી લો અને અન્યોને સુરક્ષિત રાખો</string>
-    <string name="about_this_app_software_information_date_of_release_description">02/2023</string>
+    <string name="about_this_app_software_information_date_of_release_description">04/2023</string>
     <string name="back_to_home_screen">હોમ સ્ક્રીન પર પાછા</string>
     <string name="covid_guidance_hub_check_ssp_description">COVID-19 માટે ટેસ્ટિંગ અંગે જાણો</string>
     <string name="covid_guidance_hub_check_ssp_title">નવીનતમ COVID-19 ટેસ્ટિંગ માર્ગદર્શન</string>
@@ -1179,4 +1179,20 @@
     <string name="self_report_thank_you_para_unsuccessfully_shared_keys_and_no_need_to_report_test">તમે પૂરી પાડેલી માહિતીને આધારે, અન્યોને સલામત કેવી રીતે રાખવા તે અંગે સલાહ માટે આગળ વધો.</string>
     <string name="self_report_thank_you_successfully_shared_header">આભાર, ઍપ દ્વારા અન્ય ઍપ વપરાશકર્તાઓને અનામીપણે સૂચિત કરાયાં</string>
     <string name="self_report_thank_you_title">જવાબો સુપ્રત કરાયા</string>
+    <string name="decommissioning_closure_screen_header">ઍપ બંધ થઈ છે</string>
+    <string name="decommissioning_closure_screen_image_content_description">ભેગા મળતા લોકોના સમૂહનું ઉદાહરણ. કેટલાક લોકોએ માસ્ક પહેર્યું છે. તેઓની પાછળ એક મેઘધનુષ્ય છે</string>
+    <string name="decommissioning_closure_screen_para">NHS COVID-19 ઍપ બંધ થઈ છે.\n\nકૃપા કરીને પોતાનું અને અન્યોનું રક્ષણ કરવા માટે નવીનતમ નિર્દેશોનું પાલન કરવાનું ચાલુ રાખો. તેમાં GOV.UK પર NHS લેટરલ ફ્લો ટેસ્ટનાં પરિણામો અંગે રિપોર્ટ કરવાનો સમાવેશ થાય છે.\n\nજો તમે COVID-19 સારવાર માટે લાયક હો તો તમારે તમારું પરિણામ રિપોર્ટ કરવાનું રહેશે, જેથી NHS સારવાર વિશે તમારો સંપર્ક કરી શકે.\n\nઍપનો ઉપયોગ કરવા બદલ તમારો આભાર - તમે તમારા સમાજને તંદુરસ્ત રાખવામાં અને જિંદગીઓ બચાવવામાં મદદ કરી છે.</string>
+    <string name="decommissioning_closure_screen_title">ઍપ બંધ થવા વિશે</string>
+    <string name="decommissioning_closure_screen_url_1_label">શા માટે NHS COVID-19 ઍપ બંધ થઈ છે (GOV.UK પર ઍપની બહાર ખૂલે છે)</string>
+    <string name="decommissioning_closure_screen_url_1_link">https://www.gov.uk/government/collections/nhs-covid-19--27.gu</string>
+    <string name="decommissioning_closure_screen_url_2_label">ઇંગ્લૅન્ડ - COVID-19 અંગેના નવીનતમ નિર્દેશો અને સેવાઓ (nhs.uk પર ઍપની બહાર ખૂલે છે)</string>
+    <string name="decommissioning_closure_screen_url_2_link">https://www.nhs.uk/covid-19-advice-and-services/</string>
+    <string name="decommissioning_closure_screen_url_3_label">વેલ્સ - COVID-19ના નવીનતમ નિર્દેશો અને સેવાઓ (GOV.WALES પર ઍપની બહાર ખૂલે છે)</string>
+    <string name="decommissioning_closure_screen_url_3_link">https://www.gov.wales/guidance-people-symptoms-respiratory-infection-including-covid-19</string>
+    <string name="decommissioning_closure_screen_url_4_label">GOV.UK પર NHS લેટરલ ફ્લો ટેસ્ટ પરિણામ રિપોર્ટ કરો (ઍપની બહાર ખૂલે છે)</string>
+    <string name="decommissioning_closure_screen_url_4_link">https://www.gov.uk/report-covid19-result</string>
+    <string name="decommissioning_closure_screen_url_5_label">તમારો ઍપ ડેટા અને ગોપનીયતા (GOV.UK પર ઍપની બહાર ખૂલે છે)</string>
+    <string name="decommissioning_closure_screen_url_5_link">https://www.gov.uk/government/publications/nhs-covid-19-app-privacy-information</string>
+    <string name="notification_text_app_decommissioned">તમે હવે NHS COVID-19 ઍપ દૂર કરી શકો છો. વિગતો માટે ટેપ કરો.</string>
+    <string name="notification_title_app_decommissioned">ઍપ બંધ થઈ છે</string>
 </resources>

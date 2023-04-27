@@ -3,6 +3,7 @@ package com.jeroenmols.featureflag.framework
 import com.jeroenmols.featureflag.framework.FeatureFlag.BATTERY_OPTIMIZATION
 import com.jeroenmols.featureflag.framework.FeatureFlag.COVID19_GUIDANCE_HOME_SCREEN_BUTTON_ENGLAND
 import com.jeroenmols.featureflag.framework.FeatureFlag.COVID19_GUIDANCE_HOME_SCREEN_BUTTON_WALES
+import com.jeroenmols.featureflag.framework.FeatureFlag.DECOMMISSIONING_CLOSURE_SCREEN
 import com.jeroenmols.featureflag.framework.FeatureFlag.LOCAL_COVID_STATS
 import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_ENGLAND_CONTACT_CASE_FLOW
 import com.jeroenmols.featureflag.framework.FeatureFlag.OLD_WALES_CONTACT_CASE_FLOW
@@ -35,6 +36,7 @@ class StoreFeatureFlagProvider : FeatureFlagProvider {
                 COVID19_GUIDANCE_HOME_SCREEN_BUTTON_ENGLAND -> true
                 COVID19_GUIDANCE_HOME_SCREEN_BUTTON_WALES -> true
                 SELF_REPORTING -> true
+                DECOMMISSIONING_CLOSURE_SCREEN -> true
             }
         } else {
             // TestSettings should never be shipped to users
